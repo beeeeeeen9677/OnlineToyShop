@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+@theme {
+  /*color*/
+  --color-primary: rgba(255, 145, 0, 0.87);
+  --color-secondary: rgba(167, 167, 167, 0.87);
+  /*animation*/
+  --animate-fade-in: fadeIn 0.3s ease-in-out backwards;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -17,10 +33,6 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 @media (prefers-color-scheme: light) {
