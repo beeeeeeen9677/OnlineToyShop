@@ -1,5 +1,5 @@
-import { Route, Routes } from "react-router";
-import { useEffect } from "react";
+import { Route, Routes, useNavigate, useLocation } from "react-router";
+import { useEffect, useState } from "react";
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
@@ -7,21 +7,25 @@ import Auth from "./pages/auth/Auth";
 import { monitorAuthState } from "./firebase/firebase";
 
 function App() {
+  const navigate = useNavigate();
+  const currentPath = useLocation().pathname;
+
   // Monitor authentication state on app load
-  const loginCallback = () => {
-    console.log("User is logged in");
-  };
-  const logoutCallback = () => {
-    console.log("User is logged out");
-  };
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
-    monitorAuthState(loginCallback, logoutCallback);
+    const logoutCallback = () => {
+      console.log("User is logged out");
+      const availablePaths = ["/", "/auth"];
+
+      if (!availablePaths.includes(currentPath)) navigate("/");
+    };
+    monitorAuthState(logoutCallback, setIsLoggedIn);
     console.log("App mounted, monitoring auth state");
   }, []);
 
   return (
     <Routes>
-      <Route index element={<Index />} />
+      <Route index element={<Index isLoggedIn={isLoggedIn} />} />
       <Route path="/auth" element={<Auth />} />
     </Routes>
   );

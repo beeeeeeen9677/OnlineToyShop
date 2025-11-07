@@ -1,7 +1,10 @@
-import React from "react";
 import { Link } from "react-router";
 
-function Header() {
+type HeaderProps = {
+  isLoggedIn: boolean;
+};
+
+function Header({ isLoggedIn }: HeaderProps) {
   const duration = "200";
   return (
     <header className="bg-primary w-full h-16 justify-center flex">
@@ -63,7 +66,7 @@ function Header() {
           <p
             className={`group-hover:text-primary  transition duration-${duration}`}
           >
-            登入
+            {!isLoggedIn ? "Log in" : "Log out"}
           </p>
         </Link>
       </div>

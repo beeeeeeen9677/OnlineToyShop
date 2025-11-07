@@ -1,11 +1,14 @@
 import Header from "../../components/Header";
 
-function Index() {
+type IndexProps = {
+  isLoggedIn: boolean;
+};
+
+function Index({ isLoggedIn }: IndexProps) {
   return (
     <div className="animate-fade-in min-h-screen">
       <title>Premium Ben Toys</title>
-      <Header />
-      Index
+      <Header isLoggedIn={isLoggedIn} />
     </div>
   );
 }

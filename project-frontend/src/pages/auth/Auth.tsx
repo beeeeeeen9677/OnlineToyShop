@@ -1,14 +1,18 @@
 import { useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import {
+  auth,
   loginWithEmailAndPassword,
+  logout,
   registerWithEmailAndPassword,
 } from "../../firebase/firebase";
 
 function Auth() {
+  const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const rememberMeRef = useRef<HTMLInputElement>(null);
   const [emailErrors, setEmailErrors] = useState<string>("");
   const [pwErrors, setPwErrors] = useState<string>("");
 
@@ -22,37 +26,38 @@ function Auth() {
     minLength: "Password must be at least 6 characters long",
   };
 
-  const ValidateField = (e: React.FocusEvent<HTMLInputElement>) => {
+  const validateField = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name } = e.target;
     const value = e.target.value;
 
-    let errors: string = "";
-
     if (name === "email") {
-      if (!value) {
-        errors = emailErr.required;
-      } else if (!/\S+@\S+\.\S+/.test(value)) {
-        errors = emailErr.pattern;
-      }
-      setEmailErrors(errors);
+      validateEmail(value);
     } else if (name === "password") {
-      if (!value) {
-        errors = pwErr.required;
-      } else if (value.length < 6) {
-        errors = pwErr.minLength;
-      }
-      setPwErrors(errors);
+      validatePassword(value);
     }
   };
-
+  const loginSuccessCallback = () => {
+    console.log("callback: Login successful");
+    navigate("/");
+  };
+  const loginFailCallback = () => {
+    console.log("callback: Login failed");
+  };
   const emailPwLogin = () => {
     const email: string = emailRef.current?.value ?? "";
     const password: string = passwordRef.current?.value ?? "";
+    const rememberMe: boolean = rememberMeRef.current?.checked ?? false;
+    validateEmail(email);
+    validatePassword(password);
 
     if (email && password) {
-      loginWithEmailAndPassword(email, password, () => {
-        console.log("callback: Login failed");
-      });
+      loginWithEmailAndPassword(
+        email,
+        password,
+        loginSuccessCallback,
+        loginFailCallback,
+        rememberMe
+      );
     } else {
       console.log("Email or Password is empty");
     }
@@ -63,9 +68,14 @@ function Auth() {
     const password: string = passwordRef.current?.value ?? "";
 
     if (email && password) {
-      registerWithEmailAndPassword(email, password, () => {
-        console.log("callback: Registration failed");
-      });
+      registerWithEmailAndPassword(
+        email,
+        password,
+        loginSuccessCallback,
+        () => {
+          console.log("callback: Registration failed");
+        }
+      );
     } else {
       console.log("Email or Password is empty");
     }
@@ -78,15 +88,22 @@ function Auth() {
         <img src={"/logo.png"} alt="Logo" className="h-24" />
       </Link>
 
-      <div className="w-full max-w-md p-8 bg-white rounded-4xl shadow-lg">
+      <div className="w-full max-w-md p-8 bg-white rounded-4xl shadow-lg ">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            User Authentication
+            {!auth.currentUser ? "User Authentication" : "Log Out"}
           </h1>
-          <p className="text-gray-600">Log in to your account</p>
+          <p className="text-gray-600">
+            {!auth.currentUser
+              ? "Log in to your account"
+              : "Log out of your account?"}
+          </p>
         </div>
 
-        <div id="auth-form" className="space-y-6">
+        <div
+          id="login-form"
+          className={"space-y-6 " + (auth.currentUser && "hidden")}
+        >
           <div>
             <div className="flex justify-between">
               <label
@@ -113,7 +130,7 @@ function Auth() {
                 emailErrors !== "" && "ring-3 ring-red-500 "
               }`}
               placeholder="Enter your email"
-              onBlur={ValidateField}
+              onBlur={validateField}
             />
           </div>
 
@@ -143,13 +160,14 @@ function Auth() {
                 pwErrors !== "" && "ring-3 ring-red-500 "
               }`}
               placeholder="Enter your password"
-              onBlur={ValidateField}
+              onBlur={validateField}
             />
           </div>
 
           <div className="flex items-center justify-between">
             <label className="flex items-center">
               <input
+                ref={rememberMeRef}
                 type="checkbox"
                 className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
               />
@@ -164,16 +182,37 @@ function Auth() {
           </div>
 
           <button
-            className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+            className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
             onClick={emailPwLogin}
           >
             Log In
           </button>
         </div>
-
-        <div className="mt-6 text-center">
+        <div
+          id="logout-button-section"
+          className={"space-y-6 " + (!auth.currentUser && "hidden")}
+        >
+          <button
+            className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+            onClick={logout}
+          >
+            Log Out
+          </button>
+          <button
+            className="w-full bg-white text-primary border-primary border-2 py-3 px-4 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            Back
+          </button>
+        </div>
+        <div
+          id="register-section"
+          className={"mt-6 text-center " + (auth.currentUser && "hidden")}
+        >
           <p className="text-gray-600">
-            First time using?
+            New User?{" "}
             <button
               //to="#"
               className="text-primary font-medium hover:text-orange-600 transition-colors"
@@ -184,7 +223,7 @@ function Auth() {
           </p>
         </div>
 
-        <div className="mt-6">
+        <div className={"mt-6 " + (auth.currentUser && "hidden")}>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
@@ -234,6 +273,28 @@ function Auth() {
       </div>
     </div>
   );
+
+  function validatePassword(value: string) {
+    let errors: string = "";
+
+    if (!value) {
+      errors = pwErr.required;
+    } else if (value.length < 6) {
+      errors = pwErr.minLength;
+    }
+    setPwErrors(errors);
+  }
+
+  function validateEmail(value: string) {
+    let errors: string = "";
+
+    if (!value) {
+      errors = emailErr.required;
+    } else if (!/\S+@\S+\.\S+/.test(value)) {
+      errors = emailErr.pattern;
+    }
+    setEmailErrors(errors);
+  }
 }
 
 export default Auth;

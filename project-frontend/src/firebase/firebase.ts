@@ -4,8 +4,11 @@ import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signInWithEmailLink,
+  //signInWithEmailLink,
   createUserWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence,
   signOut,
 } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -28,18 +31,25 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 const loginWithEmailAndPassword = async (
-  email,
-  password,
-  loginFailCallback
+  email: string,
+  password: string,
+  loginSuccessCallback: () => void,
+  loginFailCallback: () => void,
+  rememberMe: boolean = false
 ) => {
   try {
+    await setPersistence(
+      auth,
+      rememberMe ? browserLocalPersistence : browserSessionPersistence
+    );
+
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
       password
     );
     console.log("User logged in:", userCredential.user);
-    // no need login success, auth state change listener will handle it
+    loginSuccessCallback();
   } catch (error) {
     console.error("Error signing in with email and password:", error);
     loginFailCallback();
@@ -47,37 +57,53 @@ const loginWithEmailAndPassword = async (
 };
 
 const registerWithEmailAndPassword = async (
-  email,
-  password,
-  registerFailCallback
+  email: string,
+  password: string,
+  registerSuccessCallback: () => void,
+  registerFailCallback: () => void
 ) => {
   try {
+    await setPersistence(auth, browserSessionPersistence);
+
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
     console.log("User registered:", userCredential.user);
-    // no need register success, auth state change listener will handle it
+    registerSuccessCallback();
   } catch (error) {
     console.error("Error registering with email and password:", error);
     registerFailCallback();
   }
 };
 
-const monitorAuthState = async (loginCallback, logoutCallback) => {
+const monitorAuthState = async (
+  logoutCallback: () => void,
+  setIsLoggedIn: (isLoggedIn: boolean) => void
+) => {
   onAuthStateChanged(auth, (user) => {
     // console.log("Auth state changed.");
     if (user) {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/auth.user
-      const uid = user.uid;
-      loginCallback();
+      //const uid = user.uid;
+      console.log("Monitor state changed: logged in");
+      setIsLoggedIn(true);
     } else {
       // User is signed out
       logoutCallback();
+      setIsLoggedIn(false);
     }
   });
+};
+
+const logout = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Error signing out:", error);
+  }
 };
 
 export {
@@ -85,4 +111,5 @@ export {
   loginWithEmailAndPassword,
   registerWithEmailAndPassword,
   monitorAuthState,
+  logout,
 };
