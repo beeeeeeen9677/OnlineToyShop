@@ -4,17 +4,30 @@ import { Link, useNavigate } from "react-router";
 import {
   auth,
   loginWithEmailAndPassword,
-  logout,
   registerWithEmailAndPassword,
+  // loginWithEmailLink,
+  // authEmail,
+  logout,
 } from "../../firebase/firebase";
 
 function Auth() {
   const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const firstNameRef = useRef<HTMLInputElement>(null);
+  const lastNameRef = useRef<HTMLInputElement>(null);
+  const genderRef = useRef<HTMLSelectElement>(null);
+  const dateOfBirthRef = useRef<HTMLInputElement>(null);
   const rememberMeRef = useRef<HTMLInputElement>(null);
   const [emailErrors, setEmailErrors] = useState<string>("");
   const [pwErrors, setPwErrors] = useState<string>("");
+  const [firstNameErrors, setFirstNameErrors] = useState<string>("");
+  const [lastNameErrors, setLastNameErrors] = useState<string>("");
+  const [dobErrors, setDobErrors] = useState<string>("");
+  const [errPrompt, setErrPrompt] = useState<string>("");
+
+  type Mode = "LOGIN" | "REGISTER";
+  const [mode, setMode] = useState<Mode>("LOGIN");
 
   const emailErr = {
     required: "email cannot be empty",
@@ -26,6 +39,17 @@ function Auth() {
     minLength: "Password must be at least 6 characters long",
   };
 
+  const dobErr = {
+    required: "Date of birth cannot be empty",
+    invalid: "Please enter a valid date",
+    age: "You must be at least 18 years old to register",
+  };
+
+  const nameErr = {
+    required: "This field cannot be empty",
+    pattern: "Name can only contain letters and spaces",
+  };
+
   const validateField = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name } = e.target;
     const value = e.target.value;
@@ -34,15 +58,25 @@ function Auth() {
       validateEmail(value);
     } else if (name === "password") {
       validatePassword(value);
+    } else if (name === "dateOfBirth") {
+      validateDateOfBirth(value);
+    } else if (name === "firstName") {
+      validateFirstName(value);
+    } else if (name === "lastName") {
+      validateLastName(value);
     }
   };
   const loginSuccessCallback = () => {
     console.log("callback: Login successful");
     navigate("/");
   };
-  const loginFailCallback = () => {
-    console.log("callback: Login failed");
+
+  // for both login and register fail
+  const actionFailedCallback = (errorMessage: string) => {
+    console.log("Login/Register Failed. Error message:", errorMessage);
+    setErrPrompt(errorMessage);
   };
+
   const emailPwLogin = () => {
     const email: string = emailRef.current?.value ?? "";
     const password: string = passwordRef.current?.value ?? "";
@@ -50,12 +84,16 @@ function Auth() {
     validateEmail(email);
     validatePassword(password);
 
+    if (emailErrors !== "" || pwErrors !== "") return;
+
     if (email && password) {
+      setErrPrompt("");
+
       loginWithEmailAndPassword(
         email,
         password,
         loginSuccessCallback,
-        loginFailCallback,
+        actionFailedCallback,
         rememberMe
       );
     } else {
@@ -66,43 +104,105 @@ function Auth() {
   const emailPwRegister = () => {
     const email: string = emailRef.current?.value ?? "";
     const password: string = passwordRef.current?.value ?? "";
+    const firstName: string = firstNameRef.current?.value ?? "";
+    const lastName: string = lastNameRef.current?.value ?? "";
+    const gender: string = genderRef.current?.value ?? "";
+    const dateOfBirth: string = dateOfBirthRef.current?.value ?? "";
 
-    if (email && password) {
-      registerWithEmailAndPassword(
+    validateEmail(email);
+    validatePassword(password);
+    validateFirstName(firstName);
+    validateLastName(lastName);
+    validateDateOfBirth(dateOfBirth);
+
+    if (
+      emailErrors !== "" ||
+      pwErrors !== "" ||
+      firstNameErrors !== "" ||
+      lastNameErrors !== "" ||
+      dobErrors !== ""
+    )
+      return;
+
+    if (email && password && firstName && lastName && dateOfBirth) {
+      // Here you could also use the gender value if needed
+      console.log("Registration data:", {
         email,
         password,
+        firstName,
+        lastName,
+        gender,
+        dateOfBirth,
+      });
+      setErrPrompt("");
+
+      const userData = {
+        email,
+        password,
+        firstName,
+        lastName,
+        gender,
+        dateOfBirth,
+      };
+
+      registerWithEmailAndPassword(
+        userData,
         loginSuccessCallback,
-        () => {
-          console.log("callback: Registration failed");
-        }
+        actionFailedCallback
       );
     } else {
-      console.log("Email or Password is empty");
+      console.log("Required fields are empty");
     }
   };
 
-  return (
-    <div className="animate-fade-in flex items-center justify-center min-h-screen bg-gray-50">
-      <title>Auth</title>
-      <Link to="/" className="absolute top-5 ">
-        <img src={"/logo.png"} alt="Logo" className="h-24" />
-      </Link>
+  const switchMode = () => {
+    setErrPrompt("");
+    setMode(mode === "LOGIN" ? "REGISTER" : "LOGIN");
+  };
 
+  // const sendSignInLinkToEmail = () => {
+  //   const email: string = emailRef.current?.value ?? "";
+  //   if (email) {
+  //     loginWithEmailLink(email);
+  //   }
+  // };
+
+  // const authEmailLink = async () => {
+  //   const email: string = emailRef.current?.value ?? "";
+  //   if (email) {
+  //     await authEmail(email);
+  //   }
+  // };
+
+  return (
+    <div className="animate-fade-in flex flex-col items-center justify-start min-h-screen bg-gray-50">
+      <title>Auth</title>
+      <Link to="/" className=" my-8">
+        <img src={"/logo.png"} alt="Logo" className="h-20" />
+      </Link>
       <div className="w-full max-w-md p-8 bg-white rounded-4xl shadow-lg ">
+        {/* Title */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            {!auth.currentUser ? "User Authentication" : "Log Out"}
+            {!auth.currentUser
+              ? mode === "LOGIN"
+                ? "User Authentication"
+                : "Register"
+              : "Log Out"}
           </h1>
           <p className="text-gray-600">
             {!auth.currentUser
-              ? "Log in to your account"
+              ? mode === "LOGIN"
+                ? "Log in to your account"
+                : "Create a new account"
               : "Log out of your account?"}
           </p>
         </div>
 
+        {/* Form Section */}
         <div
-          id="login-form"
-          className={"space-y-6 " + (auth.currentUser && "hidden")}
+          id="login-register-form"
+          className={" space-y-6 " + (auth.currentUser ? "hidden" : "")}
         >
           <div>
             <div className="flex justify-between">
@@ -110,11 +210,11 @@ function Auth() {
                 htmlFor="email"
                 className=" text-sm font-medium text-gray-700 mb-2"
               >
-                Email
+                Email *
               </label>
               <div
                 className={`text-red-500 text-sm ${
-                  emailErrors === "" && "hidden"
+                  emailErrors === "" ? "hidden" : ""
                 }`}
               >
                 {emailErrors}
@@ -127,24 +227,23 @@ function Auth() {
               id="email"
               name="email"
               className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-                emailErrors !== "" && "ring-3 ring-red-500 "
+                emailErrors !== "" ? "ring-3 ring-red-500 " : ""
               }`}
               placeholder="Enter your email"
               onBlur={validateField}
             />
           </div>
-
           <div>
             <div className="flex justify-between">
               <label
                 htmlFor="password"
                 className="text-sm font-medium text-gray-700 mb-2"
               >
-                Password
+                Password *
               </label>
               <div
                 className={`text-red-500 text-sm  ${
-                  pwErrors === "" && "hidden"
+                  pwErrors === "" ? "hidden" : ""
                 }`}
               >
                 {pwErrors}
@@ -157,14 +256,128 @@ function Auth() {
               id="password"
               name="password"
               className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
-                pwErrors !== "" && "ring-3 ring-red-500 "
+                pwErrors !== "" ? "ring-3 ring-red-500 " : ""
               }`}
               placeholder="Enter your password"
               onBlur={validateField}
             />
           </div>
+          {/* Name - For register only */}
+          <div
+            className={
+              "grid grid-cols-2 gap-2 " + (mode === "LOGIN" ? "hidden" : "")
+            }
+          >
+            <div>
+              <label
+                htmlFor="firstName"
+                className="h-6 block text-sm font-medium text-gray-700 mb-2"
+              >
+                Name *
+              </label>
 
-          <div className="flex items-center justify-between">
+              <input
+                ref={firstNameRef}
+                type="text"
+                id="firstName"
+                name="firstName"
+                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+                  firstNameErrors !== "" ? "ring-3 ring-red-500 " : ""
+                }`}
+                placeholder="Enter your first name"
+                onBlur={validateField}
+              />
+            </div>
+            <div>
+              <div id="name-errors" className="h-8  block">
+                <div
+                  className={`text-right text-red-500 text-xs ${
+                    firstNameErrors === "" ? "hidden" : ""
+                  }`}
+                >
+                  {firstNameErrors}
+                </div>
+                <div
+                  className={`text-right text-red-500 text-xs ${
+                    lastNameErrors === "" ? "hidden" : ""
+                  }`}
+                >
+                  {lastNameErrors}
+                </div>
+              </div>
+
+              <input
+                ref={lastNameRef}
+                type="text"
+                id="lastName"
+                name="lastName"
+                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+                  lastNameErrors !== "" ? "ring-3 ring-red-500 " : ""
+                }`}
+                placeholder="Enter your last name"
+                onBlur={validateField}
+              />
+            </div>
+          </div>
+          {/* Gender - For register only (optional) */}
+          <div className={"" + (mode === "LOGIN" ? "hidden" : "")}>
+            <label
+              htmlFor="gender"
+              className="text-sm font-medium text-gray-700 mb-2"
+            >
+              Gender
+            </label>
+
+            <select
+              ref={genderRef}
+              id="gender"
+              name="gender"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+            >
+              <option defaultChecked value="default">
+                --
+              </option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="default">Prefer not to say</option>
+            </select>
+          </div>
+          {/* Date of Birth - For register only */}
+          <div className={"" + (mode === "LOGIN" ? "hidden" : "")}>
+            <div className="flex justify-between">
+              <label
+                htmlFor="date-of-birth"
+                className="text-sm font-medium text-gray-700 mb-2"
+              >
+                Date of Birth *
+              </label>
+              <div
+                className={`text-red-500 text-sm ${
+                  dobErrors === "" ? "hidden" : ""
+                }`}
+              >
+                {dobErrors}
+              </div>
+            </div>
+
+            <input
+              ref={dateOfBirthRef}
+              type="date"
+              id="date-of-birth"
+              name="dateOfBirth"
+              className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+                dobErrors !== "" ? "ring-3 ring-red-500 " : ""
+              }`}
+              onBlur={validateField}
+            />
+          </div>
+          {/* For login */}
+          <div
+            className={
+              "flex items-center justify-between " +
+              (mode === "REGISTER" ? "hidden" : "")
+            }
+          >
             <label className="flex items-center">
               <input
                 ref={rememberMeRef}
@@ -180,17 +393,40 @@ function Auth() {
               Forget Password
             </Link>
           </div>
-
+          {/* For login */}
           <button
-            className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+            className={
+              "w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors " +
+              (mode === "REGISTER" ? "hidden" : "")
+            }
             onClick={emailPwLogin}
           >
             Log In
           </button>
+          {/* For register */}
+          <button
+            className={
+              "w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors " +
+              (mode === "LOGIN" ? "hidden" : "")
+            }
+            onClick={emailPwRegister}
+          >
+            Register
+          </button>
+        </div>
+
+        {/* Error Message */}
+        <div
+          className={
+            "w-full p-2  text-red-600 bg-red-200 rounded-2xl animate-shake " +
+            (errPrompt === "" ? "hidden" : "")
+          }
+        >
+          {errPrompt}
         </div>
         <div
           id="logout-button-section"
-          className={"space-y-6 " + (!auth.currentUser && "hidden")}
+          className={"space-y-6 " + (!auth.currentUser ? "hidden" : "")}
         >
           <button
             className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
@@ -209,21 +445,22 @@ function Auth() {
         </div>
         <div
           id="register-section"
-          className={"mt-6 text-center " + (auth.currentUser && "hidden")}
+          className={"mt-6 text-center " + (auth.currentUser ? "hidden" : "")}
         >
           <p className="text-gray-600">
-            New User?{" "}
+            {mode === "LOGIN" ? "New User? " : "Already have an account? "}
             <button
               //to="#"
               className="text-primary font-medium hover:text-orange-600 transition-colors"
-              onClick={emailPwRegister}
+              onClick={switchMode}
             >
-              Register
+              {mode === "LOGIN" ? "Register" : "Log In"}
             </button>
           </p>
         </div>
 
-        <div className={"mt-6 " + (auth.currentUser && "hidden")}>
+        {/* Other login methods - hidden when logged in */}
+        <div className={"mt-6 " + (auth.currentUser ? "hidden" : "")}>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
@@ -294,6 +531,66 @@ function Auth() {
       errors = emailErr.pattern;
     }
     setEmailErrors(errors);
+  }
+
+  function validateDateOfBirth(value: string) {
+    let errors: string = "";
+
+    if (!value) {
+      errors = dobErr.required;
+    } else {
+      const selectedDate = new Date(value);
+      const today = new Date();
+
+      // Check if date is valid
+      if (isNaN(selectedDate.getTime())) {
+        errors = dobErr.invalid;
+      } else {
+        // Calculate age
+        let age = today.getFullYear() - selectedDate.getFullYear();
+        const monthDiff = today.getMonth() - selectedDate.getMonth();
+
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < selectedDate.getDate())
+        ) {
+          age--;
+        }
+
+        // Check minimum age requirement (18 years)
+        if (age < 18) {
+          errors = dobErr.age;
+        }
+
+        // Check if date is in the future
+        if (selectedDate > today) {
+          errors = dobErr.invalid;
+        }
+      }
+    }
+    setDobErrors(errors);
+  }
+
+  function validateFirstName(value: string) {
+    let errors: string = "";
+
+    if (!value) {
+      errors = nameErr.required;
+    } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+      errors = nameErr.pattern;
+    }
+    setFirstNameErrors(errors);
+  }
+
+  function validateLastName(value: string) {
+    let errors: string = "";
+
+    if (!value) {
+      errors = nameErr.required;
+    } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+      errors = nameErr.pattern;
+    }
+    setLastNameErrors(errors);
   }
 }
 
