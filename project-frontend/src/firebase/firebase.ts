@@ -85,8 +85,11 @@ const registerWithEmailAndPassword = async (
   try {
     await setPersistence(auth, browserSessionPersistence);
 
-    const { email, password, firstName, lastName, gender, dateOfBirth } =
-      userData;
+    const {
+      email,
+      password,
+      //firstName, lastName, gender, dateOfBirth
+    } = userData;
 
     const userCredential = await createUserWithEmailAndPassword(
       auth,

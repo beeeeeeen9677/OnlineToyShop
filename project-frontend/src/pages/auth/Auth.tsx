@@ -413,16 +413,16 @@ function Auth() {
           >
             Register
           </button>
-        </div>
 
-        {/* Error Message */}
-        <div
-          className={
-            "w-full p-2  text-red-600 bg-red-200 rounded-2xl animate-shake " +
-            (errPrompt === "" ? "hidden" : "")
-          }
-        >
-          {errPrompt}
+          {/* Error Message */}
+          <div
+            className={
+              "w-full p-2 text-red-600 bg-red-200 rounded-2xl animate-shake " +
+              (errPrompt === "" ? "hidden" : "")
+            }
+          >
+            {errPrompt}
+          </div>
         </div>
         <div
           id="logout-button-section"
