@@ -1,0 +1,28 @@
+import mongoose from "mongoose";
+
+//const uri = "mongodb+srv://benlausigoto_db_user:MFpAbutCeZ4xq0EF@cluster0.tqgcrbx.mongodb.net/?appName=Cluster0";
+const clientOptions = {
+  serverApi: {
+    version: "1",
+    strict: true,
+    deprecationErrors: true,
+  },
+  dbName: "PremiumBenToys",
+};
+
+async function connectDB(uri = process.env.MONGO_CONNECTION_STRING) {
+  try {
+    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
+    await mongoose.connect(uri, clientOptions);
+    await mongoose.connection.db.admin().command({ ping: 1 });
+    console.log("MongoDB connection: Pinged your deployment.");
+  } catch (e) {
+    // Ensures that the client will close when you finish/error
+    await mongoose.disconnect();
+    console.error("Failed to connect to DB: " + e);
+    process.exit(1); // Exit if connection fails
+  }
+}
+//connectDB().catch(console.dir);
+
+export default connectDB;

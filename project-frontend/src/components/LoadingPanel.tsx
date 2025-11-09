@@ -1,5 +1,3 @@
-import React from "react";
-
 function LoadingPanel() {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-700/50 z-50">

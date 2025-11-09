@@ -1,4 +1,5 @@
 // Import the functions you need from the SDKs you need
+import axios from "axios";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -50,12 +51,13 @@ const loginWithEmailAndPassword = async (
       rememberMe ? browserLocalPersistence : browserSessionPersistence
     );
 
+    // do not comment this
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
       password
     );
-    console.log("User logged in:", userCredential.user);
+    // console.log("User logged in:", userCredential.user);
     loginSuccessCallback();
   } catch (error: unknown) {
     let errorMessage: string = "";
@@ -70,6 +72,22 @@ const loginWithEmailAndPassword = async (
   }
 };
 
+const createNewUserInDB = async (userData: {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  dateOfBirth: string;
+}) => {
+  try {
+    const response = await axios.post("/api/auth/register", userData);
+    console.log("User created in DB:", response.data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const registerWithEmailAndPassword = async (
   userData: {
     email: string;
@@ -78,6 +96,7 @@ const registerWithEmailAndPassword = async (
     lastName: string;
     gender: string;
     dateOfBirth: string;
+    firebaseUID?: string;
   },
   registerSuccessCallback: () => void,
   registerFailCallback: (errorMessage: string) => void
@@ -96,8 +115,10 @@ const registerWithEmailAndPassword = async (
       email,
       password
     );
-    console.log("User registered:", userCredential.user);
+    //console.log("User registered:", userCredential.user);
     await sendEmailVerification(userCredential.user);
+    userData.firebaseUID = userCredential.user.uid;
+    await createNewUserInDB(userData);
     registerSuccessCallback();
   } catch (error: unknown) {
     let errorMessage: string = "";

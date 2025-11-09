@@ -41,10 +41,11 @@ function Auth() {
     minLength: "Password must be at least 6 characters long",
   };
 
+  const minAge = 16;
   const dobErr = {
     required: "Date of birth cannot be empty",
     invalid: "Please enter a valid date",
-    age: "You must be at least 18 years old to register",
+    age: `You must be at least ${minAge} years old to register`,
   };
 
   const nameErr = {
@@ -132,14 +133,14 @@ function Auth() {
 
     if (email && password && firstName && lastName && dateOfBirth) {
       // Here you could also use the gender value if needed
-      console.log("Registration data:", {
-        email,
-        password,
-        firstName,
-        lastName,
-        gender,
-        dateOfBirth,
-      });
+      // console.log("Registration data:", {
+      //   email,
+      //   password,
+      //   firstName,
+      //   lastName,
+      //   gender,
+      //   dateOfBirth,
+      // });
       setErrPrompt("");
 
       const userData = {
@@ -272,7 +273,11 @@ function Auth() {
               className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                 pwErrors !== "" ? "ring-3 ring-red-500 " : ""
               }`}
-              placeholder="Enter your password"
+              placeholder={
+                mode === "LOGIN"
+                  ? "Enter your password"
+                  : "min length: 6 characters"
+              }
               onBlur={validateField}
             />
           </div>
@@ -348,12 +353,12 @@ function Auth() {
               name="gender"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
             >
-              <option defaultChecked value="default">
+              <option defaultChecked value="not answered">
                 --
               </option>
               <option value="male">Male</option>
               <option value="female">Female</option>
-              <option value="default">Prefer not to say</option>
+              <option value="not answered">Prefer not to say</option>
             </select>
           </div>
           {/* Date of Birth - For register only */}
@@ -383,6 +388,7 @@ function Auth() {
                 dobErrors !== "" ? "ring-3 ring-red-500 " : ""
               }`}
               onBlur={validateField}
+              onChange={validateField}
             />
           </div>
           {/* For login */}
@@ -572,8 +578,8 @@ function Auth() {
           age--;
         }
 
-        // Check minimum age requirement (18 years)
-        if (age < 18) {
+        // Check minimum age requirement (16 years)
+        if (age < minAge) {
           errors = dobErr.age;
         }
 
