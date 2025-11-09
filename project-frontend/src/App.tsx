@@ -15,7 +15,7 @@ function App() {
   useEffect(() => {
     const logoutCallback = () => {
       console.log("User is logged out");
-      const availablePaths = ["/", "/auth"];
+      const availablePaths = ["/", "/auth", "/testLoading"];
 
       if (!availablePaths.includes(currentPath)) navigate("/");
     };

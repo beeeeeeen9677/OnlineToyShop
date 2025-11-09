@@ -9,6 +9,7 @@ import {
   // authEmail,
   logout,
 } from "../../firebase/firebase";
+import LoadingPanel from "../../components/LoadingPanel";
 
 function Auth() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ function Auth() {
   const [lastNameErrors, setLastNameErrors] = useState<string>("");
   const [dobErrors, setDobErrors] = useState<string>("");
   const [errPrompt, setErrPrompt] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   type Mode = "LOGIN" | "REGISTER";
   const [mode, setMode] = useState<Mode>("LOGIN");
@@ -68,6 +70,7 @@ function Auth() {
   };
   const loginSuccessCallback = () => {
     console.log("callback: Login successful");
+    setIsLoading(false);
     navigate("/");
   };
 
@@ -75,6 +78,7 @@ function Auth() {
   const actionFailedCallback = (errorMessage: string) => {
     console.log("Login/Register Failed. Error message:", errorMessage);
     setErrPrompt(errorMessage);
+    setIsLoading(false);
   };
 
   const emailPwLogin = () => {
@@ -88,6 +92,8 @@ function Auth() {
 
     if (email && password) {
       setErrPrompt("");
+
+      setIsLoading(true);
 
       loginWithEmailAndPassword(
         email,
@@ -145,6 +151,8 @@ function Auth() {
         dateOfBirth,
       };
 
+      setIsLoading(true);
+
       registerWithEmailAndPassword(
         userData,
         loginSuccessCallback,
@@ -153,6 +161,12 @@ function Auth() {
     } else {
       console.log("Required fields are empty");
     }
+  };
+
+  const logoutAccount = async () => {
+    setIsLoading(true);
+    await logout();
+    setIsLoading(false);
   };
 
   const switchMode = () => {
@@ -430,7 +444,7 @@ function Auth() {
         >
           <button
             className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
-            onClick={logout}
+            onClick={logoutAccount}
           >
             Log Out
           </button>
@@ -508,6 +522,7 @@ function Auth() {
           </div>
         </div>
       </div>
+      {isLoading && <LoadingPanel />}
     </div>
   );
 
