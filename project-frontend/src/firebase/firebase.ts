@@ -51,12 +51,10 @@ const loginWithEmailAndPassword = async (
       rememberMe ? browserLocalPersistence : browserSessionPersistence
     );
 
-    // do not comment this
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+    // do not comment the sign in function
+
+    // const userCredential =
+    await signInWithEmailAndPassword(auth, email, password);
     // console.log("User logged in:", userCredential.user);
     loginSuccessCallback();
   } catch (error: unknown) {

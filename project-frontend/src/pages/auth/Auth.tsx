@@ -190,7 +190,7 @@ function Auth() {
   // };
 
   return (
-    <div className="animate-fade-in flex flex-col items-center justify-start min-h-screen bg-gray-50">
+    <div className="animate-fade-in flex flex-col items-center justify-start min-h-screen bg-gray-50 dark:bg-gray-500">
       <title>Auth</title>
       <Link to="/" className=" my-8">
         <img src={"/logo.png"} alt="Logo" className="h-20" />
