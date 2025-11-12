@@ -37,4 +37,27 @@ const createNewUser = async (req, res) => {
   }
 };
 
-export { createNewUser };
+const getUserByFirebaseUID = async (req, res) => {
+  const { firebaseUID } = req.body;
+
+  if (!firebaseUID) {
+    return res.status(400).json({ error: "Firebase UID is required." });
+  }
+  try {
+    const user = await User.findOne({
+      firebaseUID: firebaseUID,
+    }).exec();
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User with this Firebase UID not found." });
+    }
+    req.session.user = user;
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user by Firebase UID:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export { createNewUser, getUserByFirebaseUID };

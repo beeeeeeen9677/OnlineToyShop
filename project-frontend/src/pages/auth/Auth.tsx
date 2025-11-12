@@ -195,7 +195,7 @@ function Auth() {
       <Link to="/" className=" my-8">
         <img src={"/logo.png"} alt="Logo" className="h-20" />
       </Link>
-      <div className="w-full max-w-md p-8 bg-white rounded-4xl shadow-lg ">
+      <div className="w-full max-w-md p-8 bg-white dark:bg rounded-4xl shadow-lg ">
         {/* Title */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
@@ -241,7 +241,7 @@ function Auth() {
               type="email"
               id="email"
               name="email"
-              className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 dark:bg-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                 emailErrors !== "" ? "ring-3 ring-red-500 " : ""
               }`}
               placeholder="Enter your email"
@@ -270,7 +270,7 @@ function Auth() {
               type="password"
               id="password"
               name="password"
-              className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 border dark:bg-gray-900 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                 pwErrors !== "" ? "ring-3 ring-red-500 " : ""
               }`}
               placeholder={
@@ -300,7 +300,7 @@ function Auth() {
                 type="text"
                 id="firstName"
                 name="firstName"
-                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+                className={`w-full px-4 py-3 border dark:bg-gray-900 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                   firstNameErrors !== "" ? "ring-3 ring-red-500 " : ""
                 }`}
                 placeholder="Enter your first name"
@@ -330,7 +330,7 @@ function Auth() {
                 type="text"
                 id="lastName"
                 name="lastName"
-                className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+                className={`w-full px-4 py-3 dark:bg-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                   lastNameErrors !== "" ? "ring-3 ring-red-500 " : ""
                 }`}
                 placeholder="Enter your last name"
@@ -351,7 +351,7 @@ function Auth() {
               ref={genderRef}
               id="gender"
               name="gender"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+              className="w-full px-4 py-3 border dark:bg-gray-900 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
             >
               <option defaultChecked value="not answered">
                 --
@@ -384,7 +384,7 @@ function Auth() {
               type="date"
               id="date-of-birth"
               name="dateOfBirth"
-              className={`w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 dark:bg-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                 dobErrors !== "" ? "ring-3 ring-red-500 " : ""
               }`}
               onBlur={validateField}

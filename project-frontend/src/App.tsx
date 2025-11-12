@@ -1,33 +1,78 @@
 import { Route, Routes, useNavigate, useLocation } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useEffectEvent, createContext } from "react";
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
 // Firebase
-import { monitorAuthState } from "./firebase/firebase";
+import { auth, monitorAuthState } from "./firebase/firebase";
+import axios, { AxiosError } from "axios";
+
+const UserContext = createContext(null);
 
 function App() {
   const navigate = useNavigate();
   const currentPath = useLocation().pathname;
 
+  const checkPathEvent = useEffectEvent(() => {
+    const availablePaths = ["/", "/auth"];
+    if (!availablePaths.includes(currentPath)) navigate("/");
+  });
   // Monitor authentication state on app load
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     const logoutCallback = () => {
       console.log("User is logged out");
-      const availablePaths = ["/", "/auth", "/testLoading"];
-
-      if (!availablePaths.includes(currentPath)) navigate("/");
+      checkPathEvent();
     };
     monitorAuthState(logoutCallback, setIsLoggedIn);
     console.log("App mounted, monitoring auth state");
   }, []);
 
+  const [user, setUser] = useState(null);
+
+  const getUserEvent = useEffectEvent(async () => {
+    console.log("Fetching user data...");
+    try {
+      if (!auth.currentUser) return;
+      const idToken = await auth.currentUser.getIdToken();
+      const firebaseUID = await auth.currentUser.uid;
+      const res = await axios.post(
+        "/api/user/",
+        { firebaseUID },
+        {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
+      setUser(res.data);
+      // console.log("User data fetched:\n", res.data);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ error: string }>;
+      console.error(
+        "Error fetching user data:",
+        axiosError.response?.data?.error
+      );
+    }
+  });
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setUser(null);
+      return;
+    }
+    // Fetch user data from backend
+
+    getUserEvent();
+  }, [isLoggedIn]);
+
   return (
-    <Routes>
-      <Route index element={<Index isLoggedIn={isLoggedIn} />} />
-      <Route path="/auth" element={<Auth />} />
-    </Routes>
+    <UserContext.Provider value={user}>
+      <Routes>
+        <Route index element={<Index isLoggedIn={isLoggedIn} />} />
+        <Route path="/auth" element={<Auth />} />
+      </Routes>
+    </UserContext.Provider>
   );
 }
 
