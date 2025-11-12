@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 import {
@@ -188,6 +188,30 @@ function Auth() {
   //     await authEmail(email);
   //   }
   // };
+
+  // handle keyboard Enter
+  const handleEnterEvent = useEffectEvent(
+    (event: { key: string }, mode: string) => {
+      if (event.key === "Enter") {
+        if (mode === "LOGIN") {
+          emailPwLogin();
+        } else {
+          emailPwRegister();
+        }
+      }
+    }
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event: { key: string }) => {
+      handleEnterEvent(event, mode);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mode]);
 
   return (
     <div className="animate-fade-in flex flex-col items-center justify-start min-h-screen bg-gray-50 dark:bg-gray-500">

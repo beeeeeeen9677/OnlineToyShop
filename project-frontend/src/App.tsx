@@ -1,13 +1,16 @@
+// React Imports
 import { Route, Routes, useNavigate, useLocation } from "react-router";
-import { useEffect, useState, useEffectEvent, createContext } from "react";
+import { useEffect, useState, useEffectEvent } from "react";
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
+import Admin from "./pages/admin/admin";
 // Firebase
 import { auth, monitorAuthState } from "./firebase/firebase";
+// Other Imports
 import axios, { AxiosError } from "axios";
-
-const UserContext = createContext(null);
+import type { User } from "./interface/user";
+import { LoginContext, UserContext } from "./context/app";
 
 function App() {
   const navigate = useNavigate();
@@ -28,9 +31,9 @@ function App() {
     console.log("App mounted, monitoring auth state");
   }, []);
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | undefined>(undefined);
 
-  const getUserEvent = useEffectEvent(async () => {
+  const setUserEvent = useEffectEvent(async () => {
     console.log("Fetching user data...");
     try {
       if (!auth.currentUser) return;
@@ -46,6 +49,7 @@ function App() {
         }
       );
       setUser(res.data);
+      console.log("User data set in context.");
       // console.log("User data fetched:\n", res.data);
     } catch (error) {
       const axiosError = error as AxiosError<{ error: string }>;
@@ -58,21 +62,30 @@ function App() {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      setUser(null);
+      setUser(undefined);
       return;
     }
     // Fetch user data from backend
 
-    getUserEvent();
+    setUserEvent();
   }, [isLoggedIn]);
 
   return (
     <UserContext.Provider value={user}>
-      <Routes>
-        <Route index element={<Index isLoggedIn={isLoggedIn} />} />
-        <Route path="/auth" element={<Auth />} />
-      </Routes>
+      <LoginContext.Provider value={isLoggedIn}>
+        <AppContainer />
+      </LoginContext.Provider>
     </UserContext.Provider>
+  );
+}
+
+function AppContainer() {
+  return (
+    <Routes>
+      <Route index element={<Index />} />
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/admin" element={<Admin />} />
+    </Routes>
   );
 }
 
