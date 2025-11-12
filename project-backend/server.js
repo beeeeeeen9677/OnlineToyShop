@@ -7,14 +7,14 @@ import cors from "cors";
 
 // Mongo
 import mongoose from "mongoose";
-import connectDB from "./mongodb/dbConnection.js";
+import connectDB from "./src/mongodb/dbConnection.js";
 
 // Routes
-import authRoutes from "./routes/auth.js";
-import userRoutes from "./routes/user.js";
+import authRoutes from "./src/routes/auth.js";
+import userRoutes from "./src/routes/user.js";
 
 // Import middleware
-import { verifyFirebaseToken } from "./middleware/authMiddleware.js";
+import { verifyFirebaseToken } from "./src/middleware/authMiddleware.js";
 
 // Load environment variables
 
