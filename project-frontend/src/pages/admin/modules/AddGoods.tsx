@@ -35,9 +35,9 @@ function AddGoods() {
 
   return (
     <div
-      className={`bg-yellow-100 dark:bg-zinc-600 rounded-lg p-4 m-4 relative flex flex-col gap-4 overflow-y-hidden ${
-        isOpen ? "h-auto" : "h-16"
-      } transition-[height] duration-1000 ease-in-out`}
+      className={`bg-yellow-100 dark:bg-zinc-600 rounded-lg p-4 m-4 relative flex flex-col gap-4 overflow-hidden ${
+        isOpen ? "max-h-28" : "max-h-16"
+      } transition-[max-height] duration-1000 ease-out`}
     >
       <button
         className="absolute right-10 cursor-pointer"
