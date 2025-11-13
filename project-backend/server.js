@@ -3,20 +3,27 @@ dotenv.config();
 import express from "express";
 import session from "express-session";
 import cors from "cors";
+
 //import path from 'path';
 
 // Mongo
 import mongoose from "mongoose";
 import connectDB from "./src/mongodb/dbConnection.js";
 
+// Supabase client (export for use in router)
+import { createClient } from "@supabase/supabase-js";
+export const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
+
 // Routes
 import authRoutes from "./src/routes/auth.js";
 import userRoutes from "./src/routes/user.js";
+import adminRoutes from "./src/routes/admin.js";
 
 // Import middleware
 import { verifyFirebaseToken } from "./src/middleware/authMiddleware.js";
-
-// Load environment variables
 
 // conect to MongoDB
 connectDB(process.env.MONGO_CONNECTION_STRING);
@@ -60,6 +67,7 @@ app.get("/api/protected-test", (req, res) => {
 });
 // Protected routes
 app.use("/api/user", userRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Start server only after successful DB connection
 mongoose.connection.once("open", () => {

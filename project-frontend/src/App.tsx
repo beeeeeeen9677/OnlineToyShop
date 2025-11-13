@@ -4,7 +4,7 @@ import { useEffect, useState, useEffectEvent } from "react";
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
-import Admin from "./pages/admin/admin";
+import Admin from "./pages/admin/Admin";
 // Firebase
 import { auth, monitorAuthState } from "./firebase/firebase";
 // Other Imports
