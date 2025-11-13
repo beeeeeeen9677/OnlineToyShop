@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { auth } from "../../../firebase/firebase";
 import api from "../../../services/api";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 function AddGoods() {
   // Control Module
@@ -33,9 +34,23 @@ function AddGoods() {
   };
 
   return (
-    <div id="upload-section">
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload</button>
+    <div
+      className={`bg-yellow-100 dark:bg-zinc-600 rounded-lg p-4 m-4 relative flex flex-col gap-4 overflow-y-hidden ${
+        isOpen ? "h-auto" : "h-16"
+      } transition-[height] duration-1000 ease-in-out`}
+    >
+      <button
+        className="absolute right-10 cursor-pointer"
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+      </button>
+      <div className="font-black text-3xl">Add New Goods</div>
+      {/* Form */}
+      <div>
+        <input type="file" onChange={handleFileChange} />
+        <button onClick={handleUpload}>Upload</button>
+      </div>
     </div>
   );
 }
