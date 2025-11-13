@@ -1,4 +1,5 @@
 import { supabase } from "../../../server.js";
+import Good from "../models/Good.js";
 
 export const createNewGood = async (req, res) => {
   try {
@@ -22,10 +23,26 @@ export const createNewGood = async (req, res) => {
       .from(process.env.SUPABASE_BUCKET_NAME)
       .getPublicUrl(fileName);
 
+    console.log("File uploaded to Supabase at URL");
+
+    // Create new Good document in MongoDB
+    const { name, preorderCloseDate, shippingDate, price, description, stock } =
+      req.body;
+
+    const newGood = {
+      name,
+      preorderCloseDate,
+      shippingDate,
+      price,
+      description,
+      stock,
+      imageUrl: publicUrlData.publicUrl,
+    };
+    const result = await Good.create(newGood);
+
     res.json({
       message: "File uploaded successfully!",
-      fileName,
-      publicUrl: publicUrlData.publicUrl,
+      result,
     });
   } catch (err) {
     console.error(err);
