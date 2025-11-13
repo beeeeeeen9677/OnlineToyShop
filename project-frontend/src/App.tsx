@@ -8,9 +8,10 @@ import Admin from "./pages/admin/Admin";
 // Firebase
 import { auth, monitorAuthState } from "./firebase/firebase";
 // Other Imports
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import type { User } from "./interface/user";
 import { LoginContext, UserContext } from "./context/app";
+import api from "./services/api";
 
 function App() {
   const navigate = useNavigate();
@@ -37,17 +38,8 @@ function App() {
     console.log("Fetching user data...");
     try {
       if (!auth.currentUser) return;
-      const idToken = await auth.currentUser.getIdToken();
       const firebaseUID = await auth.currentUser.uid;
-      const res = await axios.post(
-        "/api/user/",
-        { firebaseUID },
-        {
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        }
-      );
+      const res = await api.post("/user/", { firebaseUID });
       setUser(res.data);
       console.log("User data set in context.");
       // console.log("User data fetched:\n", res.data);

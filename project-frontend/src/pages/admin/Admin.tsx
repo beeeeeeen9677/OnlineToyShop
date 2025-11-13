@@ -1,7 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
 
 import Header from "../../components/Header";
+import { auth } from "../../firebase/firebase";
+import api from "../../services/api";
 
 function Admin() {
   const [file, setFile] = useState<File | null>(null);
@@ -16,8 +17,12 @@ function Admin() {
     const formData = new FormData();
     formData.append("file", file); // 'file' is the key expected by your API
 
+    const idToken = auth.currentUser?.getIdToken();
+
+    if (!idToken) return;
+
     try {
-      const response = await axios.post("api/admin/goods", formData);
+      const response = await api.post("admin/goods", formData);
       console.log("Upload success:", response.data);
     } catch (error) {
       console.error("Upload failed:", error);

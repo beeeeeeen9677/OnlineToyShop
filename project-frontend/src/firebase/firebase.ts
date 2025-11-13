@@ -1,5 +1,4 @@
 // Import the functions you need from the SDKs you need
-import axios from "axios";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -18,6 +17,7 @@ import {
   browserSessionPersistence,
   signOut,
 } from "firebase/auth";
+import api from "../services/api";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -79,7 +79,7 @@ const createNewUserInDB = async (userData: {
   dateOfBirth: string;
 }) => {
   try {
-    const response = await axios.post("/api/auth/register", userData);
+    const response = await api.post("/auth/register", userData);
     console.log("User created in DB:", response.data);
   } catch (err) {
     console.error(err);
