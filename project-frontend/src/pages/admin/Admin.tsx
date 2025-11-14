@@ -9,7 +9,7 @@ function Admin() {
       <Header />
       <div>
         <ModuleWrapper
-          maxHeight={"max-h-190"}
+          maxHeight={"max-h-195"}
           title="Add Goods"
           component={<AddGoods />}
         />

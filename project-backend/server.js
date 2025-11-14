@@ -56,18 +56,19 @@ app.get("/api/test", (req, res) => {
 // User Authentication Middleware (Firebase)
 app.use(verifyFirebaseToken);
 // Test route - Protected (requires token)
-app.get("/api/protected-test", (req, res) => {
-  res.json({
-    message: "Protected route is working!",
-    user: {
-      uid: req.user.uid,
-      email: req.user.email,
-    },
-  });
-});
+
 // Protected routes
 app.use("/api/user", userRoutes);
-app.use("/api/admin", adminRoutes);
+
+// Admin Authorization Middleware
+const adminOnly = (req, res, next) => {
+  if (req.session.user.role === "admin") {
+    next();
+  } else {
+    return res.status(403).json({ message: "Access denied. Admins only." });
+  }
+};
+app.use("/api/admin", adminOnly, adminRoutes);
 
 // Start server only after successful DB connection
 mongoose.connection.once("open", () => {

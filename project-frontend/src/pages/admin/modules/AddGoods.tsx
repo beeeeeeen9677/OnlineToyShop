@@ -1,6 +1,5 @@
 import { Activity, useRef, useState } from "react";
 
-import { auth } from "../../../firebase/firebase";
 import api from "../../../services/api";
 import { FaUpload } from "react-icons/fa";
 
@@ -51,10 +50,6 @@ function AddGoods() {
 
     const formData = new FormData();
     formData.append("file", file); // 'file' is the key expected by your API
-
-    const idToken = auth.currentUser?.getIdToken();
-
-    if (!idToken) return;
 
     try {
       const response = await api.post("admin/goods", formData);
@@ -176,7 +171,14 @@ function AddGoods() {
           </div>
         </div>
       </div>
-      <button onClick={handleUpload} className="mx-auto w-fit cursor-pointer">
+
+      <div className="absolute text-red-500 bottom-4 left-6 animate-shake">
+        *invalid field exist
+      </div>
+      <button
+        onClick={handleUpload}
+        className="w-fit mx-auto cursor-pointer border rounded-xl py-1 px-2 "
+      >
         Upload
       </button>
     </>
