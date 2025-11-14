@@ -7,7 +7,7 @@ const goodSchema = new Schema({
   shippingDate: { type: Date, required: true },
   price: { type: Number, required: true },
   description: { type: String, required: true },
-  stock: { type: Number, required: true },
+  //stock: { type: Number, required: true },
   imageUrl: { type: String, required: true },
 });
 

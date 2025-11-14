@@ -25,9 +25,11 @@ export const createNewGood = async (req, res) => {
 
     console.log("File uploaded to Supabase at URL");
 
-    // Create new Good document in MongoDB
-    const { name, preorderCloseDate, shippingDate, price, description, stock } =
-      req.body;
+    // Parse the JSON data from FormData
+    const goodsData = JSON.parse(req.body.data);
+    //const { name, preorderCloseDate, shippingDate, price, description, stock } =
+    const { name, preorderCloseDate, shippingDate, price, description } =
+      goodsData;
 
     const newGood = {
       name,
@@ -35,7 +37,7 @@ export const createNewGood = async (req, res) => {
       shippingDate,
       price,
       description,
-      stock,
+      //stock,
       imageUrl: publicUrlData.publicUrl,
     };
     const result = await Good.create(newGood);

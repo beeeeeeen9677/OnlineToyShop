@@ -10,7 +10,8 @@ function AddGoods() {
   const shippingDateRef = useRef<HTMLInputElement | null>(null);
   const priceRef = useRef<HTMLInputElement | null>(null);
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
-  const stockRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  //const stockRef = useRef<HTMLInputElement | null>(null);
 
   // File and image preview
   const [file, setFile] = useState<File | null>(null);
@@ -45,17 +46,77 @@ function AddGoods() {
     }
   };
 
+  // Form validation and error state
+  const [showError, setShowError] = useState(false);
+
+  const clearForm = () => {
+    // Clear all input refs
+    if (nameRef.current) nameRef.current.value = "";
+    if (preorderCloseDateRef.current) preorderCloseDateRef.current.value = "";
+    if (shippingDateRef.current) shippingDateRef.current.value = "";
+    if (priceRef.current) priceRef.current.value = "";
+    if (descriptionRef.current) descriptionRef.current.value = "";
+
+    // Clear file and preview
+    setFile(null);
+    setImagePreview(null);
+
+    // Clear file input
+    if (fileInputRef.current) fileInputRef.current.value = "";
+
+    // Hide error message
+    setShowError(false);
+  };
+
   const handleUpload = async () => {
-    if (!file) return alert("Please select a file");
+    // Validate all fields
+    const name = nameRef.current?.value.trim();
+    const preorderCloseDate = preorderCloseDateRef.current?.value;
+    const shippingDate = shippingDateRef.current?.value;
+    const price = priceRef.current?.value;
+    //const stock = stockRef.current?.value;
+    const description = descriptionRef.current?.value.trim();
+
+    // Check if any field is empty or null
+    if (
+      !name ||
+      !preorderCloseDate ||
+      !shippingDate ||
+      !price ||
+      //!stock ||
+      !description ||
+      !file
+    ) {
+      setShowError(true);
+      return;
+    }
+
+    // Hide error if all fields are valid
+    setShowError(false);
+
+    const requestBody = {
+      name,
+      preorderCloseDate,
+      shippingDate,
+      price: parseInt(price),
+      //stock: parseInt(stock),
+      description,
+    };
 
     const formData = new FormData();
-    formData.append("file", file); // 'file' is the key expected by your API
+    formData.append("file", file);
+    formData.append("data", JSON.stringify(requestBody));
 
     try {
       const response = await api.post("admin/goods", formData);
       console.log("Upload success:", response.data);
+
+      // Show success alert and clear form
+      alert("Product uploaded successfully!");
+      clearForm();
     } catch (error) {
       console.error("Upload failed:", error);
+      alert("Upload failed. Please try again.");
     }
   };
 
@@ -66,7 +127,7 @@ function AddGoods() {
         <input
           ref={nameRef}
           type="text"
-          placeholder="THE METAL ROBOT SPIRITS <SIDE MS> MIGHTY STRIKE FREEDOM GUNDAM FINAL BATTLE Ver."
+          placeholder="PRODUCT NAME"
           className="tw-input-field"
         />
       </div>
@@ -99,11 +160,12 @@ function AddGoods() {
           type="number"
           step="0.01"
           min="0"
-          placeholder="1580"
+          placeholder="HKD"
           className="tw-input-field"
         />
       </div>
-      <div className="flex flex-col">
+
+      {/* <div className="flex flex-col">
         <label className="ml-2">Stock:</label>
         <input
           ref={stockRef}
@@ -112,7 +174,7 @@ function AddGoods() {
           placeholder="100"
           className="tw-input-field"
         />
-      </div>
+      </div> */}
       <div className="flex gap-2">
         <div className="grow flex flex-col">
           <label className="ml-2">Description:</label>
@@ -136,6 +198,7 @@ function AddGoods() {
             </label>
 
             <input
+              ref={fileInputRef}
               id="fileUpload"
               type="file"
               accept="image/*"
@@ -172,7 +235,11 @@ function AddGoods() {
         </div>
       </div>
 
-      <div className="absolute text-red-500 bottom-4 left-6 animate-shake">
+      <div
+        className={`absolute text-red-500 bottom-4 left-6 animate-shake ${
+          showError ? "block" : "hidden"
+        }`}
+      >
         *invalid field exist
       </div>
       <button
