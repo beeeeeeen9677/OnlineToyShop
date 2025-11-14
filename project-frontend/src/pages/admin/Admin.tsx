@@ -1,4 +1,5 @@
 import Header from "../../components/Header";
+import ModuleWrapper from "../../components/ModuleWrapper";
 import AddGoods from "./modules/AddGoods";
 
 function Admin() {
@@ -7,7 +8,11 @@ function Admin() {
       <title>Admin</title>
       <Header />
       <div>
-        <AddGoods />
+        <ModuleWrapper
+          maxHeight={"max-h-190"}
+          title="Add Goods"
+          component={<AddGoods />}
+        />
       </div>
     </div>
   );

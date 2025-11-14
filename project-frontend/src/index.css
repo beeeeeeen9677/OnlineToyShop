@@ -57,3 +57,7 @@ body {
     background-color: #ffffff;
   }
 }
+
+.tw-input-field {
+  @apply m-2 p-2 rounded border focus:border-2;
+}

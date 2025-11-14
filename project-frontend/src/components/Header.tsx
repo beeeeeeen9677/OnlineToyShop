@@ -16,7 +16,9 @@ function Header() {
         <div className="flex items-center gap-10">
           <Activity mode={isAdmin ? "visible" : "hidden"}>
             <Link to="/admin">
-              <p className="hover:scale-125 transition duration-150">Admin</p>
+              <p className="hover:scale-125 transition duration-150 text-white">
+                Admin
+              </p>
             </Link>
           </Activity>
           <Link
