@@ -10,8 +10,10 @@ import {
   logout,
 } from "../../firebase/firebase";
 import LoadingPanel from "../../components/LoadingPanel";
+import { useTranslation } from "../../i18n/hooks";
 
 function Auth() {
+  const { t } = useTranslation("auth");
   const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -32,25 +34,25 @@ function Auth() {
   const [mode, setMode] = useState<Mode>("LOGIN");
 
   const emailErr = {
-    required: "email cannot be empty",
-    pattern: "Invalid email address",
+    required: t("validation.email.required"),
+    pattern: t("validation.email.pattern"),
   };
 
   const pwErr = {
-    required: "Password cannot be empty",
-    minLength: "Password must be at least 6 characters long",
+    required: t("validation.password.required"),
+    minLength: t("validation.password.minLength"),
   };
 
   const minAge = 16;
   const dobErr = {
-    required: "Date of birth cannot be empty",
-    invalid: "Please enter a valid date",
-    age: `You must be at least ${minAge} years old to register`,
+    required: t("validation.dateOfBirth.required"),
+    invalid: t("validation.dateOfBirth.invalid"),
+    age: t("validation.dateOfBirth.age", { minAge }),
   };
 
   const nameErr = {
-    required: "This field cannot be empty",
-    pattern: "Name can only contain letters and spaces",
+    required: t("validation.name.required"),
+    pattern: t("validation.name.pattern"),
   };
 
   const validateField = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -225,16 +227,16 @@ function Auth() {
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             {!auth.currentUser
               ? mode === "LOGIN"
-                ? "User Authentication"
-                : "Register"
-              : "Log Out"}
+                ? t("titles.authentication")
+                : t("titles.register")
+              : t("titles.logout")}
           </h1>
           <p className="text-gray-600">
             {!auth.currentUser
               ? mode === "LOGIN"
-                ? "Log in to your account"
-                : "Create a new account"
-              : "Log out of your account?"}
+                ? t("descriptions.loginPrompt")
+                : t("descriptions.registerPrompt")
+              : t("descriptions.logoutPrompt")}
           </p>
         </div>
 
@@ -249,7 +251,7 @@ function Auth() {
                 htmlFor="email"
                 className=" text-sm font-medium text-gray-700 mb-2"
               >
-                Email *
+                {t("labels.email")} *
               </label>
               <div
                 className={`text-red-500 text-sm ${
@@ -268,7 +270,7 @@ function Auth() {
               className={`w-full px-4 py-3 dark:bg-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                 emailErrors !== "" ? "ring-3 ring-red-500 " : ""
               }`}
-              placeholder="Enter your email"
+              placeholder={t("placeholders.enterEmail")}
               onBlur={validateField}
             />
           </div>
@@ -278,7 +280,7 @@ function Auth() {
                 htmlFor="password"
                 className="text-sm font-medium text-gray-700 mb-2"
               >
-                Password *
+                {t("labels.password")} *
               </label>
               <div
                 className={`text-red-500 text-sm  ${
@@ -299,8 +301,8 @@ function Auth() {
               }`}
               placeholder={
                 mode === "LOGIN"
-                  ? "Enter your password"
-                  : "min length: 6 characters"
+                  ? t("placeholders.enterPassword")
+                  : t("placeholders.passwordMinLength")
               }
               onBlur={validateField}
             />
@@ -316,7 +318,7 @@ function Auth() {
                 htmlFor="firstName"
                 className="h-6 block text-sm font-medium text-gray-700 mb-2"
               >
-                Name *
+                {t("labels.firstName")} *
               </label>
 
               <input
@@ -327,7 +329,7 @@ function Auth() {
                 className={`w-full px-4 py-3 border dark:bg-gray-900 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                   firstNameErrors !== "" ? "ring-3 ring-red-500 " : ""
                 }`}
-                placeholder="Enter your first name"
+                placeholder={t("placeholders.enterFirstName")}
                 onBlur={validateField}
               />
             </div>
@@ -357,7 +359,7 @@ function Auth() {
                 className={`w-full px-4 py-3 dark:bg-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                   lastNameErrors !== "" ? "ring-3 ring-red-500 " : ""
                 }`}
-                placeholder="Enter your last name"
+                placeholder={t("placeholders.enterLastName")}
                 onBlur={validateField}
               />
             </div>
@@ -368,7 +370,7 @@ function Auth() {
               htmlFor="gender"
               className="text-sm font-medium text-gray-700 mb-2"
             >
-              Gender
+              {t("labels.gender")}
             </label>
 
             <select
@@ -378,11 +380,13 @@ function Auth() {
               className="w-full px-4 py-3 border dark:bg-gray-900 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
             >
               <option defaultChecked value="not answered">
-                --
+                {t("genderOptions.notAnswered")}
               </option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="not answered">Prefer not to say</option>
+              <option value="male">{t("genderOptions.male")}</option>
+              <option value="female">{t("genderOptions.female")}</option>
+              <option value="not answered">
+                {t("genderOptions.preferNotToSay")}
+              </option>
             </select>
           </div>
           {/* Date of Birth - For register only */}
@@ -392,7 +396,7 @@ function Auth() {
                 htmlFor="date-of-birth"
                 className="text-sm font-medium text-gray-700 mb-2"
               >
-                Date of Birth *
+                {t("labels.dateOfBirth")} *
               </label>
               <div
                 className={`text-red-500 text-sm ${
@@ -428,13 +432,15 @@ function Auth() {
                 type="checkbox"
                 className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
               />
-              <span className="ml-2 text-sm text-gray-600">Remember Me</span>
+              <span className="ml-2 text-sm text-gray-600">
+                {t("labels.rememberMe")}
+              </span>
             </label>
             <Link
               to="#"
               className="text-sm text-primary hover:text-orange-600 transition-colors"
             >
-              Forget Password
+              {t("buttons.forgetPassword")}
             </Link>
           </div>
           {/* For login */}
@@ -445,7 +451,7 @@ function Auth() {
             }
             onClick={emailPwLogin}
           >
-            Log In
+            {t("buttons.login")}
           </button>
           {/* For register */}
           <button
@@ -455,7 +461,7 @@ function Auth() {
             }
             onClick={emailPwRegister}
           >
-            Register
+            {t("buttons.register")}
           </button>
 
           {/* Error Message */}
@@ -476,7 +482,7 @@ function Auth() {
             className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
             onClick={logoutAccount}
           >
-            Log Out
+            {t("buttons.logout")}
           </button>
           <button
             className="w-full bg-white text-primary border-primary border-2 py-3 px-4 rounded-lg font-medium hover:bg-gray-100 transition-colors"
@@ -484,7 +490,7 @@ function Auth() {
               navigate("/");
             }}
           >
-            Back
+            {t("buttons.back")}
           </button>
         </div>
         <div
@@ -492,13 +498,15 @@ function Auth() {
           className={"mt-6 text-center " + (auth.currentUser ? "hidden" : "")}
         >
           <p className="text-gray-600">
-            {mode === "LOGIN" ? "New User? " : "Already have an account? "}
+            {mode === "LOGIN"
+              ? t("links.newUser") + " "
+              : t("links.alreadyHaveAccount") + " "}
             <button
               //to="#"
               className="text-primary font-medium hover:text-orange-600 transition-colors"
               onClick={switchMode}
             >
-              {mode === "LOGIN" ? "Register" : "Log In"}
+              {mode === "LOGIN" ? t("buttons.register") : t("buttons.login")}
             </button>
           </p>
         </div>
@@ -510,7 +518,9 @@ function Auth() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Other Methods</span>
+              <span className="px-2 bg-white text-gray-500">
+                {t("links.otherMethods")}
+              </span>
             </div>
           </div>
 
@@ -537,7 +547,7 @@ function Auth() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              <span className="ml-2">Google</span>
+              <span className="ml-2">{t("providers.google")}</span>
             </button>
 
             <button
@@ -547,7 +557,7 @@ function Auth() {
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
-              <span className="ml-2">Facebook</span>
+              <span className="ml-2">{t("providers.facebook")}</span>
             </button>
           </div>
         </div>

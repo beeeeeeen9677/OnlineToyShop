@@ -1,0 +1,25 @@
+{
+  "buttons": {
+    "upload": "上傳",
+    "remove": "移除",
+    "back": "返回",
+    "login": "登入",
+    "register": "註冊",
+    "logout": "登出"
+  },
+  "labels": {
+    "email": "電子郵件",
+    "password": "密碼",
+    "required": "*",
+    "optional": "（可選）"
+  },
+  "messages": {
+    "success": "成功！",
+    "error": "發生錯誤",
+    "loading": "載入中...",
+    "invalidField": "*存在無效欄位"
+  },
+  "currency": {
+    "hkd": "港幣"
+  }
+}

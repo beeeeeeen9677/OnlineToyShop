@@ -2,8 +2,11 @@ import { Activity, useRef, useState } from "react";
 
 import api from "../../../services/api";
 import { FaUpload } from "react-icons/fa";
+import { useTranslation } from "../../../i18n/hooks";
 
 function AddGoods() {
+  const { t } = useTranslation("admin");
+
   // Form refs
   const nameRef = useRef<HTMLInputElement | null>(null);
   const preorderCloseDateRef = useRef<HTMLInputElement | null>(null);
@@ -23,14 +26,14 @@ function AddGoods() {
     if (selectedFile) {
       // Check if the file is an image
       if (!selectedFile.type.startsWith("image/")) {
-        alert("Please select an image file (PNG, JPG, JPEG, GIF, WebP)");
+        alert(t("messages.imageFileOnly"));
         e.target.value = ""; // Clear the input
         return;
       }
 
       // Check file size (optional: limit to 5MB)
       if (selectedFile.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB");
+        alert(t("messages.fileSizeLimit"));
         e.target.value = ""; // Clear the input
         return;
       }
@@ -112,27 +115,27 @@ function AddGoods() {
       console.log("Upload success:", response.data);
 
       // Show success alert and clear form
-      alert("Product uploaded successfully!");
+      alert(t("messages.uploadSuccess"));
       clearForm();
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("Upload failed. Please try again.");
+      alert(t("messages.uploadFailed"));
     }
   };
 
   return (
     <>
       <div className="flex flex-col">
-        <label className="ml-2">Product Name:</label>
+        <label className="ml-2">{t("labels.productName")}</label>
         <input
           ref={nameRef}
           type="text"
-          placeholder="PRODUCT NAME"
+          placeholder={t("placeholders.productName")}
           className="tw-input-field"
         />
       </div>
       <div className="flex flex-col">
-        <label className="ml-2">Preorder Close Date:</label>
+        <label className="ml-2">{t("labels.preorderCloseDate")}</label>
         <input
           ref={preorderCloseDateRef}
           type="date"
@@ -143,7 +146,7 @@ function AddGoods() {
         />
       </div>
       <div className="flex flex-col">
-        <label className="ml-2">Shipping Date:</label>
+        <label className="ml-2">{t("labels.shippingDate")}</label>
         <input
           ref={shippingDateRef}
           type="date"
@@ -154,13 +157,13 @@ function AddGoods() {
         />
       </div>
       <div className="flex flex-col">
-        <label className="ml-2">Price:</label>
+        <label className="ml-2">{t("labels.price")}</label>
         <input
           ref={priceRef}
           type="number"
           step="0.01"
           min="0"
-          placeholder="HKD"
+          placeholder={t("currency.hkd", { ns: "common" })}
           className="tw-input-field"
         />
       </div>
@@ -177,24 +180,24 @@ function AddGoods() {
       </div> */}
       <div className="flex gap-2">
         <div className="grow flex flex-col">
-          <label className="ml-2">Description:</label>
+          <label className="ml-2">{t("labels.description")}</label>
           <textarea
             ref={descriptionRef}
             rows={4}
-            placeholder="Product description..."
+            placeholder={t("placeholders.productDescription")}
             className="tw-input-field resize-none "
           />
         </div>
         <div className="flex">
           <div className="flex flex-col w-30 space-y-2">
-            <label className="ml-2">Image:</label>
+            <label className="ml-2">{t("labels.image")}</label>
 
             <label
               htmlFor="fileUpload"
               className="border rounded px-2 py-1 mx-2"
             >
               <FaUpload />
-              Upload File
+              {t("buttons.uploadFile")}
             </label>
 
             <input
@@ -219,7 +222,7 @@ function AddGoods() {
                 }}
                 className="ml-2 text-red-500 hover:text-red-700 text-sm  border rounded px-2 py-1 mx-2"
               >
-                Remove
+                {t("buttons.remove")}
               </button>
             </Activity>
           </div>
@@ -240,13 +243,13 @@ function AddGoods() {
           showError ? "block" : "hidden"
         }`}
       >
-        *invalid field exist
+        {t("messages.invalidField")}
       </div>
       <button
         onClick={handleUpload}
         className="w-fit mx-auto cursor-pointer border rounded-xl py-1 px-2 "
       >
-        Upload
+        {t("buttons.upload")}
       </button>
     </>
   );

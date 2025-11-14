@@ -1,0 +1,10 @@
+{
+  "navigation": {
+    "admin": "管理",
+    "login": "登入",
+    "logout": "登出"
+  },
+  "alt": {
+    "logo": "標誌"
+  }
+}

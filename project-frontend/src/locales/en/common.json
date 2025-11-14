@@ -1,0 +1,25 @@
+{
+  "buttons": {
+    "upload": "Upload",
+    "remove": "Remove",
+    "back": "Back",
+    "login": "Log In",
+    "register": "Register",
+    "logout": "Log Out"
+  },
+  "labels": {
+    "email": "Email",
+    "password": "Password",
+    "required": "*",
+    "optional": "(Optional)"
+  },
+  "messages": {
+    "success": "Success!",
+    "error": "An error occurred",
+    "loading": "Loading...",
+    "invalidField": "*invalid field exist"
+  },
+  "currency": {
+    "hkd": "HKD"
+  }
+}

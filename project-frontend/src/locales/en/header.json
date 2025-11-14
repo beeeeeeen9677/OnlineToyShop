@@ -1,0 +1,10 @@
+{
+  "navigation": {
+    "admin": "Admin",
+    "login": "Log in",
+    "logout": "Log out"
+  },
+  "alt": {
+    "logo": "Logo"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "titles": {
+    "addGoods": "Add Goods"
+  },
+  "labels": {
+    "productName": "Product Name:",
+    "preorderCloseDate": "Preorder Close Date:",
+    "shippingDate": "Shipping Date:",
+    "price": "Price:",
+    "description": "Description:",
+    "image": "Image:",
+    "stock": "Stock:"
+  },
+  "placeholders": {
+    "productName": "PRODUCT NAME",
+    "productDescription": "Product description...",
+    "stock": "100"
+  },
+  "buttons": {
+    "upload": "Upload",
+    "uploadFile": "Upload File",
+    "remove": "Remove"
+  },
+  "messages": {
+    "imageFileOnly": "Please select an image file (PNG, JPG, JPEG, GIF, WebP)",
+    "fileSizeLimit": "File size must be less than 5MB",
+    "uploadSuccess": "Product uploaded successfully!",
+    "uploadFailed": "Upload failed. Please try again.",
+    "invalidField": "*invalid field exist"
+  }
+}

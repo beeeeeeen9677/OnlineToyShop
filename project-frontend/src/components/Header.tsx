@@ -1,8 +1,17 @@
 import { Activity } from "react";
 import { Link } from "react-router";
 import { useLoginContext, useUserContext } from "../context/app";
+import {
+  useTranslation,
+  useLanguage,
+  SUPPORTED_LANGUAGES,
+  type SupportedLanguage,
+} from "../i18n/hooks";
 
 function Header() {
+  const { currentLanguage, changeLanguage } = useLanguage();
+
+  const { t } = useTranslation("header");
   const isLoggedIn = useLoginContext();
   const user = useUserContext();
   const isAdmin = isLoggedIn && user?.role === "admin";
@@ -11,13 +20,33 @@ function Header() {
     <header className="bg-primary w-full h-16 justify-center flex">
       <div className="relative flex grow justify-between  max-w-8/10">
         <Link to="/">
-          <img src={"/logo.png"} alt="Logo" className="h-full py-0.5 my-auto" />
+          <img
+            src={"/logo.png"}
+            alt={t("alt.logo")}
+            className="h-full py-0.5 my-auto"
+          />
         </Link>
         <div className="flex items-center gap-10">
+          <select
+            value={currentLanguage}
+            onChange={(e) =>
+              changeLanguage(e.target.value as SupportedLanguage)
+            }
+          >
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <option
+                key={lang.code}
+                value={lang.code}
+                className="bg-amber-50 text-black"
+              >
+                {lang.nativeName}
+              </option>
+            ))}
+          </select>
           <Activity mode={isAdmin ? "visible" : "hidden"}>
             <Link to="/admin">
               <p className="hover:scale-125 transition duration-150 text-white">
-                Admin
+                {t("navigation.admin")}
               </p>
             </Link>
           </Activity>
@@ -75,7 +104,7 @@ function Header() {
             <p
               className={`group-hover:text-primary  transition duration-${duration}`}
             >
-              {!isLoggedIn ? "Log in" : "Log out"}
+              {!isLoggedIn ? t("navigation.login") : t("navigation.logout")}
             </p>
           </Link>
         </div>
