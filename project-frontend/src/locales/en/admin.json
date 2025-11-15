@@ -20,6 +20,7 @@
   },
   "buttons": {
     "upload": "Upload",
+    "update": "Update",
     "uploadFile": "Upload File",
     "remove": "Remove"
   },

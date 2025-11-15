@@ -5,7 +5,7 @@ import { FaUpload } from "react-icons/fa";
 import { useTranslation } from "../../../i18n/hooks";
 import { categories, type Category } from "../../../interface/good";
 
-function AddGoods() {
+function ProductForm() {
   const { t } = useTranslation("admin");
 
   // Form refs
@@ -299,4 +299,4 @@ function AddGoods() {
   );
 }
 
-export default AddGoods;
+export default ProductForm;

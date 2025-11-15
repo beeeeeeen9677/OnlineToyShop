@@ -1,7 +1,7 @@
 import { supabase } from "../../../server.js";
 import Good from "../models/Good.js";
 
-export const createNewGood = async (req, res) => {
+export const createNewGoods = async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
@@ -59,7 +59,7 @@ export const createNewGood = async (req, res) => {
   }
 };
 
-export const updateGood = async (req, res) => {
+export const updateGoods = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -131,10 +131,25 @@ export const updateGood = async (req, res) => {
   }
 };
 
-export const fetchAllGoods = async (req, res) => {
+export const fetchGoods = async (req, res) => {
   try {
-    const goods = await Good.find().exec();
-    res.json(goods); // Return array directly, not wrapped in object
+    const { id } = req.params;
+
+    if (id) {
+      // Fetch single product by ID
+      const good = await Good.findById(id).exec();
+      if (!good) {
+        return res.status(404).json({ error: `Product ${id} not found` });
+      }
+      res.json(good);
+    } else {
+      // Fetch all products
+      const goods = await Good.find().exec();
+      if (!goods) {
+        return res.status(404).json({ error: "No products found" });
+      }
+      res.json(goods);
+    }
   } catch (err) {
     console.error("Error fetching goods:", err);
     res.status(500).json({ error: err.message });

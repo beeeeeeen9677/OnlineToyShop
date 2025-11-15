@@ -1,8 +1,9 @@
 import express from "express";
-import { fetchAllGoods } from "../mongodb/collections/goodsColl.js";
+import { fetchGoods } from "../mongodb/collections/goodsColl.js";
 
 const router = express.Router();
-router.get("/", fetchAllGoods);
+router.get("/", fetchGoods);
+router.get("/:id", fetchGoods); // Same function handles both
 export default router;
 
 /*

@@ -20,6 +20,7 @@
   },
   "buttons": {
     "upload": "上傳",
+    "update": "更新",
     "uploadFile": "上傳文件",
     "remove": "移除"
   },

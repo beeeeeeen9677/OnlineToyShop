@@ -3,6 +3,7 @@ import { useEffect, useEffectEvent, useState } from "react";
 import type { Good } from "../../interface/good";
 import api from "../../services/api";
 import type { AxiosError } from "axios";
+import { Link } from "react-router";
 
 function AdminEdit() {
   const [goods, setGoods] = useState<Array<Good>>([]);
@@ -30,8 +31,9 @@ function AdminEdit() {
       <div className="flex gap-5 p-5 flex-wrap">
         {goods.map((good) => (
           // Content
-          <div
+          <Link
             key={good._id}
+            to={`/admin/edit-product/${good._id}`}
             className="min-w-60 max-w-75 h-80 flex-1 bg-gray-300 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer"
           >
             <img
@@ -43,7 +45,7 @@ function AdminEdit() {
               <div> {good.name}</div>
               <div> ID: {good._id} </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
