@@ -7,7 +7,7 @@ import EditGoods from "./modules/EditGoods";
 // import { useUserContext } from "../../context/app";
 // import { useEffect } from "react";
 
-function Admin() {
+function AdminIndex() {
   const { t } = useTranslation("admin");
   // const navigate = useNavigate();
   // const user = useUserContext();
@@ -39,4 +39,4 @@ function Admin() {
   );
 }
 
-export default Admin;
+export default AdminIndex;

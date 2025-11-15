@@ -1,6 +1,7 @@
 {
   "titles": {
-    "addGoods": "新增商品"
+    "addGoods": "新增商品",
+    "editGoods": "編輯商品"
   },
   "labels": {
     "productName": "產品名稱：",

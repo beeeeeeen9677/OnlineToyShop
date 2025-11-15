@@ -4,7 +4,7 @@ import { useEffect, useState, useEffectEvent } from "react";
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
-import Admin from "./pages/admin/Admin";
+import AdminIndex from "./pages/admin/AdminIndex";
 import NotFound from "./pages/NotFound";
 
 // Firebase
@@ -78,7 +78,7 @@ function RouteContainer() {
     <Routes>
       <Route index element={<Index />} />
       <Route path="/auth" element={<Auth />} />
-      <Route path="/admin" element={<Admin />} />
+      <Route path="/admin" element={<AdminIndex />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

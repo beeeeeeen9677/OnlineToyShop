@@ -1,6 +1,7 @@
 {
   "titles": {
-    "addGoods": "Add Goods"
+    "addGoods": "Add Goods",
+    "editGoods": "Edit Goods"
   },
   "labels": {
     "productName": "Product Name:",
