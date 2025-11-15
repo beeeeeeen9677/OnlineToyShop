@@ -4,7 +4,7 @@ function EditGoods() {
   return (
     <>
       <Link
-        to="/admin/edit-goods"
+        to="/admin/edit"
         className="w-fit px-5 py-2 cursor-pointer border-2 rounded "
       >
         GO

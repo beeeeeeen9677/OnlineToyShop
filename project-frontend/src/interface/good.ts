@@ -16,6 +16,8 @@ export const categories: Category[] = [
 ];
 
 interface Good {
+  _id: string; // MongoDB document ID
+  id: string;
   name: string;
   preorderCloseDate: Date;
   shippingDate: Date;

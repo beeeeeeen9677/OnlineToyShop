@@ -261,9 +261,7 @@ function AddGoods() {
                   setFile(null);
                   setImagePreview(null);
                   // Clear the file input
-                  const fileInput = document.querySelector(
-                    'input[type="file"]'
-                  ) as HTMLInputElement;
+                  const fileInput = fileInputRef.current;
                   if (fileInput) fileInput.value = "";
                 }}
                 className="ml-2 text-red-500 hover:text-red-700 text-sm  border rounded px-2 py-1 mx-2"

@@ -134,7 +134,7 @@ export const updateGood = async (req, res) => {
 export const fetchAllGoods = async (req, res) => {
   try {
     const goods = await Good.find().exec();
-    res.json({ goods });
+    res.json(goods); // Return array directly, not wrapped in object
   } catch (err) {
     console.error("Error fetching goods:", err);
     res.status(500).json({ error: err.message });

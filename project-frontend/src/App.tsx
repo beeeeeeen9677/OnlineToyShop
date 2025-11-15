@@ -14,6 +14,8 @@ import api from "./services/api";
 import { AxiosError } from "axios";
 import type { User } from "./interface/user";
 import { LoginContext, UserContext } from "./context/app";
+import AdminEdit from "./pages/admin/AdminEdit";
+import AdminEditProduct from "./pages/admin/AdminEditProduct";
 
 function App() {
   const navigate = useNavigate();
@@ -79,6 +81,8 @@ function RouteContainer() {
       <Route index element={<Index />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/admin" element={<AdminIndex />} />
+      <Route path="/admin/edit" element={<AdminEdit />} />
+      <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
