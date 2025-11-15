@@ -5,13 +5,15 @@ import { useEffect, useState, useEffectEvent } from "react";
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
 import Admin from "./pages/admin/Admin";
+import NotFound from "./pages/NotFound";
+
 // Firebase
 import { auth, monitorAuthState } from "./firebase/firebase";
 // Other Imports
+import api from "./services/api";
 import { AxiosError } from "axios";
 import type { User } from "./interface/user";
 import { LoginContext, UserContext } from "./context/app";
-import api from "./services/api";
 
 function App() {
   const navigate = useNavigate();
@@ -65,18 +67,19 @@ function App() {
   return (
     <UserContext.Provider value={user}>
       <LoginContext.Provider value={isLoggedIn}>
-        <AppContainer />
+        <RouteContainer />
       </LoginContext.Provider>
     </UserContext.Provider>
   );
 }
 
-function AppContainer() {
+function RouteContainer() {
   return (
     <Routes>
       <Route index element={<Index />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/admin" element={<Admin />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

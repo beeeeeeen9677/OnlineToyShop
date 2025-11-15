@@ -9,6 +9,9 @@ const goodSchema = new Schema({
   description: { type: String, required: true },
   //stock: { type: Number, required: true },
   imageUrl: { type: String, required: true },
+  viewedCount: { type: Number, default: 0 },
+  broughtCount: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Good = mongoose.model("Good", goodSchema);

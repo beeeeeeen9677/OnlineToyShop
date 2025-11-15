@@ -21,6 +21,7 @@ export const supabase = createClient(
 import authRoutes from "./src/routes/auth.js";
 import userRoutes from "./src/routes/user.js";
 import adminRoutes from "./src/routes/admin.js";
+import goodRoutes from "./src/routes/goods.js";
 
 // Import middleware
 import { verifyFirebaseToken } from "./src/middleware/authMiddleware.js";
@@ -46,13 +47,7 @@ app.use(
 
 // Public Routes
 app.use("/api/auth", authRoutes);
-// Test route - Public (should work without token)
-app.get("/api/test", (req, res) => {
-  res.json({
-    message: "Public API is working!",
-    timestamp: new Date().toISOString(),
-  });
-});
+app.use("/api/goods", goodRoutes);
 // User Authentication Middleware (Firebase)
 app.use(verifyFirebaseToken);
 // Test route - Protected (requires token)
