@@ -28,6 +28,7 @@
     "imageFileOnly": "Please select an image file (PNG, JPG, JPEG, GIF, WebP)",
     "fileSizeLimit": "File size must be less than 5MB",
     "uploadSuccess": "Product uploaded successfully!",
+    "updateSuccess": "Product updated successfully!",
     "uploadFailed": "Upload failed. Please try again.",
     "invalidField": "*invalid field exist"
   }

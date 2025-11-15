@@ -27,7 +27,8 @@
   "messages": {
     "imageFileOnly": "請選擇圖片文件（PNG、JPG、JPEG、GIF、WebP）",
     "fileSizeLimit": "文件大小必須小於 5MB",
-    "uploadSuccess": "產品上傳成功！",
+    "uploadSuccess": "商品上傳成功！",
+    "updateSuccess": "商品更新成功！",
     "uploadFailed": "上傳失敗，請重試。",
     "invalidField": "*存在無效欄位"
   }

@@ -1,12 +1,20 @@
-import { Activity, useRef, useState } from "react";
+import { Activity, useEffect, useRef, useState } from "react";
 
 import api from "../../../services/api";
 import { FaUpload } from "react-icons/fa";
 import { useTranslation } from "../../../i18n/hooks";
-import { categories, type Category } from "../../../interface/good";
+import { categories, type Category, type Good } from "../../../interface/good";
 
-function ProductForm() {
+type ProductFormProps = {
+  product?: Good;
+  onSuccessCB?: (updatedProduct: Good) => void;
+};
+
+function ProductForm({ product, onSuccessCB }: ProductFormProps) {
   const { t } = useTranslation("admin");
+
+  // Mode: add or edit
+  const mode = product ? "edit" : "add";
 
   // Form refs
   const nameRef = useRef<HTMLInputElement | null>(null);
@@ -24,7 +32,7 @@ function ProductForm() {
   // Category selection state
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
 
     if (selectedFile) {
@@ -87,7 +95,7 @@ function ProductForm() {
     setShowError(false);
   };
 
-  const handleUpload = async () => {
+  const handleFormSubmit = async () => {
     // Validate all fields
     const name = nameRef.current?.value.trim();
     const preorderCloseDate = preorderCloseDateRef.current?.value;
@@ -99,16 +107,22 @@ function ProductForm() {
     // Get selected categories from state
     const categoryData = selectedCategories;
 
-    // Check if any field is empty or null
+    // Check basic required fields
     if (
       !name ||
       !preorderCloseDate ||
       !shippingDate ||
       !price ||
-      //!stock ||
-      !description ||
-      !file
+      !description
     ) {
+      setShowError(true);
+      return;
+    }
+
+    // Check image requirements
+    // No need to check in edit mode,
+    // keep existing image if no file is selected
+    if (mode === "add" && !file) {
       setShowError(true);
       return;
     }
@@ -127,21 +141,53 @@ function ProductForm() {
     };
 
     const formData = new FormData();
-    formData.append("file", file);
+    if (file) {
+      formData.append("file", file);
+    }
     formData.append("data", JSON.stringify(requestBody));
 
     try {
-      const response = await api.post("admin/goods", formData);
+      const path =
+        mode === "add" ? "admin/goods" : `admin/goods/${product?._id}`;
+      const method = mode === "add" ? api.post : api.put;
+
+      const response = await method(path, formData);
       console.log("Upload success:", response.data);
 
       // Show success alert and clear form
-      alert(t("messages.uploadSuccess"));
-      clearForm();
+      if (mode === "add") {
+        alert(t("messages.uploadSuccess"));
+        clearForm();
+      }
+      if (mode === "edit") {
+        alert(t("messages.updateSuccess"));
+        // refresh
+        if (onSuccessCB) onSuccessCB(response.data.result);
+      }
     } catch (error) {
       console.error("Upload failed:", error);
       alert(t("messages.uploadFailed"));
     }
   };
+
+  useEffect(() => {
+    if (mode !== "edit" || !product) return;
+    // Pre-fill form fields with product data
+    if (nameRef.current) nameRef.current.value = product.name;
+    if (preorderCloseDateRef.current)
+      preorderCloseDateRef.current.value = new Date(product.preorderCloseDate)
+        .toISOString()
+        .split("T")[0];
+    if (shippingDateRef.current)
+      shippingDateRef.current.value = new Date(product.shippingDate)
+        .toISOString()
+        .split("T")[0];
+    if (priceRef.current) priceRef.current.value = product.price.toString();
+    if (descriptionRef.current)
+      descriptionRef.current.value = product.description;
+    setSelectedCategories(product.category);
+    setImagePreview(product.imageUrl);
+  }, [product, mode]);
 
   return (
     <>
@@ -251,7 +297,7 @@ function ProductForm() {
               id="fileUpload"
               type="file"
               accept="image/*"
-              onChange={handleFileChange}
+              onChange={handleImageFileChange}
               className="hidden"
             />
             <Activity mode={imagePreview ? "visible" : "hidden"}>
@@ -290,10 +336,10 @@ function ProductForm() {
         {t("messages.invalidField")}
       </div>
       <button
-        onClick={handleUpload}
+        onClick={handleFormSubmit}
         className="w-fit mx-auto cursor-pointer border rounded-xl py-1 px-2 "
       >
-        {t("buttons.upload")}
+        {t(mode === "add" ? "buttons.upload" : "buttons.update")}
       </button>
     </>
   );
