@@ -152,7 +152,10 @@ function ProductForm({ product, onSuccessCB }: ProductFormProps) {
       const method = mode === "add" ? api.post : api.put;
 
       const response = await method(path, formData);
-      console.log("Upload success:", response.data);
+      console.log(
+        (mode === "add" ? "Upload" : "Update") + " success:",
+        response.data
+      );
 
       // Show success alert and clear form
       if (mode === "add") {
@@ -160,7 +163,6 @@ function ProductForm({ product, onSuccessCB }: ProductFormProps) {
         clearForm();
       }
       if (mode === "edit") {
-        alert(t("messages.updateSuccess"));
         // refresh
         if (onSuccessCB) onSuccessCB(response.data.result);
       }

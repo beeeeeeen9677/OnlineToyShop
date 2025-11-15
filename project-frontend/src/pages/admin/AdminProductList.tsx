@@ -5,7 +5,7 @@ import api from "../../services/api";
 import type { AxiosError } from "axios";
 import { Link } from "react-router";
 
-function AdminEdit() {
+function AdminProductList() {
   const [goods, setGoods] = useState<Array<Good>>([]);
   const fetchDataEvent = useEffectEvent(async () => {
     try {
@@ -27,6 +27,9 @@ function AdminEdit() {
     <div className="animate-fade-in min-h-screen">
       <title>Admin Edit</title>
       <Header />
+      <Link to="/admin/">
+        <div className="mx-6 mt-3 underline text-2xl"> &lt;Back</div>
+      </Link>
       {/* Container for goods list */}
       <div className="flex gap-5 p-5 flex-wrap">
         {goods.map((good) => (
@@ -34,7 +37,7 @@ function AdminEdit() {
           <Link
             key={good._id}
             to={`/admin/edit-product/${good._id}`}
-            className="min-w-60 max-w-75 h-80 flex-1 bg-gray-300 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer"
+            className="min-w-60 max-w-75 h-80 flex-1 bg-gray-300 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer overflow-hidden"
           >
             <img
               src={good.imageUrl}
@@ -52,4 +55,4 @@ function AdminEdit() {
   );
 }
 
-export default AdminEdit;
+export default AdminProductList;
