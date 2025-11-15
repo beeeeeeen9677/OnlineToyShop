@@ -9,7 +9,8 @@
     "price": "價格：",
     "description": "描述：",
     "image": "圖片：",
-    "stock": "庫存："
+    "stock": "庫存：",
+    "category": "類別："
   },
   "placeholders": {
     "productName": "產品名稱",

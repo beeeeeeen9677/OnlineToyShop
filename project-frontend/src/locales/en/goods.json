@@ -1,0 +1,10 @@
+{
+  "category": {
+    "gunpla": "Gunpla",
+    "model": "Model",
+    "figure": "Figure",
+    "puzzle": "Puzzle",
+    "board game": "Board Game",
+    "electronic": "Electronic"
+  }
+}

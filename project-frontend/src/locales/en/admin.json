@@ -9,7 +9,8 @@
     "price": "Price:",
     "description": "Description:",
     "image": "Image:",
-    "stock": "Stock:"
+    "stock": "Stock:",
+    "category": "Category:"
   },
   "placeholders": {
     "productName": "PRODUCT NAME",

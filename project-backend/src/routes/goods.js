@@ -1,6 +1,9 @@
 import express from "express";
+import { fetchAllGoods } from "../mongodb/collections/goodsColl.js";
 
 const router = express.Router();
+router.get("/", fetchAllGoods);
+export default router;
 
 /*
 router.get("/updateExisitingGoods", async (req, res) => {
@@ -32,5 +35,3 @@ router.get("/updateExisitingGoods", async (req, res) => {
   }
 });
 */
-
-export default router;

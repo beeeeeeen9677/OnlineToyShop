@@ -26,7 +26,7 @@ function Header() {
             className="h-full py-0.5 my-auto"
           />
         </Link>
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-5">
           <select
             className="cursor-pointer hover:scale-125 transition duration-150"
             value={currentLanguage}

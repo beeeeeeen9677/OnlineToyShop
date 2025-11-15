@@ -3,6 +3,7 @@ import { Activity, useRef, useState } from "react";
 import api from "../../../services/api";
 import { FaUpload } from "react-icons/fa";
 import { useTranslation } from "../../../i18n/hooks";
+import { categories, type Category } from "../../../interface/good";
 
 function AddGoods() {
   const { t } = useTranslation("admin");
@@ -19,6 +20,9 @@ function AddGoods() {
   // File and image preview
   const [file, setFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  // Category selection state
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -49,6 +53,15 @@ function AddGoods() {
     }
   };
 
+  // Handle category selection
+  const handleCategoryChange = (category: Category) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
+
   // Form validation and error state
   const [showError, setShowError] = useState(false);
 
@@ -59,6 +72,9 @@ function AddGoods() {
     if (shippingDateRef.current) shippingDateRef.current.value = "";
     if (priceRef.current) priceRef.current.value = "";
     if (descriptionRef.current) descriptionRef.current.value = "";
+
+    // Clear category selection
+    setSelectedCategories([]);
 
     // Clear file and preview
     setFile(null);
@@ -79,6 +95,9 @@ function AddGoods() {
     const price = priceRef.current?.value;
     //const stock = stockRef.current?.value;
     const description = descriptionRef.current?.value.trim();
+
+    // Get selected categories from state
+    const categoryData = selectedCategories;
 
     // Check if any field is empty or null
     if (
@@ -104,6 +123,7 @@ function AddGoods() {
       price: parseInt(price),
       //stock: parseInt(stock),
       description,
+      category: categoryData,
     };
 
     const formData = new FormData();
@@ -134,38 +154,64 @@ function AddGoods() {
           className="tw-input-field"
         />
       </div>
-      <div className="flex flex-col">
-        <label className="ml-2">{t("labels.preorderCloseDate")}</label>
-        <input
-          ref={preorderCloseDateRef}
-          type="date"
-          className="tw-input-field cursor-pointer"
-          onClick={() => {
-            preorderCloseDateRef.current?.showPicker();
-          }}
-        />
+      <div className="flex gap-1">
+        <div className="flex flex-col grow">
+          <label className="ml-2">{t("labels.preorderCloseDate")}</label>
+          <input
+            ref={preorderCloseDateRef}
+            type="date"
+            className="tw-input-field cursor-pointer"
+            onClick={() => {
+              preorderCloseDateRef.current?.showPicker();
+            }}
+          />
+        </div>
+        <div className="flex flex-col grow">
+          <label className="ml-2">{t("labels.shippingDate")}</label>
+          <input
+            ref={shippingDateRef}
+            type="date"
+            className="tw-input-field cursor-pointer"
+            onClick={() => {
+              shippingDateRef.current?.showPicker();
+            }}
+          />
+        </div>
       </div>
-      <div className="flex flex-col">
-        <label className="ml-2">{t("labels.shippingDate")}</label>
-        <input
-          ref={shippingDateRef}
-          type="date"
-          className="tw-input-field cursor-pointer"
-          onClick={() => {
-            shippingDateRef.current?.showPicker();
-          }}
-        />
-      </div>
-      <div className="flex flex-col">
-        <label className="ml-2">{t("labels.price")}</label>
-        <input
-          ref={priceRef}
-          type="number"
-          step="0.01"
-          min="0"
-          placeholder={t("currency.hkd", { ns: "common" })}
-          className="tw-input-field"
-        />
+      <div className="flex gap-1">
+        <div className="flex flex-col grow-2">
+          <label className="ml-2">{t("labels.price")}</label>
+          <input
+            ref={priceRef}
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder={t("currency.hkd", { ns: "common" })}
+            className="tw-input-field"
+          />
+        </div>
+        <div className="flex flex-col grow">
+          <label className="ml-2">{t("labels.category")}</label>
+          <div className="tw-input-field max-h-32 overflow-y-auto space-y-1">
+            {categories.map((category) => (
+              <label
+                key={category}
+                className="flex items-center space-x-2 p-1 hover:bg-amber-400 dark:hover:bg-gray-50  dark:hover:text-black rounded cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value={category}
+                  checked={selectedCategories.includes(category)}
+                  onChange={() => handleCategoryChange(category)}
+                  className="rounded text-primary focus:ring-primary"
+                />
+                <span className="text-sm capitalize">
+                  {t(`category.${category}`, { ns: "goods" })}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* <div className="flex flex-col">

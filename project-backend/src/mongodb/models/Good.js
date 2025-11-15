@@ -12,6 +12,13 @@ const goodSchema = new Schema({
   viewedCount: { type: Number, default: 0 },
   broughtCount: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
+  category: [
+    {
+      type: String,
+      enum: ["gunpla", "model", "figure", "puzzle", "board game", "electronic"],
+      required: false,
+    },
+  ],
 });
 
 const Good = mongoose.model("Good", goodSchema);
