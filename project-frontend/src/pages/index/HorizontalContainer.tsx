@@ -43,13 +43,31 @@ function HorizontalContainer({
       <div className="flex gap-4 p-4 bg-black dark:bg-gray-600 overflow-x-auto ">
         {/* Goods */}
         {sortedGoods.map((good) => (
-          <ItemCard key={good._id} itemDetails={good} />
-        ))}
+          <ItemCard
+            key={good._id}
+            itemDetails={good}
+            dateType={
+              sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
+            }
+          />
+        ))}{" "}
         {sortedGoods.map((good) => (
-          <ItemCard key={good._id} itemDetails={good} />
-        ))}
+          <ItemCard
+            key={good._id}
+            itemDetails={good}
+            dateType={
+              sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
+            }
+          />
+        ))}{" "}
         {sortedGoods.map((good) => (
-          <ItemCard key={good._id} itemDetails={good} />
+          <ItemCard
+            key={good._id}
+            itemDetails={good}
+            dateType={
+              sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
+            }
+          />
         ))}
       </div>
     </div>

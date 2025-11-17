@@ -2,5 +2,9 @@
   "title": {
     "newArrivals": "新商品",
     "closingSoon": "即將下架"
+  },
+  "info": {
+    "openTo": "開放至",
+    "preorderOpen": "預購開始"
   }
 }
