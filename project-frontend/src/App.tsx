@@ -81,7 +81,7 @@ function RouteContainer() {
       <Route index element={<Index />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/admin" element={<AdminIndex />} />
-      <Route path="/admin/edit" element={<AdminProductList />} />
+      <Route path="/admin/product" element={<AdminProductList />} />
       <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
