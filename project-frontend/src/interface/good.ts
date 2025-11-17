@@ -19,14 +19,14 @@ interface Good {
   _id: string; // MongoDB document ID
   id: string;
   name: string;
-  preorderCloseDate: Date;
-  shippingDate: Date;
+  preorderCloseDate: string; // ISO date string from API
+  shippingDate: string; // ISO date string from API
   price: number;
   description: string;
   imageUrl: string;
   viewedCount: number;
   broughtCount: number;
-  createdAt: Date;
+  createdAt: string; // ISO date string from API
   category: Category[];
 }
 export type { Good, Category };

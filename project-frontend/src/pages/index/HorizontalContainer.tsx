@@ -16,9 +16,22 @@ function HorizontalContainer({
     const aValue = a[sortingKey];
     const bValue = b[sortingKey];
 
-    if (aValue instanceof Date && bValue instanceof Date) {
-      return bValue.getTime() - aValue.getTime(); // Newest first
+    // Handle date string sorting (for createdAt, preorderCloseDate, shippingDate)
+    if (
+      sortingKey === "createdAt" ||
+      sortingKey === "preorderCloseDate" ||
+      sortingKey === "shippingDate"
+    ) {
+      const aDate = new Date(aValue as string);
+      const bDate = new Date(bValue as string);
+      return bDate.getTime() - aDate.getTime(); // Newest first
     }
+
+    // Handle numeric sorting
+    if (typeof aValue === "number" && typeof bValue === "number") {
+      return bValue - aValue; // Highest first
+    }
+
     return 0;
   });
 
