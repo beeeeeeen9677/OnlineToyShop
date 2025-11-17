@@ -6,7 +6,13 @@ import i18n from "../i18n";
 export type SupportedLanguage = "en" | "zh";
 
 // Type definitions for namespaces
-export type Namespace = "common" | "auth" | "admin" | "header" | "goods";
+export type Namespace =
+  | "common"
+  | "auth"
+  | "admin"
+  | "header"
+  | "goods"
+  | "index";
 
 // Custom hook for translation with namespace support
 export const useTranslation = (namespace: Namespace = "common") => {

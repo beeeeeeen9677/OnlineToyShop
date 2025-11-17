@@ -1,5 +1,11 @@
-import { Link } from "react-router";
+import { Activity, useEffect, useState } from "react";
+import { useTranslation } from "../../i18n/hooks";
+import api from "../../services/api";
+import type { AxiosError } from "axios";
 import Header from "../../components/Header";
+import LoadingPanel from "../../components/LoadingPanel";
+import type { Good } from "../../interface/good";
+import HorizontalContainer from "./HorizontalContainer";
 
 // type IndexProps = {
 //   isLoggedIn: boolean;
@@ -7,36 +13,42 @@ import Header from "../../components/Header";
 
 //function Index({ isLoggedIn }: IndexProps) {
 function Index() {
+  const { t } = useTranslation("index");
+  const [allGoods, setAllGoods] = useState<Good[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchAllGoods = async () => {
+      try {
+        const response = await api.get("/goods/");
+        setAllGoods(response.data);
+      } catch (error) {
+        const axiosError = error as AxiosError<{ error: string }>;
+        console.error(
+          "Error fetching all goods data:",
+          axiosError.response?.data?.error
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllGoods();
+  }, []);
   return (
     <div className="animate-fade-in min-h-screen">
       <title>Premium Ben Toys</title>
       <Header />
-      New Arrivals
+      <Activity mode={loading ? "visible" : "hidden"}>
+        <LoadingPanel />
+      </Activity>
       {/* New Arriavals */}
-      <div className="flex gap-4 p-4 bg-black dark:bg-gray-600">
-        {/* Goods */}
-        <Link to={""} className="w-40 h-80 bg-white">
-          <img src={""} className="bg-amber-200 w-full h-1/2"></img>
-          <div className="text-black font-bold text-xl">Title</div>
-        </Link>
-        <Link to={""} className="w-40 h-80 bg-white">
-          <img src={""} className="bg-amber-200 w-full h-1/2"></img>
-          <div className="text-black font-bold text-xl">Title</div>
-        </Link>
-      </div>
+      <HorizontalContainer
+        title={t("newArrivals")}
+        goods={allGoods}
+        sortingKey="createdAt"
+      />
       Closing Soon
       {/* Closing Soon */}
-      <div className="flex gap-4 p-4 bg-black dark:bg-gray-600">
-        {/* Goods */}
-        <Link to={""} className="w-40 h-80 bg-white">
-          <img src={""} className="bg-amber-200 w-full h-1/2"></img>
-          <div className="text-black font-bold text-xl">Title</div>
-        </Link>
-        <Link to={""} className="w-40 h-80 bg-white">
-          <img src={""} className="bg-amber-200 w-full h-1/2"></img>
-          <div className="text-black font-bold text-xl">Title</div>
-        </Link>
-      </div>
     </div>
   );
 }

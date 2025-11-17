@@ -7,12 +7,14 @@ import enAuth from "../locales/en/auth.json";
 import enAdmin from "../locales/en/admin.json";
 import enHeader from "../locales/en/header.json";
 import enGoods from "../locales/en/goods.json";
+import enIndex from "../locales/en/index.json";
 
 import zhCommon from "../locales/zh/common.json";
 import zhAuth from "../locales/zh/auth.json";
 import zhAdmin from "../locales/zh/admin.json";
 import zhHeader from "../locales/zh/header.json";
 import zhGoods from "../locales/zh/goods.json";
+import zhIndex from "../locales/zh/index.json";
 
 // Define resources
 const resources = {
@@ -22,6 +24,7 @@ const resources = {
     admin: enAdmin,
     header: enHeader,
     goods: enGoods,
+    index: enIndex,
   },
   zh: {
     common: zhCommon,
@@ -29,6 +32,7 @@ const resources = {
     admin: zhAdmin,
     header: zhHeader,
     goods: zhGoods,
+    index: zhIndex,
   },
 };
 
@@ -41,7 +45,7 @@ i18n.use(initReactI18next).init({
   defaultNS: "common",
 
   // Namespace configuration
-  ns: ["common", "auth", "admin", "header", "goods"],
+  ns: ["common", "auth", "admin", "header", "goods", "index"],
 
   interpolation: {
     escapeValue: false, // React already does escaping
