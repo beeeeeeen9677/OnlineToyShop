@@ -37,9 +37,17 @@ function HorizontalContainer({
 
   return (
     <div>
-      <div>{title}</div>
-      <div className="flex gap-4 p-4 bg-black dark:bg-gray-600">
+      <div className="font-oswald text-center m-6 font-semibold text-3xl md:text-5xl text-blue-500 dark:text-white">
+        <div> {title}</div>
+      </div>
+      <div className="flex gap-4 p-4 bg-black dark:bg-gray-600 overflow-x-auto ">
         {/* Goods */}
+        {sortedGoods.map((good) => (
+          <ItemCard key={good._id} itemDetails={good} />
+        ))}
+        {sortedGoods.map((good) => (
+          <ItemCard key={good._id} itemDetails={good} />
+        ))}
         {sortedGoods.map((good) => (
           <ItemCard key={good._id} itemDetails={good} />
         ))}

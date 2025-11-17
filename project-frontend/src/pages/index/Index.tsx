@@ -43,7 +43,7 @@ function Index() {
       </Activity>
       {/* New Arriavals */}
       <HorizontalContainer
-        title={t("newArrivals")}
+        title={t("title.newArrivals")}
         goods={allGoods}
         sortingKey="createdAt"
       />

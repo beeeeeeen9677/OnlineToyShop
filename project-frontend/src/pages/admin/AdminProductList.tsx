@@ -12,7 +12,17 @@ function AdminProductList() {
   const fetchDataEvent = useEffectEvent(async () => {
     try {
       const response = await api.get("/goods/");
-      setGoods(response.data); // Backend now returns array directly
+      // sort by added date
+      const sortedGoods = [...response.data].sort((a, b) => {
+        const aValue = a["createdAt"];
+        const bValue = b["createdAt"];
+
+        const aDate = new Date(aValue as string);
+        const bDate = new Date(bValue as string);
+        return bDate.getTime() - aDate.getTime(); // Newest first
+      });
+
+      setGoods(sortedGoods); // Backend now returns array directly
     } catch (error) {
       const axiosError = error as AxiosError<{ error: string }>;
       console.error(
@@ -50,12 +60,12 @@ function AdminProductList() {
           <Link
             key={good._id}
             to={`/admin/edit-product/${good._id}`}
-            className="min-w-60 max-w-75 h-80 flex-1 bg-gray-300 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer overflow-hidden"
+            className="min-w-60 max-w-75 h-90 flex-1 bg-gray-300 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer overflow-hidden"
           >
             <img
               src={good.imageUrl}
               alt={good.name}
-              className="w-full h-40 object-cover bg-white"
+              className="w-full h-3/5 object-cover object-top bg-white"
             />
             <div className="p-1 flex flex-col justify-between flex-1">
               <div> {good.name}</div>

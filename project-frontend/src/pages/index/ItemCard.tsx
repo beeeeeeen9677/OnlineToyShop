@@ -3,13 +3,20 @@ import type { Good } from "../../interface/good";
 
 function ItemCard({ itemDetails }: { itemDetails: Good }) {
   return (
-    <Link to={""} className="w-40 h-80 bg-white">
-      <img
-        src={itemDetails.imageUrl}
-        className="bg-amber-200 w-full h-1/2"
-      ></img>
-      <div className="text-black font-bold text-xl">{itemDetails.name}</div>
-    </Link>
+    <div className="w-36 h-72 sm:w-45 sm:h-90 md:w-40 md:h-80 lg:w-44 lg:h-88 xl:w-48 xl:h-96 bg-white shrink-0">
+      <Link to={""} className="group">
+        <div className=" w-full h-2/3 overflow-hidden flex items-center ">
+          <img
+            src={itemDetails.imageUrl}
+            className="object-contain scale-200 transform translate-y-6 group-hover:scale-100 group-hover:translate-0 transition duration-300"
+          />
+        </div>
+
+        <div className="font-oswald px-1 pt-1 text-black font-black text-sm line-clamp-2">
+          {itemDetails.name}
+        </div>
+      </Link>
+    </div>
   );
 }
 
