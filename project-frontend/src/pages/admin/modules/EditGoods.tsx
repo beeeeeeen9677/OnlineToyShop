@@ -5,7 +5,7 @@ function EditGoods() {
     <>
       <Link
         to="/admin/edit"
-        className="w-fit px-5 py-2 cursor-pointer border-2 rounded "
+        className="px-5 py-2 cursor-pointer border-2 rounded text-center"
       >
         GO
       </Link>

@@ -8,8 +8,11 @@ import type { Good } from "../../interface/good";
 import type { AxiosError } from "axios";
 import ProductForm from "./modules/ProductForm";
 import { useTranslation } from "../../i18n/hooks";
+import { useUserContext } from "../../context/app";
 
 function AdminEditProduct() {
+  const user = useUserContext();
+
   const { t } = useTranslation("admin");
   const { id } = useParams();
   const [product, setProduct] = useState<Good | null>(null);
@@ -39,6 +42,17 @@ function AdminEditProduct() {
     setProduct(updatedProduct);
     alert(t("messages.updateSuccess"));
   };
+
+  if (user === undefined || user.role !== "admin") {
+    return (
+      <>
+        <Header />
+        <div className="flex justify-center items-center h-100">
+          <div className="text-5xl text">Restricted Access</div>
+        </div>
+      </>
+    );
+  }
 
   if (loading) return <LoadingPanel />;
   if (!product) return <div>Product not found</div>;

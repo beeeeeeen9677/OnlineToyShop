@@ -4,8 +4,10 @@ import type { Good } from "../../interface/good";
 import api from "../../services/api";
 import type { AxiosError } from "axios";
 import { Link } from "react-router";
+import { useUserContext } from "../../context/app";
 
 function AdminProductList() {
+  const user = useUserContext();
   const [goods, setGoods] = useState<Array<Good>>([]);
   const fetchDataEvent = useEffectEvent(async () => {
     try {
@@ -22,6 +24,17 @@ function AdminProductList() {
   useEffect(() => {
     fetchDataEvent();
   }, []);
+
+  if (user === undefined || user.role !== "admin") {
+    return (
+      <>
+        <Header />
+        <div className="flex justify-center items-center h-100">
+          <div className="text-5xl text">Restricted Access</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <div className="animate-fade-in min-h-screen">
