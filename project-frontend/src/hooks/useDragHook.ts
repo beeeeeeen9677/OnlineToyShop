@@ -54,7 +54,6 @@ export function useDragHook() {
 
   // Style object for cursor changes
   const containerStyle = {
-    cursor: isDragging ? "grabbing" : "grab",
     userSelect: "none" as const, // Prevent text selection
   };
 

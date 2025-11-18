@@ -10,9 +10,9 @@ type ItemCardProps = {
 function ItemCard({ itemDetails, dateType }: ItemCardProps) {
   const { t } = useTranslation("index");
   return (
-    <div className="w-36 h-72 sm:w-45 sm:h-90 md:w-42 md:h-84 lg:w-44 lg:h-88 xl:w-48 xl:h-96 bg-white shrink-0">
+    <div className="w-[calc(100%/3-0.5rem)] aspect-1/2 md:w-36 md:h-80 lg:w-44 lg:h-88 xl:w-48 xl:h-96 bg-white shrink-0">
       <Link to={""} className="group">
-        <div className=" w-full h-2/3 overflow-hidden flex items-center ">
+        <div className="w-full h-1/2 sm:h-2/3 md:h-1/2 lg:h-2/3 overflow-hidden items-center flex ">
           <img
             src={itemDetails.imageUrl}
             className="object-contain scale-200 transform translate-y-6 group-hover:scale-100 group-hover:translate-0 transition duration-300"
