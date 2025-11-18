@@ -6,6 +6,7 @@ import Header from "../../components/Header";
 import LoadingPanel from "../../components/LoadingPanel";
 import type { Good } from "../../interface/good";
 import HorizontalContainer from "./HorizontalContainer";
+import Banner from "./Banner";
 
 // type IndexProps = {
 //   isLoggedIn: boolean;
@@ -41,6 +42,7 @@ function Index() {
       <Activity mode={loading ? "visible" : "hidden"}>
         <LoadingPanel />
       </Activity>
+      <Banner goods={allGoods} />
       {/* New Arriavals */}
       <HorizontalContainer
         title={t("title.newArrivals")}
