@@ -1,5 +1,6 @@
 import type { Good } from "../../interface/good";
 import ItemCard from "./ItemCard";
+import "./IndexPage.css";
 
 type HorizontalContainerProps = {
   title: string;
@@ -40,7 +41,7 @@ function HorizontalContainer({
       <div className="font-oswald text-center m-6 font-semibold text-3xl md:text-5xl text-blue-500 dark:text-white">
         <div> {title}</div>
       </div>
-      <div className="flex gap-4 p-4 bg-black dark:bg-gray-600 overflow-x-auto ">
+      <div className="flex gap-4 p-4 bg-black dark:bg-gray-600 overflow-x-auto scrollbar-custom">
         {/* Goods */}
         {sortedGoods.map((good) => (
           <ItemCard
@@ -50,7 +51,8 @@ function HorizontalContainer({
               sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
             }
           />
-        ))}{" "}
+        ))}
+        {/* Use Repeated Data for test */}
         {sortedGoods.map((good) => (
           <ItemCard
             key={good._id}
@@ -59,7 +61,7 @@ function HorizontalContainer({
               sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
             }
           />
-        ))}{" "}
+        ))}
         {sortedGoods.map((good) => (
           <ItemCard
             key={good._id}

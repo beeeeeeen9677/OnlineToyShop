@@ -37,9 +37,11 @@ function ItemCard({ itemDetails, dateType }: ItemCardProps) {
         <div className="font-oswald px-1 pt-1 text-black font-black text-sm line-clamp-2">
           {itemDetails.name}
         </div>
-        <div className="font-oswald px-1 pt-1 text-black font-black text-sm line-clamp-2">
-          {/* separate HKD and number style */}
-          HKD$ {itemDetails.price}
+        <div className=" px-1 pt-1 text-black ">
+          <span className="font-bold text-xs "> HK$ </span>
+          <span className="font-oswald font-black text-sm ">
+            {itemDetails.price}
+          </span>
         </div>
       </Link>
     </div>
