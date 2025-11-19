@@ -14,7 +14,8 @@ function HorizontalContainer({
   goods,
   sortingKey,
 }: HorizontalContainerProps) {
-  const { containerRef, handleMouseDown, containerStyle } = useDragHook();
+  const { containerRef, handleMouseDown, handleTouchStart, containerStyle } =
+    useDragHook();
 
   const sortedGoods = [...goods].sort((a, b) => {
     const aValue = a[sortingKey];
@@ -48,6 +49,7 @@ function HorizontalContainer({
         className="flex gap-4 p-4 bg-black dark:bg-gray-600 overflow-x-auto scrollbar-custom "
         ref={containerRef}
         onMouseDown={handleMouseDown} // Start drag
+        onTouchStart={handleTouchStart} // Start drag for mobile
         style={containerStyle}
       >
         {/* Goods */}

@@ -6,32 +6,82 @@ export function useDragHook() {
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
 
-  // Handle mouse down - start dragging
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
+  // Common logic for starting drag operation
+  const startDrag = useCallback((pageX: number) => {
+    if (!containerRef.current) return false;
     setIsDragging(true);
-    setStartX(e.pageX - containerRef.current.offsetLeft);
+    setStartX(pageX - containerRef.current.offsetLeft);
     setScrollLeft(containerRef.current.scrollLeft);
-    // Prevent text selection while dragging
-    e.preventDefault();
+    return true;
   }, []);
 
-  // Handle mouse move - perform dragging (document-level when dragging)
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
+  // Common logic for performing drag operation
+  const performDrag = useCallback(
+    (pageX: number) => {
       if (!isDragging || !containerRef.current) return;
-      e.preventDefault();
-      const x = e.pageX - containerRef.current.offsetLeft;
+      const x = pageX - containerRef.current.offsetLeft;
       const walk = (x - startX) * 1; // multiplier for scroll speed
       containerRef.current.scrollLeft = scrollLeft - walk;
     },
     [isDragging, startX, scrollLeft]
   );
 
-  // Handle mouse up - stop dragging (document-level when dragging)
-  const handleMouseUp = useCallback(() => {
+  // Common logic for ending drag operation
+  const endDrag = useCallback(() => {
     setIsDragging(false);
   }, []);
+
+  // Handle mouse down - start dragging
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (startDrag(e.pageX)) {
+        e.preventDefault();
+      }
+    },
+    [startDrag]
+  );
+
+  // Handle touch start - start dragging for mobile
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      if (startDrag(touch.pageX)) {
+        e.preventDefault();
+      }
+    },
+    [startDrag]
+  );
+
+  // Handle mouse move - perform dragging (document-level when dragging)
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      performDrag(e.pageX);
+    },
+    [performDrag]
+  );
+
+  // Handle touch move - perform dragging for mobile
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      performDrag(touch.pageX);
+    },
+    [performDrag]
+  );
+
+  // Handle mouse up - stop dragging (document-level when dragging)
+  const handleMouseUp = useCallback(() => {
+    endDrag();
+  }, [endDrag]);
+
+  // Handle touch end - stop dragging for mobile
+  const handleTouchEnd = useCallback(() => {
+    endDrag();
+  }, [endDrag]);
 
   // Remove mouse leave handler - we want dragging to continue outside container
   // Only document mouseup will stop the drag
@@ -39,27 +89,43 @@ export function useDragHook() {
   // Attach document-level events ONLY when dragging is active
   useEffect(() => {
     if (isDragging) {
-      // These work anywhere on the page, but only when drag started inside container
+      // Mouse events work anywhere on the page, but only when drag started inside container
       document.addEventListener("mousemove", handleMouseMove, {
         passive: false,
       });
       document.addEventListener("mouseup", handleMouseUp);
 
+      // Touch events for mobile support
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+      document.addEventListener("touchend", handleTouchEnd);
+
       return () => {
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [
+    isDragging,
+    handleMouseMove,
+    handleMouseUp,
+    handleTouchMove,
+    handleTouchEnd,
+  ]);
 
   // Style object for cursor changes
   const containerStyle = {
     userSelect: "none" as const, // Prevent text selection
+    touchAction: "none" as const, // Prevent default scrolling on touch
   };
 
   return {
     containerRef,
     handleMouseDown,
+    handleTouchStart,
     containerStyle,
     isDragging,
   };
