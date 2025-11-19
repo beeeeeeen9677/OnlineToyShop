@@ -1,43 +1,16 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import { Pagination } from "swiper/modules";
+import { Suspense, lazy } from "react";
 import type { Good } from "../../interface/good";
-import BannerItem from "./BannerItem";
+
+const BannerSlides = lazy(() => import("./BannerSlides"));
 
 function Banner({ goods }: { goods: Good[] }) {
-  const sortedGoods = [...goods].sort((a, b) => {
-    const aValue: number = a["broughtCount"];
-    const bValue: number = b["broughtCount"];
-
-    return bValue - aValue; // Highest first
-  });
-
-  const bannerSlideStyle: React.CSSProperties = {
-    width: "clamp(27.5rem, calc(100% - 10rem), 80rem)",
-    aspectRatio: "2 / 1",
-  };
-
   return (
     <div className="bg-black dark:bg-gray-600 py-3 select-none">
-      <Swiper
-        modules={[Pagination]}
-        pagination={{
-          clickable: true,
-        }}
-        loop={true}
-        slidesPerView={"auto"}
-        slidesPerGroup={1}
-        spaceBetween={25}
-        centeredSlides={true}
-        className="p-4"
+      <Suspense
+        fallback={<div className="p-4 text-white">Loading banner…</div>}
       >
-        {sortedGoods.map((good) => (
-          <SwiperSlide key={good._id} style={bannerSlideStyle}>
-            <BannerItem itemDetails={good} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+        <BannerSlides goods={goods} />
+      </Suspense>
     </div>
   );
 }
