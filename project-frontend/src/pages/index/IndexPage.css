@@ -14,3 +14,27 @@
 .scrollbar-custom::-webkit-scrollbar-thumb:hover {
   background: #2e2d2d;
 }
+
+.swipe-slide {
+  transition: filter 0.3s ease;
+}
+
+/* Darken adjacent slides */
+.swiper-slide-prev,
+.swiper-slide-next {
+  filter: brightness(0.5);
+}
+
+.custom-pagination .swiper-pagination-bullet {
+  flex-grow: 1;
+  width: 40px;
+  height: 5px;
+  background-color: #ccc;
+  border-radius: 0%;
+  opacity: 0.7;
+}
+
+.custom-pagination .swiper-pagination-bullet-active {
+  background-color: #ffffff;
+  opacity: 1;
+}

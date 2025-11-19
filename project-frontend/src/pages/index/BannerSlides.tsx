@@ -5,6 +5,7 @@ import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import type { Good } from "../../interface/good";
 import BannerItem from "./BannerItem";
+import "./IndexPage.css";
 
 function BannerSlides({ goods }: { goods: Good[] }) {
   const sortedGoods = useMemo(() => {
@@ -24,24 +25,28 @@ function BannerSlides({ goods }: { goods: Good[] }) {
   };
 
   return (
-    <Swiper
-      modules={[Pagination]}
-      pagination={{
-        clickable: true,
-      }}
-      loop={enableLoop}
-      slidesPerView={"auto"}
-      slidesPerGroup={1}
-      spaceBetween={25}
-      centeredSlides={true}
-      className="p-4"
-    >
-      {sortedGoods.map((good) => (
-        <SwiperSlide key={good._id} style={bannerSlideStyle}>
-          <BannerItem itemDetails={good} />
-        </SwiperSlide>
-      ))}
-    </Swiper>
+    <>
+      <Swiper
+        modules={[Pagination]}
+        pagination={{
+          el: ".custom-pagination",
+          clickable: true,
+        }}
+        loop={enableLoop}
+        slidesPerView={"auto"}
+        slidesPerGroup={1}
+        spaceBetween={25}
+        centeredSlides={true}
+        className="p-4"
+      >
+        {sortedGoods.map((good) => (
+          <SwiperSlide key={good._id} style={bannerSlideStyle}>
+            <BannerItem itemDetails={good} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+      <div className="custom-pagination flex mx-auto md:mt-4 gap-2 w-[clamp(27.5rem,calc(100%-14rem),80rem)]"></div>
+    </>
   );
 }
 

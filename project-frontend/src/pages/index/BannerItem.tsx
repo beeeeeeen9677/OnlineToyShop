@@ -6,7 +6,10 @@ function BannerItem({ itemDetails }: { itemDetails: Good }) {
   const { t } = useTranslation("index");
 
   return (
-    <Link to={""} className="flex">
+    <Link
+      to={""}
+      className="flex transition duration-150 ease-in hover:brightness-80"
+    >
       <div className="bg-white flex-5 lg:flex-4 flex flex-col justify-center">
         <div className="px-2 md:px-4 xl:px-6">
           <div className="text-white bg-red-400 w-fit p-0.5 text-xs">

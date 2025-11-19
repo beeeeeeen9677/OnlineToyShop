@@ -1,8 +1,8 @@
 {
   "navigation": {
     "admin": "Admin",
-    "login": "Log in",
-    "logout": "Log out"
+    "login": "Log In",
+    "logout": "Log Out"
   },
   "alt": {
     "logo": "Logo"
