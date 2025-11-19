@@ -10,7 +10,7 @@ function BannerItem({ itemDetails }: { itemDetails: Good }) {
       <div className="bg-white flex-5 lg:flex-4 flex flex-col justify-center">
         <div className="px-2">
           <div className="text-white bg-red-400 w-fit p-0.5 text-xs">
-            {t("PRE-ORDER")}
+            {t("info.PRE-ORDER")}
           </div>
           <div
             className="font-bold font-oswald text-black line-clamp-2 2xl:line-clamp-4

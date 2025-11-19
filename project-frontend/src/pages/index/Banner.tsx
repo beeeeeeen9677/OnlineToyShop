@@ -1,5 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import "swiper/css/pagination";
+import { Pagination } from "swiper/modules";
 import type { Good } from "../../interface/good";
 import BannerItem from "./BannerItem";
 
@@ -19,9 +21,14 @@ function Banner({ goods }: { goods: Good[] }) {
   return (
     <div className="bg-black dark:bg-gray-600 py-3 select-none">
       <Swiper
-        loop
+        modules={[Pagination]}
+        pagination={{
+          clickable: true,
+        }}
+        loop={true}
         slidesPerView={"auto"}
-        spaceBetween={16}
+        slidesPerGroup={1}
+        spaceBetween={25}
         centeredSlides={true}
         className="p-4"
       >
