@@ -35,7 +35,7 @@ function BannerSlides({ goods }: { goods: Good[] }) {
         loop={enableLoop}
         slidesPerView={"auto"}
         slidesPerGroup={1}
-        spaceBetween={25}
+        spaceBetween={20}
         centeredSlides={true}
         className="p-4"
       >

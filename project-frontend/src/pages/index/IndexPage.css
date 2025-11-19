@@ -32,6 +32,7 @@
   background-color: #ccc;
   border-radius: 0%;
   opacity: 0.7;
+  cursor: pointer;
 }
 
 .custom-pagination .swiper-pagination-bullet-active {
