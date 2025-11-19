@@ -1,3 +1,5 @@
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 import type { Good } from "../../interface/good";
 import BannerItem from "./BannerItem";
 
@@ -9,13 +11,26 @@ function Banner({ goods }: { goods: Good[] }) {
     return bValue - aValue; // Highest first
   });
 
+  const bannerSlideStyle: React.CSSProperties = {
+    width: "clamp(27.5rem, calc(100% - 10rem), 80rem)",
+    aspectRatio: "2 / 1",
+  };
+
   return (
-    <div>
-      <div className="flex flex-nowrap overflow-hidden gap-4 p-4 bg-black dark:bg-gray-600 select-none">
+    <div className="bg-black dark:bg-gray-600 py-3 select-none">
+      <Swiper
+        loop
+        slidesPerView={"auto"}
+        spaceBetween={16}
+        centeredSlides={true}
+        className="p-4"
+      >
         {sortedGoods.map((good) => (
-          <BannerItem key={good._id} itemDetails={good} />
+          <SwiperSlide key={good._id} style={bannerSlideStyle}>
+            <BannerItem itemDetails={good} />
+          </SwiperSlide>
         ))}
-      </div>
+      </Swiper>
     </div>
   );
 }

@@ -6,10 +6,7 @@ function BannerItem({ itemDetails }: { itemDetails: Good }) {
   const { t } = useTranslation("index");
 
   return (
-    <Link
-      to={""}
-      className="flex shrink-0 w-[clamp(27.5rem,calc(100%-10rem),80rem)] aspect-2/1"
-    >
+    <Link to={""} className="flex">
       <div className="bg-white flex-5 lg:flex-4 flex flex-col justify-center">
         <div className="px-2">
           <div className="text-white bg-red-400 w-fit p-0.5 text-xs">
