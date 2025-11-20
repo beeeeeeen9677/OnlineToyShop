@@ -11,7 +11,10 @@
     "description": "Description:",
     "image": "Image:",
     "stock": "Stock:",
-    "category": "Category:"
+    "category": "Category:",
+    "createdAt": "Created At:",
+    "broughtCount": "Brought Count:",
+    "viewedCount": "Viewed Count:"
   },
   "placeholders": {
     "productName": "PRODUCT NAME",

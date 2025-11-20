@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import api from "../../services/api";
 
@@ -9,15 +9,16 @@ import type { AxiosError } from "axios";
 import ProductForm from "./modules/ProductForm";
 import { useTranslation } from "../../i18n/hooks";
 import { useUserContext } from "../../context/app";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 function AdminEditProduct() {
   const user = useUserContext();
 
   const { t } = useTranslation("admin");
   const { id } = useParams();
-  const [product, setProduct] = useState<Good | null>(null);
-  const [loading, setLoading] = useState(true);
-
+  //const [product, setProduct] = useState<Good | null>(null);
+  //const [isLoading, setIsLoading] = useState(true);
+  /*
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -30,17 +31,43 @@ function AdminEditProduct() {
           axiosError.response?.data?.error
         );
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     if (id) fetchProduct();
   }, [id]);
+  */
+
+  const queryClient = useQueryClient();
+  const {
+    data: product = null,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Good, AxiosError>({
+    queryKey: ["good", { id }],
+    queryFn: async () => {
+      const response = await api.get(`/goods/${id}`);
+      return response.data;
+    },
+  });
+
+  const { mutateAsync: setProductMutation } = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const path = `admin/goods/${product?._id}`;
+      const response = await api.put(path, formData);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["good", { id }] });
+    },
+  });
 
   // Callback to update product state directly
   const handleProductUpdate = (updatedProduct: Good) => {
-    setProduct(updatedProduct);
-    alert(t("messages.updateSuccess"));
+    //setProduct(updatedProduct);
+    alert(t("messages.updateSuccess") + `:\n${updatedProduct.name}`);
   };
 
   if (user === undefined || user.role !== "admin") {
@@ -54,20 +81,38 @@ function AdminEditProduct() {
     );
   }
 
-  if (loading) return <LoadingPanel />;
+  if (isError) return <p>Error: {(error as AxiosError)?.message}</p>;
+  if (isLoading) return <LoadingPanel />;
   if (!product) return <div>Product not found</div>;
 
   return (
     <div className="animate-fade-in min-h-screen">
       <title>Edit Product</title>
       <Header />
+      {/* Back Btn */}
       <Link to="/admin/product">
         <div className="mx-6 mt-3 underline text-2xl"> &lt;Back</div>
       </Link>
       <div className="bg-yellow-100 dark:bg-zinc-600 rounded-lg p-4 m-4 relative flex flex-col gap-4 h-fit">
         <div className="text-4xl mx-auto underline">UPDATE</div>
         <div className="p-2 text-3xl">ID: {product._id}</div>
-        <ProductForm product={product} onSuccessCB={handleProductUpdate} />
+        <div className="p-2 text-2xl">
+          {t("labels.createdAt")} {product.createdAt.split("T")[0]}
+        </div>
+        <div>
+          <span className="p-2 text-lg">
+            {t("labels.broughtCount")} {product.broughtCount}
+          </span>
+          <span className="p-2 text-lg">
+            {t("labels.viewedCount")} {product.viewedCount}
+          </span>
+        </div>
+
+        <ProductForm
+          product={product}
+          mutationFn={setProductMutation}
+          onSuccessCB={handleProductUpdate}
+        />
       </div>
     </div>
   );

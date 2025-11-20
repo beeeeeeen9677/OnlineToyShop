@@ -5,12 +5,14 @@ import { FaUpload } from "react-icons/fa";
 import { useTranslation } from "../../../i18n/hooks";
 import { categories, type Category, type Good } from "../../../interface/good";
 
+type MutationResult<T> = { message: string; result: T };
 type ProductFormProps = {
   product?: Good;
+  mutationFn?: (formData: FormData) => Promise<MutationResult<Good>>;
   onSuccessCB?: (updatedProduct: Good) => void;
 };
 
-function ProductForm({ product, onSuccessCB }: ProductFormProps) {
+function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
   const { t } = useTranslation("admin");
 
   // Mode: add or edit
@@ -146,29 +148,36 @@ function ProductForm({ product, onSuccessCB }: ProductFormProps) {
     }
     formData.append("data", JSON.stringify(requestBody));
 
-    try {
-      const path =
-        mode === "add" ? "admin/goods" : `admin/goods/${product?._id}`;
-      const method = mode === "add" ? api.post : api.put;
+    if (mode === "add") {
+      try {
+        const path = "admin/goods";
+        const method = api.post;
 
-      const response = await method(path, formData);
-      console.log(
-        (mode === "add" ? "Upload" : "Update") + " success:",
-        response.data
-      );
+        const response = await method(path, formData);
+        console.log("Upload" + " success:", response.data);
 
-      // Show success alert and clear form
-      if (mode === "add") {
+        // Show success alert and clear form
         alert(t("messages.uploadSuccess"));
         clearForm();
+
+        // if (mode === "edit") {
+        //   // refresh
+        //   if (onSuccessCB) onSuccessCB(response.data.result);
+        // }
+      } catch (error) {
+        console.error("Upload failed:", error);
+        alert(t("messages.uploadFailed"));
       }
-      if (mode === "edit") {
-        // refresh
-        if (onSuccessCB) onSuccessCB(response.data.result);
+    } else if (mode === "edit" && mutationFn) {
+      try {
+        const updatedProduct = await mutationFn(formData);
+        // Call the onSuccess callback if provided
+        //console.log("Update success:", updatedProduct);
+        if (onSuccessCB) onSuccessCB(updatedProduct.result as Good);
+      } catch (error) {
+        console.error("Update failed:", error);
+        alert(t("messages.updateFailed"));
       }
-    } catch (error) {
-      console.error("Upload failed:", error);
-      alert(t("messages.uploadFailed"));
     }
   };
 

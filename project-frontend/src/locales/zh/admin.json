@@ -11,7 +11,10 @@
     "description": "描述：",
     "image": "圖片：",
     "stock": "庫存：",
-    "category": "類別："
+    "category": "類別：",
+    "createdAt": "創建於：",
+    "broughtCount": "售出次數：",
+    "viewedCount": "瀏覽次數："
   },
   "placeholders": {
     "productName": "產品名稱",
