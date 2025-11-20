@@ -1,6 +1,7 @@
 // React Imports
 import { Route, Routes, useNavigate, useLocation } from "react-router";
 import { useEffect, useState, useEffectEvent } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
@@ -16,6 +17,9 @@ import type { User } from "./interface/user";
 import { LoginContext, UserContext } from "./context/app";
 import AdminProductList from "./pages/admin/AdminProductList";
 import AdminEditProduct from "./pages/admin/AdminEditProduct";
+
+// React Query
+const queryClient = new QueryClient();
 
 function App() {
   const navigate = useNavigate();
@@ -67,11 +71,13 @@ function App() {
   }, [isLoggedIn]);
 
   return (
-    <UserContext.Provider value={user}>
-      <LoginContext.Provider value={isLoggedIn}>
-        <RouteContainer />
-      </LoginContext.Provider>
-    </UserContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <UserContext.Provider value={user}>
+        <LoginContext.Provider value={isLoggedIn}>
+          <RouteContainer />
+        </LoginContext.Provider>
+      </UserContext.Provider>
+    </QueryClientProvider>
   );
 }
 

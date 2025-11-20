@@ -1,13 +1,16 @@
 import Header from "../../components/Header";
-import { useEffect, useEffectEvent, useState } from "react";
+//import { useEffect, useEffectEvent, useState } from "react";
 import type { Good } from "../../interface/good";
 import api from "../../services/api";
 import type { AxiosError } from "axios";
 import { Link } from "react-router";
 import { useUserContext } from "../../context/app";
+import { useQuery } from "@tanstack/react-query";
+import LoadingPanel from "../../components/LoadingPanel";
 
 function AdminProductList() {
   const user = useUserContext();
+  /*
   const [goods, setGoods] = useState<Array<Good>>([]);
   const fetchDataEvent = useEffectEvent(async () => {
     try {
@@ -34,6 +37,28 @@ function AdminProductList() {
   useEffect(() => {
     fetchDataEvent();
   }, []);
+ */
+  const {
+    data: goods = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Good[], AxiosError>({
+    queryKey: ["goods"],
+    queryFn: async () => {
+      const response = await api.get("/goods/");
+      // sort by added date
+      const sortedGoods = [...response.data].sort((a, b) => {
+        const aValue = a["createdAt"];
+        const bValue = b["createdAt"];
+
+        const aDate = new Date(aValue as string);
+        const bDate = new Date(bValue as string);
+        return bDate.getTime() - aDate.getTime(); // Newest first
+      });
+      return sortedGoods; // Backend now returns array directly
+    },
+  });
 
   if (user === undefined || user.role !== "admin") {
     return (
@@ -45,6 +70,9 @@ function AdminProductList() {
       </>
     );
   }
+
+  if (isError) return <p>Error: {(error as AxiosError)?.message}</p>;
+  if (isLoading) return <LoadingPanel />;
 
   return (
     <div className="animate-fade-in min-h-screen">

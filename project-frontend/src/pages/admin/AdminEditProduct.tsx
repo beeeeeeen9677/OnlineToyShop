@@ -61,7 +61,7 @@ function AdminEditProduct() {
     <div className="animate-fade-in min-h-screen">
       <title>Edit Product</title>
       <Header />
-      <Link to="/admin/edit">
+      <Link to="/admin/product">
         <div className="mx-6 mt-3 underline text-2xl"> &lt;Back</div>
       </Link>
       <div className="bg-yellow-100 dark:bg-zinc-600 rounded-lg p-4 m-4 relative flex flex-col gap-4 h-fit">
