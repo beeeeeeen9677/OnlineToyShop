@@ -1,7 +1,7 @@
 // React Imports
 import { Route, Routes, useNavigate, useLocation } from "react-router";
 import { useEffect, useState, useEffectEvent } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
@@ -17,9 +17,7 @@ import type { User } from "./interface/user";
 import { LoginContext, UserContext } from "./context/app";
 import AdminProductList from "./pages/admin/AdminProductList";
 import AdminEditProduct from "./pages/admin/AdminEditProduct";
-
-// React Query
-const queryClient = new QueryClient();
+import LoadingPanel from "./components/LoadingPanel";
 
 function App() {
   const navigate = useNavigate();
@@ -40,16 +38,20 @@ function App() {
     console.log("App mounted, monitoring auth state");
   }, []);
 
+  /*
   const [user, setUser] = useState<User | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
 
   const setUserEvent = useEffectEvent(async () => {
     console.log("Fetching user data...");
     try {
+      setIsLoading(true);
       if (!auth.currentUser) return;
       const firebaseUID = await auth.currentUser.uid;
       const res = await api.post("/user/", { firebaseUID });
       setUser(res.data);
       console.log("User data set in context.");
+      setIsLoading(false);
       // console.log("User data fetched:\n", res.data);
     } catch (error) {
       const axiosError = error as AxiosError<{ error: string }>;
@@ -57,6 +59,9 @@ function App() {
         "Error fetching user data:",
         axiosError.response?.data?.error
       );
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   });
 
@@ -70,14 +75,55 @@ function App() {
     setUserEvent();
   }, [isLoggedIn]);
 
+  */
+
+  const {
+    data: user = undefined,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<User, AxiosError>({
+    queryKey: ["user"],
+    enabled: isLoggedIn,
+    queryFn: async () => {
+      console.log("Try fetching user data");
+      if (!auth.currentUser) throw new Error("No Firebase user");
+      const firebaseUID = auth.currentUser.uid;
+      const res = await api.post("/user/", { firebaseUID });
+      console.log("User data set in context");
+      return res.data;
+    },
+    refetchOnWindowFocus: false,
+  });
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (!isLoggedIn) {
+      //setUser(undefined);
+      queryClient.removeQueries({ queryKey: ["user"] });
+      return;
+    }
+    // Fetch user data from backend
+    //setUserEvent();
+  }, [isLoggedIn]);
+
+  if (isLoading) {
+    return <LoadingPanel />;
+  }
+
+  if (isError) {
+    return (
+      <div>
+        Error{(error as AxiosError<{ error: string }>).response?.data?.error}
+      </div>
+    );
+  }
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <UserContext.Provider value={user}>
-        <LoginContext.Provider value={isLoggedIn}>
-          <RouteContainer />
-        </LoginContext.Provider>
-      </UserContext.Provider>
-    </QueryClientProvider>
+    <UserContext.Provider value={user}>
+      <LoginContext.Provider value={isLoggedIn}>
+        <RouteContainer />
+      </LoginContext.Provider>
+    </UserContext.Provider>
   );
 }
 
