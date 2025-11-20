@@ -108,7 +108,7 @@ function Header() {
               <p
                 className={`absolute bottom-2 group-hover:hidden transition duration-${duration}`}
               >
-                {t("navigation.user")}
+                {t("navigation.profile")}
               </p>
             </Link>
           </Activity>

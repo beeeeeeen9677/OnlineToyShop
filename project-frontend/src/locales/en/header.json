@@ -3,7 +3,8 @@
     "admin": "Admin",
     "login": "Log In",
     "logout": "Log Out",
-    "user": "User"
+    "user": "User",
+    "profile": "Profile"
   },
   "alt": {
     "logo": "Logo"

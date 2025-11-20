@@ -9,7 +9,7 @@ import Auth from "./pages/auth/Auth";
 import AdminIndex from "./pages/admin/AdminIndex";
 import AdminProductList from "./pages/admin/AdminProductList";
 import AdminEditProduct from "./pages/admin/AdminEditProduct";
-import UserPage from "./pages/userPage/UserPage";
+import Profile from "./pages/profile/Profile";
 import LoadingPanel from "./components/LoadingPanel";
 import NotFound from "./pages/NotFound";
 
@@ -133,7 +133,7 @@ function RouteContainer() {
       <Route path="/admin" element={<AdminIndex />} />
       <Route path="/admin/product" element={<AdminProductList />} />
       <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />
-      <Route path="/user" element={<UserPage />} />
+      <Route path="/user" element={<Profile />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
