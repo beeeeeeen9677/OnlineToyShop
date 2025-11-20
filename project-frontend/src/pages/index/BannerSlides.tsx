@@ -19,8 +19,10 @@ function BannerSlides({ goods }: { goods: Good[] }) {
 
   const enableLoop = sortedGoods.length > 3;
 
+  const bannerWidth = "clamp(27.5rem, calc(100% - 14rem), 80rem)";
+
   const bannerSlideStyle: React.CSSProperties = {
-    width: "clamp(27.5rem, calc(100% - 14rem), 80rem)",
+    width: bannerWidth,
     aspectRatio: "2 / 1",
   };
 
@@ -37,7 +39,6 @@ function BannerSlides({ goods }: { goods: Good[] }) {
         slidesPerGroup={1}
         spaceBetween={20}
         centeredSlides={true}
-        className="p-4"
       >
         {sortedGoods.map((good) => (
           <SwiperSlide key={good._id} style={bannerSlideStyle}>
@@ -45,7 +46,7 @@ function BannerSlides({ goods }: { goods: Good[] }) {
           </SwiperSlide>
         ))}
       </Swiper>
-      <div className="custom-pagination flex mx-auto md:mt-4 gap-2 w-[clamp(27.5rem,calc(100%-14rem),80rem)]"></div>
+      <div className="custom-pagination" style={{ width: bannerWidth }}></div>
     </>
   );
 }
