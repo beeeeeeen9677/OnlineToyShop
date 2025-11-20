@@ -104,18 +104,14 @@ function App() {
     }
     // Fetch user data from backend
     //setUserEvent();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, queryClient]);
 
   if (isLoading) {
     return <LoadingPanel />;
   }
 
   if (isError) {
-    return (
-      <div>
-        Error{(error as AxiosError<{ error: string }>).response?.data?.error}
-      </div>
-    );
+    return <div>Error: {error.message}</div>;
   }
 
   return (
