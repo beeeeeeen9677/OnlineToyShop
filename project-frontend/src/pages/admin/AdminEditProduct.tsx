@@ -81,7 +81,12 @@ function AdminEditProduct() {
     );
   }
 
-  if (isError) return <p>Error: {(error as AxiosError)?.message}</p>;
+  if (isError)
+    return (
+      <p>
+        Error: {(error as AxiosError<{ error: string }>)?.response?.data?.error}
+      </p>
+    );
   if (isLoading) return <LoadingPanel />;
   if (!product) return <div>Product not found</div>;
 

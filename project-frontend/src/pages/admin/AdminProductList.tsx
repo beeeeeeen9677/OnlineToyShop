@@ -71,7 +71,12 @@ function AdminProductList() {
     );
   }
 
-  if (isError) return <p>Error: {(error as AxiosError)?.message}</p>;
+  if (isError)
+    return (
+      <p>
+        Error: {(error as AxiosError<{ error: string }>)?.response?.data?.error}
+      </p>
+    );
   if (isLoading) return <LoadingPanel />;
 
   return (

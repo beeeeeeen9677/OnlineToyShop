@@ -1,4 +1,4 @@
-import { Activity, useEffect, useState } from "react";
+import { Activity } from "react";
 import { useTranslation } from "../../i18n/hooks";
 import api from "../../services/api";
 import type { AxiosError } from "axios";
@@ -7,6 +7,7 @@ import LoadingPanel from "../../components/LoadingPanel";
 import type { Good } from "../../interface/good";
 import HorizontalContainer from "./HorizontalContainer";
 import Banner from "./Banner";
+import { useQuery } from "@tanstack/react-query";
 
 // type IndexProps = {
 //   isLoggedIn: boolean;
@@ -15,8 +16,9 @@ import Banner from "./Banner";
 //function Index({ isLoggedIn }: IndexProps) {
 function Index() {
   const { t } = useTranslation("index");
+  /*
   const [allGoods, setAllGoods] = useState<Good[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const fetchAllGoods = async () => {
       try {
@@ -29,17 +31,40 @@ function Index() {
           axiosError.response?.data?.error
         );
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchAllGoods();
   }, []);
+  */
+
+  const {
+    data: allGoods = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Good[], AxiosError>({
+    queryKey: ["allGoods"],
+    queryFn: async () => {
+      const response = await api.get("/goods/");
+      return response.data;
+    },
+  });
+
+  if (isError) {
+    return (
+      <div>
+        Error: {(error as AxiosError<{ error: string }>)?.response?.data?.error}
+      </div>
+    );
+  }
+
   return (
     <div className="animate-fade-in min-h-screen">
       <title>Premium Ben Toys</title>
       <Header />
-      <Activity mode={loading ? "visible" : "hidden"}>
+      <Activity mode={isLoading ? "visible" : "hidden"}>
         <LoadingPanel />
       </Activity>
       <Banner goods={allGoods} />
