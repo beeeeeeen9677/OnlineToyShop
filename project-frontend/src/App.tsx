@@ -2,10 +2,15 @@
 import { Route, Routes, useNavigate, useLocation } from "react-router";
 import { useEffect, useState, useEffectEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
 import AdminIndex from "./pages/admin/AdminIndex";
+import AdminProductList from "./pages/admin/AdminProductList";
+import AdminEditProduct from "./pages/admin/AdminEditProduct";
+import UserPage from "./pages/userPage/UserPage";
+import LoadingPanel from "./components/LoadingPanel";
 import NotFound from "./pages/NotFound";
 
 // Firebase
@@ -15,9 +20,6 @@ import api from "./services/api";
 import { AxiosError } from "axios";
 import type { User } from "./interface/user";
 import { LoginContext, UserContext } from "./context/app";
-import AdminProductList from "./pages/admin/AdminProductList";
-import AdminEditProduct from "./pages/admin/AdminEditProduct";
-import LoadingPanel from "./components/LoadingPanel";
 
 function App() {
   const navigate = useNavigate();
@@ -131,6 +133,7 @@ function RouteContainer() {
       <Route path="/admin" element={<AdminIndex />} />
       <Route path="/admin/product" element={<AdminProductList />} />
       <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />
+      <Route path="/user" element={<UserPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

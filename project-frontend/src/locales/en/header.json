@@ -2,7 +2,8 @@
   "navigation": {
     "admin": "Admin",
     "login": "Log In",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "user": "User"
   },
   "alt": {
     "logo": "Logo"

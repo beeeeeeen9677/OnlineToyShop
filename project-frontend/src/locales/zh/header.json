@@ -2,7 +2,8 @@
   "navigation": {
     "admin": "管理員",
     "login": "登入",
-    "logout": "登出"
+    "logout": "登出",
+    "user": "用戶"
   },
   "alt": {
     "logo": "標誌"
