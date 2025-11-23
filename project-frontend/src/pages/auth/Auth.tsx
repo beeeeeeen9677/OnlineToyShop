@@ -53,6 +53,29 @@ function Auth() {
     age: t("validation.dateOfBirth.age", { minAge }),
   };
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const storageKey = "premiumbentoys:rememberMe";
+    const savedCredentials = localStorage.getItem(storageKey);
+    if (!savedCredentials) return;
+    try {
+      const parsed: { email?: string; password?: string } =
+        JSON.parse(savedCredentials);
+      if (parsed.email && emailRef.current) {
+        emailRef.current.value = parsed.email;
+      }
+      if (parsed.password && passwordRef.current) {
+        passwordRef.current.value = parsed.password;
+      }
+      if (rememberMeRef.current) {
+        rememberMeRef.current.checked = true;
+      }
+    } catch (parseError) {
+      console.warn("Failed to parse remembered credentials", parseError);
+      localStorage.removeItem(storageKey);
+    }
+  }, []);
+
   const nameErr = {
     required: t("validation.name.required"),
     pattern: t("validation.name.pattern"),

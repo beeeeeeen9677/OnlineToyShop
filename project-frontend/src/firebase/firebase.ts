@@ -14,7 +14,6 @@ import {
   sendEmailVerification,
   setPersistence,
   browserLocalPersistence,
-  browserSessionPersistence,
   signOut,
 } from "firebase/auth";
 import api from "../services/api";
@@ -46,16 +45,24 @@ const loginWithEmailAndPassword = async (
   rememberMe: boolean = false
 ) => {
   try {
-    await setPersistence(
-      auth,
-      rememberMe ? browserLocalPersistence : browserSessionPersistence
-    );
+    await setPersistence(auth, browserLocalPersistence);
 
     // do not comment the sign in function
 
     // const userCredential =
     await signInWithEmailAndPassword(auth, email, password);
     // console.log("User logged in:", userCredential.user);
+
+    // store in local if rememberMe is true
+    if (typeof window !== "undefined") {
+      const storageKey = "premiumbentoys:rememberMe";
+      if (rememberMe) {
+        localStorage.setItem(storageKey, JSON.stringify({ email, password }));
+      } else {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
     loginSuccessCallback();
   } catch (error: unknown) {
     let errorMessage: string = "";
@@ -100,7 +107,7 @@ const registerWithEmailAndPassword = async (
   registerFailCallback: (errorMessage: string) => void
 ) => {
   try {
-    await setPersistence(auth, browserSessionPersistence);
+    await setPersistence(auth, browserLocalPersistence);
 
     const {
       email,
