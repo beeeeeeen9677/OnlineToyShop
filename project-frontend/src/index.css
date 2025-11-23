@@ -31,9 +31,9 @@
       transform: translate(4px, -2px);
     }
   }
-
-  --animate-fade-in-out: fadeIn 3s ease-in-out;
-  @keyframes fadeIn {
+  /* problematic animation */
+  --animate-fade-in-out: fadeInOut 3s ease-in-out;
+  @keyframes fadeInOut {
     0%,
     100% {
       opacity: 0;

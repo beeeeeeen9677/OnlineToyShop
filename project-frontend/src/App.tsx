@@ -29,6 +29,7 @@ function App() {
     const availablePaths = ["/", "/auth"];
     if (!availablePaths.includes(currentPath)) navigate("/");
   });
+
   // Monitor authentication state on app load
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
