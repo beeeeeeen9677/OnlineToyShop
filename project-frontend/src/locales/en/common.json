@@ -19,7 +19,8 @@
     "success": "Success!",
     "error": "An error occurred",
     "loading": "Loading...",
-    "invalidField": "*invalid field exist"
+    "invalidField": "*invalid field exist",
+    "verificationEmailSent": "Verification email sent. Please check your inbox."
   },
   "currency": {
     "hkd": "HKD"

@@ -19,7 +19,8 @@
     "success": "成功！",
     "error": "發生錯誤",
     "loading": "載入中...",
-    "invalidField": "*存在無效欄位"
+    "invalidField": "*存在無效欄位",
+    "verificationEmailSent": "驗證郵件已發送。請檢查您的收件箱。"
   },
   "currency": {
     "hkd": "港幣"

@@ -30,6 +30,8 @@ declare module "./firebase/firebase" {
 
   export function authEmail(email: string): Promise<void>;
 
+  export function verifyUserEmail(): Promise<void>;
+
   export function monitorAuthState(
     logoutCallback: () => void,
     setIsLoggedIn: (isLoggedIn: boolean) => void

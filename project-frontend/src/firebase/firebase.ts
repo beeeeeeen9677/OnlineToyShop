@@ -121,7 +121,8 @@ const registerWithEmailAndPassword = async (
       password
     );
     //console.log("User registered:", userCredential.user);
-    await sendEmailVerification(userCredential.user);
+    // await sendEmailVerification(userCredential.user);
+    // let user send manually in profile page
     userData.firebaseUID = userCredential.user.uid;
     await createNewUserInDB(userData);
     registerSuccessCallback();
@@ -256,6 +257,17 @@ const authEmail = async (email: string) => {
   }
 };
 
+const verifyUserEmail = async () => {
+  if (auth.currentUser) {
+    try {
+      await sendEmailVerification(auth.currentUser);
+      console.log("Verification email sent.");
+    } catch (error) {
+      console.error("Error sending verification email:", error);
+    }
+  }
+};
+
 // Monitor
 const monitorAuthState = async (
   logoutCallback: () => void,
@@ -292,6 +304,7 @@ export {
   registerWithEmailAndPassword,
   loginWithEmailLink,
   authEmail,
+  verifyUserEmail,
   monitorAuthState,
   logout,
 };
