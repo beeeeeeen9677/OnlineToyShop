@@ -32,26 +32,9 @@ function App() {
   // Monitor authentication state on app load
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const logout = useEffectEvent(async () => {
-    if (user === undefined) return;
-
-    // call backend api to clear session
-    try {
-      const res = await api.post("/auth/logout");
-      console.log("Backend logout response:", res.data);
-    } catch (error) {
-      const axiosError = error as AxiosError<{ error: string }>;
-      console.error(
-        "Error during backend logout:",
-        axiosError.response?.data?.error
-      );
-    }
-  });
-
   useEffect(() => {
     const logoutCallback = () => {
       console.log("User is logged out");
-      logout();
       checkPathEvent();
     };
     monitorAuthState(logoutCallback, setIsLoggedIn);

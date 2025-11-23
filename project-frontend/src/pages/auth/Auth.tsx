@@ -1,5 +1,7 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import type { AxiosError } from "axios";
+import { useTranslation } from "../../i18n/hooks";
 
 import {
   auth,
@@ -9,8 +11,9 @@ import {
   // authEmail,
   logout,
 } from "../../firebase/firebase";
+
 import LoadingPanel from "../../components/LoadingPanel";
-import { useTranslation } from "../../i18n/hooks";
+import api from "../../services/api";
 
 function Auth() {
   const { t } = useTranslation("auth");
@@ -166,8 +169,23 @@ function Auth() {
     }
   };
 
+  const expressLogout = useEffectEvent(async () => {
+    // call backend api to clear session
+    try {
+      const res = await api.post("/auth/logout");
+      console.log("Backend logout response:", res.data);
+    } catch (error) {
+      const axiosError = error as AxiosError<{ error: string }>;
+      console.error(
+        "Error during backend logout:",
+        axiosError.response?.data?.error
+      );
+    }
+  });
+
   const logoutAccount = async () => {
     setIsLoading(true);
+    await expressLogout();
     await logout();
     setIsLoading(false);
   };
