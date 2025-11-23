@@ -41,7 +41,8 @@ app.use(
     secret: "sexionchinpodekai",
     resave: false,
     saveUninitialized: true,
-    cookie: { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }, // 1 day
+    rolling: true,
+    cookie: { httpOnly: true, maxAge: 15 * 60 * 1000 }, // 15 minutes
   })
 );
 

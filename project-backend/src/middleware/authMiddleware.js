@@ -18,7 +18,8 @@ export const verifyFirebaseToken = async (req, res, next) => {
     const decodedToken = await admin.auth().verifyIdToken(token);
 
     // Attach user info to request
-    req.user = decodedToken;
+    req.firebaseUser = decodedToken;
+    //console.log("Verified user:", decodedToken);
 
     next();
   } catch (error) {

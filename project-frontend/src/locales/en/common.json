@@ -5,7 +5,9 @@
     "back": "Back",
     "login": "Log In",
     "register": "Register",
-    "logout": "Log Out"
+    "logout": "Log Out",
+    "update": "Update",
+    "verify": "Verify"
   },
   "labels": {
     "email": "Email",
@@ -21,5 +23,24 @@
   },
   "currency": {
     "hkd": "HKD"
+  },
+  "user": {
+    "userId": "User ID",
+    "name": "Name",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "notAnswered": "Not Answered",
+    "dateOfBirth": "Date of Birth"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "banned": "Banned",
+    "verified": "Verified",
+    "unverified": "Unverified"
   }
 }

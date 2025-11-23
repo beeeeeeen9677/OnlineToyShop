@@ -1,13 +1,9 @@
 import Header from "../../components/Header";
-import { useTranslation } from "../../i18n/hooks";
-import { useEffect } from "react";
 import { useUserContext } from "../../context/app";
+import UserForm from "./UserForm";
 
 function Profile() {
-  const { t } = useTranslation("common");
   const user = useUserContext();
-
-  useEffect(() => {}, []);
 
   if (user === undefined) {
     return (
@@ -24,6 +20,7 @@ function Profile() {
     <div className="animate-fade-in min-h-screen">
       <title>Profile</title>
       <Header />
+      <UserForm user={user} />
     </div>
   );
 }
