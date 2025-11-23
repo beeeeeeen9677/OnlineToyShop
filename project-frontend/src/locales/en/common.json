@@ -7,11 +7,17 @@
     "register": "Register",
     "logout": "Log Out",
     "update": "Update",
-    "verify": "Verify"
+    "verify": "Verify",
+    "savePassword": "Save Password",
+    "cancel": "Cancel"
   },
   "labels": {
     "email": "Email",
     "password": "Password",
+    "changePassword": "Change Password",
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
     "required": "*",
     "optional": "(Optional)"
   },
@@ -20,7 +26,14 @@
     "error": "An error occurred",
     "loading": "Loading...",
     "invalidField": "*invalid field exist",
-    "verificationEmailSent": "Verification email sent. Please check your inbox."
+    "verificationEmailSent": "Verification email sent. Please check your inbox.",
+    "passwordUpdateSuccess": "Password updated successfully!",
+    "password": {
+      "required": "Please fill all password fields.",
+      "minLength": "Password must be at least {{min}} characters.",
+      "sameAsOld": "Your new password must be different from the old password.",
+      "mismatch": "New password and confirmation do not match."
+    }
   },
   "currency": {
     "hkd": "HKD"

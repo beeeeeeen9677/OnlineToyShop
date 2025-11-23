@@ -9,7 +9,7 @@ declare module "./firebase/firebase" {
     email: string,
     password: string,
     loginSuccessCallback: () => void,
-    loginFailCallback: (errorMessage: string) => void,
+    loginFailCallback: (errorCode: string) => void,
     rememberMe: boolean
   ): Promise<void>;
 
@@ -23,7 +23,7 @@ declare module "./firebase/firebase" {
       dateOfBirth: string;
     },
     registerSuccessCallback: () => void,
-    registerFailCallback: (errorMessage: string) => void
+    registerFailCallback: (errorCode: string) => void
   ): Promise<void>;
 
   export function loginWithEmailLink(email: string): Promise<void>;
@@ -32,9 +32,11 @@ declare module "./firebase/firebase" {
 
   export function verifyUserEmail(): Promise<void>;
 
-  export function monitorAuthState(
-    logoutCallback: () => void,
-    setIsLoggedIn: (isLoggedIn: boolean) => void
+  export function changePassword(
+    oldPassword: string,
+    newPassword: string,
+    successCallback: () => void,
+    failCallback: (errorCode: string) => void
   ): Promise<void>;
 
   export function logout(): Promise<void>;

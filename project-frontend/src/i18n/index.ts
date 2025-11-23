@@ -8,6 +8,7 @@ import enAdmin from "../locales/en/admin.json";
 import enHeader from "../locales/en/header.json";
 import enGoods from "../locales/en/goods.json";
 import enIndex from "../locales/en/index.json";
+import enFirebase from "../locales/en/firebase.json";
 
 import zhCommon from "../locales/zh/common.json";
 import zhAuth from "../locales/zh/auth.json";
@@ -15,6 +16,7 @@ import zhAdmin from "../locales/zh/admin.json";
 import zhHeader from "../locales/zh/header.json";
 import zhGoods from "../locales/zh/goods.json";
 import zhIndex from "../locales/zh/index.json";
+import zhFirebase from "../locales/zh/firebase.json";
 
 // Define resources
 const resources = {
@@ -25,6 +27,7 @@ const resources = {
     header: enHeader,
     goods: enGoods,
     index: enIndex,
+    firebase: enFirebase,
   },
   zh: {
     common: zhCommon,
@@ -33,6 +36,7 @@ const resources = {
     header: zhHeader,
     goods: zhGoods,
     index: zhIndex,
+    firebase: zhFirebase,
   },
 };
 
@@ -45,7 +49,7 @@ i18n.use(initReactI18next).init({
   defaultNS: "common",
 
   // Namespace configuration
-  ns: ["common", "auth", "admin", "header", "goods", "index"],
+  ns: ["common", "auth", "admin", "header", "goods", "index", "firebase"],
 
   interpolation: {
     escapeValue: false, // React already does escaping

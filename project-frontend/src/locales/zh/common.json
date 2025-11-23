@@ -7,11 +7,17 @@
     "register": "註冊",
     "logout": "登出",
     "update": "更新",
-    "verify": "驗證"
+    "verify": "驗證",
+    "savePassword": "儲存密碼",
+    "cancel": "取消"
   },
   "labels": {
     "email": "電子郵件",
     "password": "密碼",
+    "changePassword": "更改密碼",
+    "oldPassword": "舊密碼",
+    "newPassword": "新密碼",
+    "confirmPassword": "確認密碼",
     "required": "*",
     "optional": "（可選）"
   },
@@ -20,7 +26,14 @@
     "error": "發生錯誤",
     "loading": "載入中...",
     "invalidField": "*存在無效欄位",
-    "verificationEmailSent": "驗證郵件已發送。請檢查您的收件箱。"
+    "verificationEmailSent": "驗證郵件已發送。請檢查您的收件箱。",
+    "passwordUpdateSuccess": "密碼更新成功！",
+    "password": {
+      "required": "請填寫所有密碼欄位。",
+      "minLength": "密碼至少需要 {{min}} 個字元。",
+      "sameAsOld": "新密碼必須與舊密碼不同。",
+      "mismatch": "新密碼與確認密碼不相符。"
+    }
   },
   "currency": {
     "hkd": "港幣"

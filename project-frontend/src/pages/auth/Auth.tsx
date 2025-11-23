@@ -16,7 +16,7 @@ import LoadingPanel from "../../components/LoadingPanel";
 import api from "../../services/api";
 
 function Auth() {
-  const { t } = useTranslation("auth");
+  const { t, i18n } = useTranslation("auth");
   const navigate = useNavigate();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -104,9 +104,15 @@ function Auth() {
   };
 
   // for both login and register fail
-  const actionFailedCallback = (errorMessage: string) => {
-    console.log("Login/Register Failed. Error message:", errorMessage);
-    setErrPrompt(errorMessage);
+  const actionFailedCallback = (errorCode: string) => {
+    console.log("Login/Register Failed. Error code:", errorCode);
+    const localizedMessage = i18n.t(`errors.${errorCode}`, {
+      ns: "firebase",
+      defaultValue: i18n.t("errors.auth/unexpected-error", {
+        ns: "firebase",
+      }),
+    });
+    setErrPrompt(localizedMessage);
     setIsLoading(false);
   };
 

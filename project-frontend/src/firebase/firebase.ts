@@ -15,6 +15,7 @@ import {
   setPersistence,
   browserLocalPersistence,
   signOut,
+  updatePassword,
 } from "firebase/auth";
 import api from "../services/api";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -41,7 +42,7 @@ const loginWithEmailAndPassword = async (
   email: string,
   password: string,
   loginSuccessCallback: () => void,
-  loginFailCallback: (errorMessage: string) => void,
+  loginFailCallback: (errorCode: string) => void,
   rememberMe: boolean = false
 ) => {
   try {
@@ -65,15 +66,14 @@ const loginWithEmailAndPassword = async (
 
     loginSuccessCallback();
   } catch (error: unknown) {
-    let errorMessage: string = "";
+    let errorCode: string = "auth/unexpected-error";
 
     if (typeof error === "object" && error !== null && "code" in error) {
       const firebaseError = error as { code: string };
-      errorMessage = getFirebaseAuthErrorMessage(firebaseError.code);
+      errorCode = getFirebaseAuthErrorMessage(firebaseError.code);
     }
 
-    // console.error("Login error:", error);
-    loginFailCallback(errorMessage);
+    loginFailCallback(errorCode);
   }
 };
 
@@ -104,7 +104,7 @@ const registerWithEmailAndPassword = async (
     firebaseUID?: string;
   },
   registerSuccessCallback: () => void,
-  registerFailCallback: (errorMessage: string) => void
+  registerFailCallback: (errorCode: string) => void
 ) => {
   try {
     await setPersistence(auth, browserLocalPersistence);
@@ -127,87 +127,48 @@ const registerWithEmailAndPassword = async (
     await createNewUserInDB(userData);
     registerSuccessCallback();
   } catch (error: unknown) {
-    let errorMessage: string = "";
+    let errorCode: string = "auth/unexpected-error";
 
     if (typeof error === "object" && error !== null && "code" in error) {
       const firebaseError = error as { code: string };
-      errorMessage = getFirebaseAuthErrorMessage(firebaseError.code);
+      errorCode = getFirebaseAuthErrorMessage(firebaseError.code);
     }
-    registerFailCallback(errorMessage);
+    registerFailCallback(errorCode);
   }
 };
 
 // Error Handling
-export const getFirebaseAuthErrorMessage = (code: string): string => {
-  let message = "An unexpected error occurred. Please try again.";
+const KNOWN_FIREBASE_AUTH_ERROR_CODES = new Set<string>([
+  "auth/unexpected-error",
+  "auth/invalid-email",
+  "auth/user-disabled",
+  "auth/user-not-found",
+  "auth/wrong-password",
+  "auth/too-many-requests",
+  "auth/email-already-in-use",
+  "auth/weak-password",
+  "auth/network-request-failed",
+  "auth/internal-error",
+  "auth/invalid-credential",
+  "auth/operation-not-allowed",
+  "auth/requires-recent-login",
+  "auth/account-exists-with-different-credential",
+  "auth/popup-closed-by-user",
+  "auth/cancelled-popup-request",
+  "auth/invalid-verification-code",
+  "auth/expired-action-code",
+  "auth/invalid-action-code",
+  "auth/missing-verification-code",
+  "auth/missing-password",
+  "auth/old-password-incorrect",
+]);
 
-  switch (code) {
-    case "auth/invalid-email":
-      message = "The email address is not valid.";
-      break;
-    case "auth/user-disabled":
-      message = "This user account has been disabled.";
-      break;
-    case "auth/user-not-found":
-      message = "No user found with this email.";
-      break;
-    case "auth/wrong-password":
-      message = "Incorrect password. Please try again.";
-      break;
-    case "auth/too-many-requests":
-      message = "Too many login attempts. Please try again later.";
-      break;
-    case "auth/email-already-in-use":
-      message = "This email is already in use.";
-      break;
-    case "auth/weak-password":
-      message = "The password is too weak. Please choose a stronger one.";
-      break;
-    case "auth/network-request-failed":
-      message = "Network error. Please check your internet connection.";
-      break;
-    case "auth/internal-error":
-      message = "Internal server error. Please try again later.";
-      break;
-    case "auth/invalid-credential":
-      message = "Email / Password is incorrect.";
-      break;
-    case "auth/operation-not-allowed":
-      message = "This operation is not allowed. Please contact support.";
-      break;
-    case "auth/requires-recent-login":
-      message = "Please log in again to perform this action.";
-      break;
-    case "auth/account-exists-with-different-credential":
-      message = "An account already exists with a different sign-in method.";
-      break;
-    case "auth/popup-closed-by-user":
-      message = "The popup was closed before completing the sign-in.";
-      break;
-    case "auth/cancelled-popup-request":
-      message = "Popup request was cancelled. Please try again.";
-      break;
-    case "auth/invalid-verification-code":
-      message = "The verification code is invalid.";
-      break;
-    case "auth/expired-action-code":
-      message = "The action code has expired.";
-      break;
-    case "auth/invalid-action-code":
-      message = "The action code is invalid.";
-      break;
-    case "auth/missing-verification-code":
-      message = "Verification code is missing.";
-      break;
-    case "auth/missing-password":
-      message = "Password is required.";
-      break;
-    // Add more cases as needed
-    default:
-      break;
+export const getFirebaseAuthErrorMessage = (code: string): string => {
+  if (KNOWN_FIREBASE_AUTH_ERROR_CODES.has(code)) {
+    return code;
   }
 
-  return message;
+  return "auth/unexpected-error";
 };
 
 // Email Link
@@ -268,6 +229,39 @@ const verifyUserEmail = async () => {
   }
 };
 
+const changePassword = async (
+  oldPassword: string,
+  newPassword: string,
+  successCallback: () => void,
+  failCallback: (errorCode: string) => void
+) => {
+  if (auth.currentUser && auth.currentUser.email) {
+    try {
+      const credential = EmailAuthProvider.credential(
+        auth.currentUser.email,
+        oldPassword
+      );
+      await reauthenticateWithCredential(auth.currentUser, credential);
+      await updatePassword(auth.currentUser, newPassword);
+      console.log("Password changed successfully.");
+      successCallback();
+    } catch (error: unknown) {
+      let errorCode: string = "auth/unexpected-error";
+
+      if (typeof error === "object" && error !== null && "code" in error) {
+        const firebaseError = error as { code: string };
+        const normalizedCode =
+          firebaseError.code === "auth/invalid-credential"
+            ? "auth/old-password-incorrect"
+            : firebaseError.code;
+
+        errorCode = getFirebaseAuthErrorMessage(normalizedCode);
+      }
+      failCallback(errorCode);
+    }
+  }
+};
+
 // Monitor
 const monitorAuthState = async (
   logoutCallback: () => void,
@@ -305,6 +299,7 @@ export {
   loginWithEmailLink,
   authEmail,
   verifyUserEmail,
+  changePassword,
   monitorAuthState,
   logout,
 };

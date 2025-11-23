@@ -1,0 +1,26 @@
+{
+  "errors": {
+    "auth/unexpected-error": "發生未知錯誤，請稍後再試。",
+    "auth/invalid-email": "電子郵件地址無效。",
+    "auth/user-disabled": "此帳戶已被停用。",
+    "auth/user-not-found": "找不到使用此電子郵件的帳戶。",
+    "auth/wrong-password": "密碼錯誤，請再試一次。",
+    "auth/too-many-requests": "登入嘗試次數過多，請稍後再試。",
+    "auth/email-already-in-use": "此電子郵件已被使用。",
+    "auth/weak-password": "密碼強度不足，請選擇更強的密碼。",
+    "auth/network-request-failed": "網路錯誤，請檢查您的網路連線。",
+    "auth/internal-error": "伺服器內部錯誤，請稍後再試。",
+    "auth/invalid-credential": "電子郵件或密碼不正確。",
+    "auth/operation-not-allowed": "此操作未被允許，請聯絡客服。",
+    "auth/requires-recent-login": "請重新登入後再執行此操作。",
+    "auth/account-exists-with-different-credential": "已有帳戶使用其他登入方式。",
+    "auth/popup-closed-by-user": "登入視窗在完成前被關閉。",
+    "auth/cancelled-popup-request": "彈出式視窗請求已取消，請再試一次。",
+    "auth/invalid-verification-code": "驗證碼無效。",
+    "auth/expired-action-code": "操作代碼已過期。",
+    "auth/invalid-action-code": "操作代碼無效。",
+    "auth/missing-verification-code": "缺少驗證碼。",
+    "auth/missing-password": "請輸入密碼。",
+    "auth/old-password-incorrect": "舊密碼不正確。"
+  }
+}

@@ -37,6 +37,7 @@ const createNewUser = async (req, res) => {
   }
 };
 
+// get user by firebase UID, also set user in session
 const getUserByFirebaseUID = async (req, res) => {
   const { firebaseUID } = req.body;
 
