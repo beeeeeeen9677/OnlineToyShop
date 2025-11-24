@@ -17,7 +17,7 @@ function CsChatWindow() {
   >([]);
   const [inputMessage, setInputMessage] = React.useState("");
 
-  const messageContainerRef = useAutoScroll([chatRecords]);
+  const messageContainerRef = useAutoScroll(chatRecords);
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
