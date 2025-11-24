@@ -9,7 +9,8 @@
     "update": "更新",
     "verify": "驗證",
     "savePassword": "儲存密碼",
-    "cancel": "取消"
+    "cancel": "取消",
+    "clear": "清空"
   },
   "labels": {
     "email": "電子郵件",

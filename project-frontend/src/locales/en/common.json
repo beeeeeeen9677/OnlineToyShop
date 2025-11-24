@@ -9,7 +9,8 @@
     "update": "Update",
     "verify": "Verify",
     "savePassword": "Save Password",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "clear": "Clear"
   },
   "labels": {
     "email": "Email",

@@ -291,7 +291,7 @@ function UserForm({ user }: UserFormProps) {
                 }}
                 className="tw-button border-2 border-gray-400 rounded-lg px-4 py-1 hover:bg-gray-200 hover:text-black transition duration-150 cursor-pointer"
               >
-                {t("buttons.cancel")}
+                {t("buttons.clear")}
               </button>
             </div>
           </div>

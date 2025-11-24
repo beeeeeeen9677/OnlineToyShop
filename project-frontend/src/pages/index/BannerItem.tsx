@@ -8,7 +8,7 @@ function BannerItem({ itemDetails }: { itemDetails: Good }) {
   return (
     <Link
       to={""}
-      className="flex transition duration-150 ease-in hover:brightness-80"
+      className="flex transition duration-150 ease-in hover:brightness-80 w-full h-full"
     >
       <div className="bg-white flex-5 lg:flex-4 flex flex-col justify-center">
         <div className="px-2 md:px-4 xl:px-6">
@@ -27,7 +27,7 @@ function BannerItem({ itemDetails }: { itemDetails: Good }) {
           </div>
         </div>
       </div>
-      <div className="flex-4 md:flex-5 bg-amber-200">
+      <div className="flex-4 md:flex-5  ">
         <img
           src={itemDetails.imageUrl}
           alt={itemDetails.name}

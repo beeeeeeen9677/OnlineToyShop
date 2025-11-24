@@ -8,6 +8,7 @@ import type { Good } from "../../interface/good";
 import HorizontalContainer from "./HorizontalContainer";
 import Banner from "./Banner";
 import { useQuery } from "@tanstack/react-query";
+import BackToTopButton from "../../components/BackToTopButton";
 
 // type IndexProps = {
 //   isLoggedIn: boolean;
@@ -67,6 +68,7 @@ function Index() {
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <LoadingPanel />
       </Activity>
+      <BackToTopButton />
       <Banner goods={allGoods} />
       {/* New Arriavals */}
       <HorizontalContainer
