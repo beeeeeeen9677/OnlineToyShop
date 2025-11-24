@@ -1,0 +1,85 @@
+import { useTranslation } from "../../i18n/hooks";
+import React, { useEffect } from "react";
+import io from "socket.io-client";
+import { useUserContext } from "../../context/app";
+import ChatMessage from "./ChatMessage";
+
+const socket = io(import.meta.env.VITE_SERVER_URL);
+
+function CsChatWindow() {
+  const { t } = useTranslation("chat");
+  const user = useUserContext();
+  const maxMessageLength = 300;
+
+  const [chatRecords, setChatRecords] = React.useState<
+    Array<{ senderId: string; message: string }>
+  >([]);
+  const [inputMessage, setInputMessage] = React.useState("");
+
+  useEffect(() => {
+    socket.on("receive_message", (data) => {
+      setChatRecords((prev) => [...prev, data]);
+      console.log("Message received:", data);
+    });
+
+    return () => {
+      socket.off("receive_message");
+    };
+  }, []);
+
+  if (!user) return <div>User not exist</div>;
+
+  const sendMessage = () => {
+    if (inputMessage.trim() !== "") {
+      socket.emit("send_message", {
+        senderId: user._id, // or use actual user name/id
+        message: inputMessage,
+      });
+      setInputMessage("");
+    }
+  };
+
+  return (
+    <div className="bg-gray-400 flex-1 flex flex-col  ">
+      <h1 className="text-center">Chat Room</h1>
+      <div className="border-2 border-[#ccc] p-2 overflow-y-auto flex-1">
+        {chatRecords.map((msg, index) => (
+          <ChatMessage
+            key={index}
+            isSender={msg.senderId === user._id}
+            message={msg.message}
+          />
+        ))}
+      </div>
+      <div className="flex items-end">
+        <div className="flex-1 relative m-1">
+          <textarea
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            placeholder={t("placeholders.typeMessage")}
+            maxLength={maxMessageLength}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault(); // Prevent newline
+                sendMessage();
+              }
+            }}
+            className="w-full overflow-auto resize-none field-sizing-content wrap-anywhere p-2 pb-6 border rounded text-gray-700 max-h-40 bg-white"
+          />
+          <span className="absolute bottom-2 right-6 text-xs text-gray-500">
+            {inputMessage.length}/{maxMessageLength}
+          </span>
+        </div>
+
+        <button
+          onClick={sendMessage}
+          className="cursor-pointer p-2 bg-primary text-white rounded-2xl m-1"
+        >
+          {t("buttons.send")}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default CsChatWindow;

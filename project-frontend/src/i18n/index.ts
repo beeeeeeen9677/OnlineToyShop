@@ -5,6 +5,7 @@ import { initReactI18next } from "react-i18next";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enAdmin from "../locales/en/admin.json";
+import enChat from "../locales/en/chat.json";
 import enHeader from "../locales/en/header.json";
 import enGoods from "../locales/en/goods.json";
 import enIndex from "../locales/en/index.json";
@@ -13,6 +14,7 @@ import enFirebase from "../locales/en/firebase.json";
 import zhCommon from "../locales/zh/common.json";
 import zhAuth from "../locales/zh/auth.json";
 import zhAdmin from "../locales/zh/admin.json";
+import zhChat from "../locales/zh/chat.json";
 import zhHeader from "../locales/zh/header.json";
 import zhGoods from "../locales/zh/goods.json";
 import zhIndex from "../locales/zh/index.json";
@@ -24,6 +26,7 @@ const resources = {
     common: enCommon,
     auth: enAuth,
     admin: enAdmin,
+    chat: enChat,
     header: enHeader,
     goods: enGoods,
     index: enIndex,
@@ -33,6 +36,7 @@ const resources = {
     common: zhCommon,
     auth: zhAuth,
     admin: zhAdmin,
+    chat: zhChat,
     header: zhHeader,
     goods: zhGoods,
     index: zhIndex,
@@ -49,7 +53,16 @@ i18n.use(initReactI18next).init({
   defaultNS: "common",
 
   // Namespace configuration
-  ns: ["common", "auth", "admin", "header", "goods", "index", "firebase"],
+  ns: [
+    "common",
+    "auth",
+    "admin",
+    "chat",
+    "header",
+    "goods",
+    "index",
+    "firebase",
+  ],
 
   interpolation: {
     escapeValue: false, // React already does escaping

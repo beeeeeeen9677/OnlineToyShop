@@ -10,6 +10,7 @@ export type Namespace =
   | "common"
   | "auth"
   | "admin"
+  | "chat"
   | "header"
   | "goods"
   | "index"

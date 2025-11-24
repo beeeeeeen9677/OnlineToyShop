@@ -9,7 +9,7 @@ import HorizontalContainer from "./HorizontalContainer";
 import Banner from "./Banner";
 import { useQuery } from "@tanstack/react-query";
 import BackToTopButton from "../../components/BackToTopButton";
-import CustomerService from "../../components/CustomerService";
+import CustomerService from "../../components/CustomerService/CustomerService";
 
 // type IndexProps = {
 //   isLoggedIn: boolean;

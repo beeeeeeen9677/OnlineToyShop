@@ -1,0 +1,8 @@
+{
+  "buttons": {
+    "send": "Send"
+  },
+  "placeholders": {
+    "typeMessage": "Type your message..."
+  }
+}

@@ -1,9 +1,14 @@
 import { Activity, useState } from "react";
 import { RiCustomerService2Fill } from "react-icons/ri";
-import CSWindow from "./CSWindow";
+import { auth } from "../../firebase/firebase";
+import CsPanel from "./CsPanel";
 
 function CustomerService() {
   const [showWindow, setShowWindow] = useState(false);
+
+  if (!auth.currentUser)
+    // not logged in
+    return null;
 
   return (
     <>
@@ -14,7 +19,7 @@ function CustomerService() {
         <RiCustomerService2Fill />
       </button>
       <Activity mode={showWindow ? "visible" : "hidden"}>
-        <CSWindow />
+        <CsPanel />
       </Activity>
     </>
   );

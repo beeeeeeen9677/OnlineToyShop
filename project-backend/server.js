@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import session from "express-session";
+import http from "http";
+import { Server } from "socket.io";
 import cors from "cors";
 
 //import path from 'path';
@@ -66,9 +68,33 @@ const adminOnly = (req, res, next) => {
 };
 app.use("/api/admin", adminOnly, adminRoutes);
 
+// ✅ Create HTTP server
+const server = http.createServer(app);
+
+// ✅ Attach Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST"],
+  },
+});
+
+// ✅ Socket.IO events
+io.on("connection", (socket) => {
+  //console.log("User connected, socket-id:", socket.id);
+
+  socket.on("send_message", (data) => {
+    io.emit("receive_message", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
+
 // Start server only after successful DB connection
 mongoose.connection.once("open", () => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`🚀 Server is running & listening to port: ${PORT}`);
   });
 });
