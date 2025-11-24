@@ -30,9 +30,9 @@ const BackToTopButton = () => {
     <>
       <button
         onClick={scrollToTop}
-        className={`bg-white text-primary hover:bg-purple-50 hover:text-primary-hover border-2 border-primary rounded-full font-extrabold text-lg w-12 h-12 fixed bottom-10 right-10 lg:right-30  cursor-pointer z-20 ${
+        className={`bg-primary text-white hover:bg-primary-hover hover:text-purple-50 dark:bg-white dark:text-primary dark:hover:bg-purple-50 dark:hover:text-primary-hover border-2 border-primary rounded-full font-extrabold text-lg size-12 fixed bottom-26 lg:bottom-10 right-10 lg:right-46  cursor-pointer ${
           isVisible ? "scale-100" : "scale-0"
-        } transition-transform duration-300`}
+        } transition-transform duration-300  z-20`}
       >
         Top
       </button>
