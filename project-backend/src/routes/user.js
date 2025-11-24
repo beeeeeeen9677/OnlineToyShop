@@ -1,6 +1,9 @@
 import express from "express";
 const router = express.Router();
-import { getUserByFirebaseUID } from "../mongodb/collections/userColl.js";
+import {
+  getUserByFirebaseUID,
+  getUserByID,
+} from "../mongodb/collections/userColl.js";
 
 router.post("/", getUserByFirebaseUID);
 router.get("/last-verification-email", async (req, res) => {
@@ -21,5 +24,7 @@ router.post("/last-verification-email", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+router.get("/limited-data/:id", getUserByID);
 
 export default router;

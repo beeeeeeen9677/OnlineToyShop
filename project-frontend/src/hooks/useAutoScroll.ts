@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
-export const useAutoScroll = (msg: { senderId: string; message: string }[]) => {
+export const useAutoScroll = (
+  msg: { senderId: string; message: string; timestamp: string }[]
+) => {
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

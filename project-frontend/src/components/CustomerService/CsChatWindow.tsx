@@ -13,7 +13,11 @@ function CsChatWindow() {
   const maxMessageLength = 300;
 
   const [chatRecords, setChatRecords] = React.useState<
-    Array<{ senderId: string; message: string }>
+    Array<{
+      senderId: string;
+      message: string;
+      timestamp: string;
+    }>
   >([]);
   const [inputMessage, setInputMessage] = React.useState("");
 
@@ -22,7 +26,7 @@ function CsChatWindow() {
   useEffect(() => {
     socket.on("receive_message", (data) => {
       setChatRecords((prev) => [...prev, data]);
-      console.log("Message received:", data);
+      //console.log("Message received:", data);
     });
 
     return () => {
@@ -35,8 +39,9 @@ function CsChatWindow() {
   const sendMessage = () => {
     if (inputMessage.trim() !== "") {
       socket.emit("send_message", {
-        senderId: user._id, // or use actual user name/id
+        senderId: user._id,
         message: inputMessage,
+        timestamp: new Date().toISOString(),
       });
       setInputMessage("");
     }
@@ -49,13 +54,29 @@ function CsChatWindow() {
         ref={messageContainerRef}
         className="border-2 border-[#ccc] p-2 overflow-y-auto flex-1 space-y-3"
       >
-        {chatRecords.map((msg, index) => (
-          <ChatMessage
-            key={index}
-            isSender={msg.senderId === user._id}
-            message={msg.message}
-          />
-        ))}
+        {chatRecords.map((msg, index) => {
+          // show same date once
+          const currentDate = msg.timestamp.split("T")[0];
+          const previousDate =
+            index > 0 ? chatRecords[index - 1].timestamp.split("T")[0] : null;
+          const showDate = currentDate !== previousDate;
+
+          return (
+            <React.Fragment key={index}>
+              {showDate && (
+                <div className="bg-white text-black text-xs w-fit mx-auto p-0.75 rounded-lg">
+                  {currentDate}
+                </div>
+              )}
+              <ChatMessage
+                userId={user._id}
+                isSender={msg.senderId === user._id}
+                message={msg.message}
+                timestamp={msg.timestamp}
+              />
+            </React.Fragment>
+          );
+        })}
       </div>
       <div className="flex items-end">
         <div className="flex-1 relative m-1">
