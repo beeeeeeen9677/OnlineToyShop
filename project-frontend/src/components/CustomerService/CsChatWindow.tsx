@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import io from "socket.io-client";
 import { useUserContext } from "../../context/app";
 import ChatMessage from "./ChatMessage";
+import { useAutoScroll } from "../../hooks/useAutoScroll";
 
 const socket = io(import.meta.env.VITE_SERVER_URL);
 
@@ -15,6 +16,8 @@ function CsChatWindow() {
     Array<{ senderId: string; message: string }>
   >([]);
   const [inputMessage, setInputMessage] = React.useState("");
+
+  const messageContainerRef = useAutoScroll([chatRecords]);
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
@@ -42,7 +45,10 @@ function CsChatWindow() {
   return (
     <div className="bg-gray-400 flex-1 flex flex-col  ">
       <h1 className="text-center">Chat Room</h1>
-      <div className="border-2 border-[#ccc] p-2 overflow-y-auto flex-1">
+      <div
+        ref={messageContainerRef}
+        className="border-2 border-[#ccc] p-2 overflow-y-auto flex-1 space-y-3"
+      >
         {chatRecords.map((msg, index) => (
           <ChatMessage
             key={index}
