@@ -5,6 +5,9 @@
 .env.test.local
 .env.production.local
 
+# Firebase Admin SDK keys
+*firebase*adminsdk*.json
+
 # Dependencies
 node_modules/
 npm-debug.log*

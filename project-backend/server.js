@@ -19,6 +19,25 @@ export const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 
+// Firebase Admin SDK
+import admin from "firebase-admin";
+let serviceAccount;
+if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
+  const jsonString = Buffer.from(
+    process.env.FIREBASE_SERVICE_ACCOUNT_BASE64,
+    "base64"
+  ).toString("utf8");
+  serviceAccount = JSON.parse(jsonString);
+} else {
+  console.error("FIREBASE_SERVICE_ACCOUNT_BASE64 env variable not set");
+  process.exit(1);
+}
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+export default admin;
+
 // Routes
 import authRoutes from "./src/routes/auth.js";
 import userRoutes from "./src/routes/user.js";
