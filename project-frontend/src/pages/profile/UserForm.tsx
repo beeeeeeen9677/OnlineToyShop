@@ -151,8 +151,10 @@ function UserForm({ user }: UserFormProps) {
                     onClick={async () => {
                       if (timeLeft > 0) return;
                       try {
+                        setIsSubmitting(true);
                         await verifyUserEmail();
                         await setLastEmailSentAt(new Date());
+                        setIsSubmitting(false);
                         setTimeLeft(resendInterval);
                       } catch (error) {
                         console.error(

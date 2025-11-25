@@ -10,7 +10,7 @@ function Profile() {
       <>
         <Header />
         <div className="flex justify-center items-center h-100">
-          <div className="text-5xl text">Invalid User</div>
+          <div className="text-5xl text">-</div>
         </div>
       </>
     );
