@@ -11,7 +11,7 @@ function CsRoomTab({ room }: CsRoomTabProps) {
 
   return (
     <div>
-      <div>{!user || user.role !== "admin" ? "Admin" : room.roomId}</div>
+      <div>{!user || user.role !== "admin" ? "Admin" : room._id}</div>
     </div>
   );
 }

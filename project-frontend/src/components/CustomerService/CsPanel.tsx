@@ -19,7 +19,7 @@ function CsPanel({ isLoading, chatRooms }: CsPanelProps) {
   const setRoomIdEvent = useEffectEvent((chatRooms: ChatRoom[]) => {
     if (chatRooms && roomId === "" && chatRooms.length > 0) {
       //console.log("Setting roomId to:", chatRooms[0]?.roomId);
-      setRoomId(chatRooms[0].roomId);
+      setRoomId(chatRooms[0]._id);
     }
   });
   useEffect(() => {

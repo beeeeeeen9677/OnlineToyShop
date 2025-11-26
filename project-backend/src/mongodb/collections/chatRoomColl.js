@@ -1,6 +1,6 @@
 import ChatRoom from "../models/ChatRoom.js";
 import User from "../models/User.js";
-import crypto from "crypto";
+//import crypto from "crypto";
 
 export const createChatRoom = async (req, res) => {
   try {
@@ -8,7 +8,7 @@ export const createChatRoom = async (req, res) => {
     const adminIds = await User.find({ role: "admin" }).select("_id").exec();
     const userIds = [userId, ...adminIds.map((admin) => admin._id)];
     const newRoom = new ChatRoom({
-      roomId: crypto.randomUUID(),
+      //roomId: crypto.randomUUID(), // use mongoDB id directly
       joinedUsers: userIds,
     });
     await newRoom.save();

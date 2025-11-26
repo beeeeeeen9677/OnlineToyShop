@@ -1,6 +1,6 @@
 interface ChatRoom {
   _id: string; // MongoDB document ID
-  roomId: string;
+  // roomId: string;  // use MongoDB _id directly
   createdAt: string; // ISO date string from API
   joinedUsers: string[]; // Array of User IDs
 }

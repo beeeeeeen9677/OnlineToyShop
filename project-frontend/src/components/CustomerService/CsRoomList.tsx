@@ -14,10 +14,10 @@ function CsRoomList({ rooms = [] }: CsRoomListProps) {
     <div className="w-1/4">
       {rooms.map((room) => (
         <div
-          onClick={() => setRoomId(room.roomId)}
+          onClick={() => setRoomId(room._id)}
           key={room._id}
           className={`flex p-2 justify-center items-center h-18 overflow-hidden border-b border-gray-300 cursor-pointer ${
-            roomId === room.roomId
+            roomId === room._id
               ? "bg-gray-100 text-black"
               : "bg-gray-300 text-black hover:bg-gray-400"
           }`}

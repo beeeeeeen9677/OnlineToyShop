@@ -1,3 +1,4 @@
+import Message from "./mongodb/models/Message.js";
 import OnlineUser from "./mongodb/models/OnlineUser.js";
 
 const initSocket = async (io) => {
@@ -11,7 +12,7 @@ const initSocket = async (io) => {
         { upsert: true }
       ).exec();
 
-      console.log(`User ${userId} connected, socket-id: ${socket.id}`);
+      //console.log(`User ${userId} connected, socket-id: ${socket.id}`);
     } catch (err) {
       console.error("Error creating online user:", err);
     }
@@ -23,16 +24,27 @@ const initSocket = async (io) => {
     });
 
     // Send message to a room
-    socket.on("sendMessage", ({ roomId, message }) => {
-      io.to(roomId).emit("receiveMessage", {
-        senderId: userId,
-        message,
-        timestamp: new Date().toISOString(),
-      });
+    socket.on("sendMessage", async ({ roomId, message }) => {
+      const timestamp = new Date().toISOString();
+      try {
+        const msg = await Message.create({
+          roomId,
+          sender: userId,
+          message,
+          timestamp,
+        });
+        io.to(roomId).emit("receiveMessage", {
+          senderId: userId,
+          message,
+          timestamp,
+        });
+      } catch (error) {
+        console.error("Error saving or sending message:", error);
+      }
     });
 
     socket.on("disconnect", async () => {
-      console.log(`User ${userId} disconnected`, socket.id);
+      //console.log(`User ${userId} disconnected`, socket.id);
       try {
         await OnlineUser.updateOne(
           { userId },

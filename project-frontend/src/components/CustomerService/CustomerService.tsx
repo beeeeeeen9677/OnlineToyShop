@@ -36,7 +36,7 @@ function CustomerService() {
     if (!chatRooms) return;
 
     chatRooms.forEach((room) => {
-      socket.emit("joinRoom", room.roomId);
+      socket.emit("joinRoom", room._id);
     });
   }, [chatRooms, socket]);
 
