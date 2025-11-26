@@ -1,16 +1,15 @@
 import { useTranslation } from "../../i18n/hooks";
 import React, { useEffect } from "react";
-import io from "socket.io-client";
 import { useUserContext } from "../../context/app";
+import { useSocketContext } from "../../context/socket";
 import ChatMessage from "./ChatMessage";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
-
-const socket = io(import.meta.env.VITE_SERVER_URL);
 
 function CsChatWindow() {
   const { t } = useTranslation("chat");
   const user = useUserContext();
   const maxMessageLength = 300;
+  const socket = useSocketContext();
 
   const [chatRecords, setChatRecords] = React.useState<
     Array<{

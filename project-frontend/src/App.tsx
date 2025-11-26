@@ -15,11 +15,16 @@ import NotFound from "./pages/NotFound";
 
 // Firebase
 import { auth, monitorAuthState } from "./firebase/firebase";
+
+// Socket
+import { io, type Socket } from "socket.io-client";
+
 // Other Imports
 import api from "./services/api";
 import { AxiosError } from "axios";
 import type { User } from "./interface/user";
 import { LoginContext, UserContext } from "./context/app";
+import { SocketContext } from "./context/socket";
 
 function App() {
   const navigate = useNavigate();
@@ -28,6 +33,10 @@ function App() {
   const checkPathEvent = useEffectEvent(() => {
     const availablePaths = ["/", "/auth"];
     if (!availablePaths.includes(currentPath)) navigate("/");
+  });
+
+  const socket: Socket = io(import.meta.env.VITE_SERVER_URL, {
+    autoConnect: false,
   });
 
   // Monitor authentication state on app load
@@ -104,12 +113,14 @@ function App() {
   useEffect(() => {
     if (!isLoggedIn) {
       //setUser(undefined);
+      socket.disconnect();
       queryClient.removeQueries({ queryKey: ["user"] });
       return;
     }
+    socket.connect();
     // Fetch user data from backend
     //setUserEvent();
-  }, [isLoggedIn, queryClient]);
+  }, [isLoggedIn, queryClient, socket]);
 
   if (isLoading) {
     return <LoadingPanel />;
@@ -122,7 +133,9 @@ function App() {
   return (
     <UserContext.Provider value={user}>
       <LoginContext.Provider value={isLoggedIn}>
-        <RouteContainer />
+        <SocketContext.Provider value={socket}>
+          <RouteContainer />
+        </SocketContext.Provider>
       </LoginContext.Provider>
     </UserContext.Provider>
   );

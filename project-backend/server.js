@@ -99,6 +99,8 @@ const io = new Server(server, {
   },
 });
 
+// Make io accessible in api
+app.set("io", io);
 // Socket.IO events
 initSocket(io);
 
