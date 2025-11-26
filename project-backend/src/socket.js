@@ -29,11 +29,12 @@ const initSocket = async (io) => {
       try {
         const msg = await Message.create({
           roomId,
-          sender: userId,
+          senderId: userId,
           message,
           timestamp,
         });
         io.to(roomId).emit("receiveMessage", {
+          roomId,
           senderId: userId,
           message,
           timestamp,

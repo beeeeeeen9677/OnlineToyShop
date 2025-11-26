@@ -5,4 +5,12 @@ interface ChatRoom {
   joinedUsers: string[]; // Array of User IDs
 }
 
-export type { ChatRoom };
+interface ChatMessage {
+  _id: string;
+  roomId: string;
+  senderId: string;
+  message: string;
+  timestamp: string; // ISO date string
+}
+
+export type { ChatRoom, ChatMessage };

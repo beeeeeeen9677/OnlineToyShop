@@ -46,6 +46,8 @@ function ChatMessage({
     return <div>Error loading user data: {(error as Error).message}</div>;
   }
 
+  console.log("Is Sender: ", isSender);
+
   return (
     <div className={`${isSender ? "ml-auto" : "mr-auto"} w-fit`}>
       {!isSender && (

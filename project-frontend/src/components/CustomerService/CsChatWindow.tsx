@@ -1,10 +1,13 @@
 import { useTranslation } from "../../i18n/hooks";
 import React, { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "../../context/app";
 import { useSocketContext } from "../../context/socket";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
 import { useRoomContext } from "../../context/useRoomContext";
 import ChatMessage from "./ChatMessage";
+import type { ChatMessage as ChatMessageType } from "../../interface/chatRoom";
+import { useMessageQuery } from "../../hooks/useMessageQuery";
 
 function CsChatWindow() {
   const { t } = useTranslation("chat");
@@ -12,30 +15,63 @@ function CsChatWindow() {
   const { roomId } = useRoomContext();
   const maxMessageLength = 300;
   const socket = useSocketContext();
+  const queryClient = useQueryClient();
 
-  const [chatRecords, setChatRecords] = React.useState<
-    Array<{
-      senderId: string;
-      message: string;
-      timestamp: string;
-    }>
-  >([]);
+  // Fetch initial chat history from API
+  const {
+    data: chatRecords = [] as ChatMessageType[],
+    isLoading,
+    isError,
+  } = useMessageQuery(roomId!);
+
   const [inputMessage, setInputMessage] = React.useState("");
 
   const messageContainerRef = useAutoScroll(chatRecords);
 
+  // Listen for socket messages and merge into React Query cache
   useEffect(() => {
-    socket.on("receiveMessage", (data) => {
-      setChatRecords((prev) => [...prev, data]);
-      //console.log("Message received:", data);
-    });
+    const handleReceiveMessage = (data: ChatMessageType) => {
+      // Merge new message into the cached data for this room
+      queryClient.setQueryData<ChatMessageType[]>(
+        ["chatMessages", { roomId: data.roomId }],
+        (oldMessages) => {
+          if (!oldMessages) return [data];
+          // Avoid duplicates by checking if message already exists
+          const exists = oldMessages.some(
+            (msg) =>
+              msg.timestamp === data.timestamp &&
+              msg.senderId === data.senderId &&
+              msg.message === data.message
+          );
+          if (exists) return oldMessages;
+          return [...oldMessages, data];
+        }
+      );
+    };
+
+    // socket.on("receive_message", (data) => {
+    //   setChat((prev) => [...prev, data]);
+    // });
+    socket.on("receiveMessage", handleReceiveMessage);
 
     return () => {
-      socket.off("receiveMessage");
+      socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, [socket]);
+  }, [socket, queryClient]);
 
   if (!user) return <div>User not exist</div>;
+  if (isLoading)
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="border-10 rounded-full size-20 border-t-primary animate-spin"></div>
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="flex-1 flex items-center justify-center text-red-500">
+        Error loading messages
+      </div>
+    );
 
   const sendMessage = () => {
     if (inputMessage.trim() !== "") {
