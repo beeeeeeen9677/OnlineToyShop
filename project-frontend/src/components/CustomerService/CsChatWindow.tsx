@@ -1,5 +1,5 @@
 import { useTranslation } from "../../i18n/hooks";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "../../context/app";
 import { useSocketContext } from "../../context/socket";
@@ -16,6 +16,7 @@ function CsChatWindow() {
   const maxMessageLength = 300;
   const socket = useSocketContext();
   const queryClient = useQueryClient();
+  const isFirstConnect = useRef(true);
 
   // Fetch initial chat history from API
   const {
@@ -33,7 +34,7 @@ function CsChatWindow() {
     const handleReceiveMessage = (data: ChatMessageType) => {
       // Merge new message into the cached data for this room
       queryClient.setQueryData<ChatMessageType[]>(
-        ["chatMessages", { roomId: data.roomId }],
+        ["chatMessages", { roomId }],
         (oldMessages) => {
           if (!oldMessages) return [data];
           // Avoid duplicates by checking if message already exists
@@ -49,15 +50,27 @@ function CsChatWindow() {
       );
     };
 
-    // socket.on("receive_message", (data) => {
-    //   setChat((prev) => [...prev, data]);
-    // });
+    // Invalidate cache on reconnect to fetch any missed messages
+    const handleReconnect = () => {
+      if (isFirstConnect.current) {
+        isFirstConnect.current = false;
+        return; // Skip invalidation on first connect
+      }
+      if (roomId) {
+        queryClient.invalidateQueries({
+          queryKey: ["chatMessages", { roomId }],
+        });
+      }
+    };
+
     socket.on("receiveMessage", handleReceiveMessage);
+    socket.on("connect", handleReconnect);
 
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
+      socket.off("connect", handleReconnect);
     };
-  }, [socket, queryClient]);
+  }, [socket, queryClient, roomId]);
 
   if (!user) return <div>User not exist</div>;
   if (isLoading)

@@ -34,7 +34,6 @@ const initSocket = async (io) => {
           timestamp,
         });
         io.to(roomId).emit("receiveMessage", {
-          roomId,
           senderId: userId,
           message,
           timestamp,
