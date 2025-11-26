@@ -40,10 +40,11 @@ admin.initializeApp({
 export default admin;
 
 // Routes
-import authRoutes from "./src/routes/auth.js";
-import userRoutes from "./src/routes/user.js";
 import adminRoutes from "./src/routes/admin.js";
+import authRoutes from "./src/routes/auth.js";
+import chatRoutes from "./src/routes/chat.js";
 import goodRoutes from "./src/routes/goods.js";
+import userRoutes from "./src/routes/user.js";
 
 // Import middleware
 import { verifyFirebaseToken } from "./src/middleware/authMiddleware.js";
@@ -77,6 +78,7 @@ app.use(verifyFirebaseToken);
 
 // Protected routes
 app.use("/api/user", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 // Admin Authorization Middleware
 const adminOnly = (req, res, next) => {

@@ -53,7 +53,7 @@ function AdminEditProduct() {
     },
   });
 
-  const { mutateAsync: setProductMutation } = useMutation({
+  const { mutateAsync: setProductMutation, isPending } = useMutation({
     mutationFn: async (formData: FormData) => {
       const path = `admin/goods/${product?._id}`;
       const response = await api.put(path, formData);
@@ -93,6 +93,7 @@ function AdminEditProduct() {
   return (
     <div className="animate-fade-in min-h-screen">
       <title>Edit Product</title>
+      {isPending && <LoadingPanel />}
       <Header />
       {/* Back Btn */}
       <Link to="/admin/product">

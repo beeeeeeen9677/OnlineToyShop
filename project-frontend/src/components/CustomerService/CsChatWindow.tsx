@@ -2,12 +2,14 @@ import { useTranslation } from "../../i18n/hooks";
 import React, { useEffect } from "react";
 import { useUserContext } from "../../context/app";
 import { useSocketContext } from "../../context/socket";
-import ChatMessage from "./ChatMessage";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
+import { useRoomContext } from "../../context/useRoomContext";
+import ChatMessage from "./ChatMessage";
 
 function CsChatWindow() {
   const { t } = useTranslation("chat");
   const user = useUserContext();
+  const { roomId } = useRoomContext();
   const maxMessageLength = 300;
   const socket = useSocketContext();
 
@@ -31,7 +33,7 @@ function CsChatWindow() {
     return () => {
       socket.off("receive_message");
     };
-  }, []);
+  }, [socket]);
 
   if (!user) return <div>User not exist</div>;
 
@@ -48,7 +50,9 @@ function CsChatWindow() {
 
   return (
     <div className="bg-gray-400 flex-1 flex flex-col  ">
-      <h1 className="text-center">Chat Room</h1>
+      <h1 className="text-center">
+        {user.role !== "admin" ? "Admin" : roomId}
+      </h1>
       <div
         ref={messageContainerRef}
         className="border-2 border-[#ccc] p-2 overflow-y-auto flex-1 space-y-3"

@@ -1,6 +1,7 @@
 {
   "buttons": {
-    "send": "Send"
+    "send": "Send",
+    "startConversation": "Start Conversation"
   },
   "placeholders": {
     "typeMessage": "Type your message..."

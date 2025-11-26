@@ -1,6 +1,7 @@
 {
   "buttons": {
-    "send": "發送"
+    "send": "發送",
+    "startConversation": "開始對話"
   },
   "placeholders": {
     "typeMessage": "輸入訊息..."
