@@ -1,4 +1,4 @@
-import { Activity, useState } from "react";
+import { Activity, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { RiCustomerService2Fill } from "react-icons/ri";
 import { auth } from "../../firebase/firebase";
@@ -6,6 +6,8 @@ import api from "../../services/api";
 import type { AxiosError } from "axios";
 import { RoomContext } from "../../context/useRoomContext";
 import { useUserContext } from "../../context/app";
+import { useSocketContext } from "../../context/socket";
+import type { ChatRoom } from "../../interface/chatRoom";
 import CsPanel from "./CsPanel";
 
 // root component for customer service chat
@@ -14,12 +16,14 @@ function CustomerService() {
   const [roomId, setRoomId] = useState<string>("");
 
   const user = useUserContext();
+  const socket = useSocketContext();
+
   const {
     data: chatRooms, // rooms current user joined
     isLoading,
     isError,
     error,
-  } = useQuery({
+  } = useQuery<ChatRoom[]>({
     queryKey: ["chatRooms", { userId: user?._id }],
     queryFn: async () => {
       const res = await api.get(`/chat/chatRooms/${user?._id}`);
@@ -27,6 +31,14 @@ function CustomerService() {
     },
     enabled: !!user,
   });
+
+  useEffect(() => {
+    if (!chatRooms) return;
+
+    chatRooms.forEach((room) => {
+      socket.emit("joinRoom", room.roomId);
+    });
+  }, [chatRooms, socket]);
 
   if (isError) {
     console.error(
@@ -48,7 +60,7 @@ function CustomerService() {
         <RiCustomerService2Fill />
       </button>
       <Activity mode={showWindow ? "visible" : "hidden"}>
-        <CsPanel isLoading={isLoading} chatRooms={chatRooms} />
+        <CsPanel isLoading={isLoading} chatRooms={chatRooms ?? []} />
       </Activity>
     </RoomContext.Provider>
   );

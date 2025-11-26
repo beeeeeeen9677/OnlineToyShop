@@ -47,7 +47,7 @@ export const createNewGoods = async (req, res) => {
       imageUrl: publicUrlData.publicUrl,
       category: category || [], // Use empty array if no category provided
     };
-    const result = await Good.create(newGood);
+    const result = await Good.create(newGood).exec();
 
     res.json({
       message: "File uploaded successfully!",

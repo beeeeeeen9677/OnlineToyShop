@@ -25,13 +25,13 @@ function CsChatWindow() {
   const messageContainerRef = useAutoScroll(chatRecords);
 
   useEffect(() => {
-    socket.on("receive_message", (data) => {
+    socket.on("receiveMessage", (data) => {
       setChatRecords((prev) => [...prev, data]);
       //console.log("Message received:", data);
     });
 
     return () => {
-      socket.off("receive_message");
+      socket.off("receiveMessage");
     };
   }, [socket]);
 
@@ -39,10 +39,9 @@ function CsChatWindow() {
 
   const sendMessage = () => {
     if (inputMessage.trim() !== "") {
-      socket.emit("send_message", {
-        senderId: user._id,
+      socket.emit("sendMessage", {
+        roomId,
         message: inputMessage,
-        timestamp: new Date().toISOString(),
       });
       setInputMessage("");
     }

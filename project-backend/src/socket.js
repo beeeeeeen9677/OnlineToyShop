@@ -17,15 +17,15 @@ const initSocket = async (io) => {
     }
 
     // Join a room
-    socket.on("join_room", (roomId) => {
+    socket.on("joinRoom", (roomId) => {
       socket.join(roomId);
       console.log(`Socket ${socket.id} joined room ${roomId}`);
     });
 
     // Send message to a room
-    socket.on("send_message", ({ roomId, message }) => {
-      io.to(roomId).emit("receive_message", {
-        senderId: socket.id,
+    socket.on("sendMessage", ({ roomId, message }) => {
+      io.to(roomId).emit("receiveMessage", {
+        senderId: userId,
         message,
         timestamp: new Date().toISOString(),
       });
