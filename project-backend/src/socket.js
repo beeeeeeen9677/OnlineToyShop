@@ -1,6 +1,20 @@
-const initSocket = (io) => {
-  io.on("connection", (socket) => {
-    console.log("User connected, socket-id:", socket.id);
+import OnlineUser from "./mongodb/models/OnlineUser.js";
+
+const initSocket = async (io) => {
+  await OnlineUser.deleteMany().exec(); // Clear online users on server restart
+  io.on("connection", async (socket) => {
+    const { userId } = socket.handshake.auth;
+    try {
+      await OnlineUser.updateOne(
+        { userId },
+        { $set: { userId }, $addToSet: { socketIds: socket.id } }, // add new socketId
+        { upsert: true }
+      ).exec();
+
+      console.log(`User ${userId} connected, socket-id: ${socket.id}`);
+    } catch (err) {
+      console.error("Error creating online user:", err);
+    }
 
     // Join a room
     socket.on("join_room", (roomId) => {
@@ -17,8 +31,17 @@ const initSocket = (io) => {
       });
     });
 
-    socket.on("disconnect", () => {
-      console.log("User disconnected", socket.id);
+    socket.on("disconnect", async () => {
+      console.log(`User ${userId} disconnected`, socket.id);
+      try {
+        await OnlineUser.updateOne(
+          { userId },
+          { $pull: { socketIds: socket.id } }
+        ).exec();
+        await OnlineUser.deleteOne({ userId, socketIds: { $size: 0 } }).exec();
+      } catch (error) {
+        console.error("Error deleting online user on disconnect:", error);
+      }
     });
   });
 };

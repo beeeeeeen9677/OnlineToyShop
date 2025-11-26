@@ -18,6 +18,9 @@ import { auth, monitorAuthState } from "./firebase/firebase";
 
 // Socket
 import { io, type Socket } from "socket.io-client";
+const socket: Socket = io(import.meta.env.VITE_SERVER_URL, {
+  autoConnect: false,
+});
 
 // Other Imports
 import api from "./services/api";
@@ -33,10 +36,6 @@ function App() {
   const checkPathEvent = useEffectEvent(() => {
     const availablePaths = ["/", "/auth"];
     if (!availablePaths.includes(currentPath)) navigate("/");
-  });
-
-  const socket: Socket = io(import.meta.env.VITE_SERVER_URL, {
-    autoConnect: false,
   });
 
   // Monitor authentication state on app load
@@ -117,10 +116,13 @@ function App() {
       queryClient.removeQueries({ queryKey: ["user"] });
       return;
     }
-    socket.connect();
+    if (isLoggedIn && user) {
+      socket.auth = { userId: user._id };
+      socket.connect();
+    }
     // Fetch user data from backend
     //setUserEvent();
-  }, [isLoggedIn, queryClient, socket]);
+  }, [isLoggedIn, queryClient, user]);
 
   if (isLoading) {
     return <LoadingPanel />;
