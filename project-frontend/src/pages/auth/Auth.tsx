@@ -114,6 +114,9 @@ function Auth() {
     });
     setErrPrompt(localizedMessage);
     setIsLoading(false);
+    if (passwordRef.current) {
+      passwordRef.current.value = "";
+    }
   };
 
   const emailPwLogin = () => {
