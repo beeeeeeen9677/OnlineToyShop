@@ -4,6 +4,7 @@ interface ChatRoom {
   createdAt: string; // ISO date string from API
   joinedUsers: string[]; // Array of User IDs
   lastMessageTime: string | null; // Timestamp of latest message in room
+  lastMessageSenderId: string | null; // Who sent the last message
   lastReadTime: string | null; // Last read timestamp for current user in this room
 }
 

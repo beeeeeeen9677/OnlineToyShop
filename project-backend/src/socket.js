@@ -44,7 +44,7 @@ const initSocket = async (io) => {
 
     // Send message to a room
     socket.on("sendMessage", async ({ roomId, message }) => {
-      console.log("Send message :", userId, message);
+      // console.log("Send message :", userId, message);
       const timestamp = dayjs().tz(HK_TIMEZONE).format("YYYY-MM-DDTHH:mm:ss");
 
       try {
@@ -60,7 +60,7 @@ const initSocket = async (io) => {
           message,
           timestamp,
         });
-        console.log(`Message sent to room ${roomId}`);
+        // console.log(`Message sent to room ${roomId}`);
       } catch (error) {
         console.error("Error saving or sending message:", error);
       }

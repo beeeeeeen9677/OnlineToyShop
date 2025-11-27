@@ -1,12 +1,13 @@
-import { Activity, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { Activity, useState, useEffect, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RiCustomerService2Fill } from "react-icons/ri";
 import { auth } from "../../firebase/firebase";
 import api from "../../services/api";
 import type { AxiosError } from "axios";
 import { RoomContext } from "../../context/useRoomContext";
 import { useUserContext } from "../../context/app";
-import type { ChatRoom } from "../../interface/chatRoom";
+import { useSocketContext } from "../../context/socket";
+import type { ChatRoom, ChatMessage } from "../../interface/chatRoom";
 import CsPanel from "./CsPanel";
 
 // root component for customer service chat
@@ -15,6 +16,9 @@ function CustomerService() {
   const [roomId, setRoomId] = useState<string>("");
 
   const user = useUserContext();
+  const socket = useSocketContext();
+  const queryClient = useQueryClient();
+  const isFirstConnect = useRef(true);
 
   const {
     data: chatRooms, // rooms of current user joined
@@ -30,6 +34,61 @@ function CustomerService() {
     enabled: !!user,
   });
 
+  // Listen for socket messages
+  // moved to root level to ensure consistent updates
+  useEffect(() => {
+    const handleReceiveMessage = (data: ChatMessage) => {
+      // Merge new message into the cached data (msg record) for this room
+      queryClient.setQueryData<ChatMessage[]>(
+        ["chatMessages", { roomId: data.roomId }],
+        (oldMessages) => {
+          if (!oldMessages) return; // probably havn't open the chat window, not fetch yet
+          // Avoid duplicates by checking if message already exists
+          const exists = oldMessages.some(
+            (msg) =>
+              msg.timestamp === data.timestamp &&
+              msg.senderId === data.senderId &&
+              msg.message === data.message
+          );
+          if (exists) return oldMessages;
+          return [...oldMessages, data];
+        }
+      );
+
+      // Update lastMessageTime and lastMessageSenderId in chatRooms cache (for red dot indicator)
+      queryClient.setQueryData<ChatRoom[]>(
+        ["chatRooms", { userId: user?._id }],
+        (oldRooms) =>
+          oldRooms?.map((room) =>
+            room._id === data.roomId
+              ? {
+                  ...room,
+                  lastMessageTime: data.timestamp,
+                  lastMessageSenderId: data.senderId,
+                }
+              : room
+          )
+      );
+    };
+
+    // Invalidate cache on reconnect to fetch any missed messages
+    const handleReconnect = () => {
+      if (isFirstConnect.current) {
+        isFirstConnect.current = false;
+        return; // Skip invalidation on first connect
+      }
+      queryClient.invalidateQueries({ queryKey: ["chatMessages"] });
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
+    socket.on("connect", handleReconnect);
+
+    return () => {
+      socket.off("receiveMessage", handleReceiveMessage);
+      socket.off("connect", handleReconnect);
+    };
+  }, [socket, queryClient, user?._id]);
+
   if (isError) {
     console.error(
       (error as AxiosError<{ error: string }>).response?.data.error
@@ -41,6 +100,15 @@ function CustomerService() {
     // not logged in
     return null;
 
+  // check if any room has unread messages
+  // ignore if last message is from current user
+  const hasAnyUnread = chatRooms?.some(
+    (room) =>
+      room.lastMessageTime &&
+      room.lastMessageSenderId !== user?._id &&
+      (!room.lastReadTime || room.lastMessageTime > room.lastReadTime)
+  );
+
   return (
     <RoomContext.Provider value={{ roomId, setRoomId }}>
       <button
@@ -48,7 +116,11 @@ function CustomerService() {
         className={`bg-primary text-white hover:bg-primary-hover hover:text-purple-50 dark:bg-white dark:text-primary dark:hover:bg-purple-50 dark:hover:text-primary-hover border-2 border-primary rounded-full flex items-center justify-center font-extrabold text-3xl size-12 fixed bottom-10 right-10 lg:right-30 cursor-pointer transition-transform duration-300 z-20`}
       >
         <RiCustomerService2Fill />
+        {hasAnyUnread && !showWindow && (
+          <span className="bg-red-500 rounded-full size-3 animate-pulse absolute top-0 right-0" />
+        )}
       </button>
+
       <Activity mode={showWindow ? "visible" : "hidden"}>
         <CsPanel isLoading={isLoading} chatRooms={chatRooms ?? []} />
       </Activity>

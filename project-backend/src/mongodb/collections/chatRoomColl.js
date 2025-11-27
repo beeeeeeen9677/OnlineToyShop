@@ -43,9 +43,9 @@ export const getChatRoomsForUser = async (req, res) => {
     // without promise.all will get array of promise
     const roomsWithExtraData = await Promise.all(
       chatRooms.map(async (room) => {
-        const latestMessageTime = await Message.findOne({ roomId: room._id })
+        const latestMessage = await Message.findOne({ roomId: room._id })
           .sort({ timestamp: -1 }) // latest msg
-          .select("timestamp") // only need timestamp field
+          .select("timestamp senderId") // need timestamp and senderId
           .lean()
           .exec();
 
@@ -58,11 +58,12 @@ export const getChatRoomsForUser = async (req, res) => {
           createdAt: dayjs(room.createdAt)
             .tz(HK_TIMEZONE)
             .format("YYYY-MM-DDTHH:mm:ss"),
-          lastMessageTime: latestMessageTime
-            ? dayjs(latestMessageTime.timestamp)
+          lastMessageTime: latestMessage
+            ? dayjs(latestMessage.timestamp)
                 .tz(HK_TIMEZONE)
                 .format("YYYY-MM-DDTHH:mm:ss")
             : null,
+          lastMessageSenderId: latestMessage?.senderId?.toString() || null,
           lastReadTime: userLastReadAt
             ? dayjs(userLastReadAt)
                 .tz(HK_TIMEZONE)

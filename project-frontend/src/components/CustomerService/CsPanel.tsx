@@ -14,12 +14,13 @@ type CsPanelProps = {
 function CsPanel({ isLoading, chatRooms }: CsPanelProps) {
   const { roomId, setRoomId } = useRoomContext();
 
+  // Socket listener is now in CustomerService.tsx so it stays active even when panel is closed
+
   // select first room when open cs panel
   // (also trigger when user clicked start conversation btn)
   const setRoomIdEvent = useEffectEvent((chatRooms: ChatRoom[]) => {
     if (chatRooms && roomId === "" && chatRooms.length > 0) {
       //console.log("Setting roomId to:", chatRooms[0]?.roomId);
-      return;
       setRoomId(chatRooms[0]._id);
     }
   });

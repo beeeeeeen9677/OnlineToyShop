@@ -1,6 +1,5 @@
 import { useTranslation } from "../../i18n/hooks";
-import React, { useEffect, useRef } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import React, { useEffect } from "react";
 import { useUserContext } from "../../context/app";
 import { useSocketContext } from "../../context/socket";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
@@ -11,6 +10,14 @@ import type {
   ChatRoom,
 } from "../../interface/chatRoom";
 import { useMessageQuery } from "../../hooks/useMessageQuery";
+import api from "../../services/api";
+import { useQueryClient } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 function CsChatWindow() {
   const { t } = useTranslation("chat");
@@ -18,8 +25,6 @@ function CsChatWindow() {
   const { roomId } = useRoomContext();
   const maxMessageLength = 300;
   const socket = useSocketContext();
-  const queryClient = useQueryClient();
-  const isFirstConnect = useRef(true);
 
   // Fetch initial chat history from API
   const {
@@ -32,61 +37,36 @@ function CsChatWindow() {
 
   const messageContainerRef = useAutoScroll(chatRecords);
 
-  // Listen for socket messages and merge into React Query cache
+  const queryClient = useQueryClient();
+
+  // set last read time when opening room or receiving new messages
   useEffect(() => {
-    const handleReceiveMessage = (data: ChatMessageType) => {
-      // Merge new message into the cached data (msg record) for this room
-      queryClient.setQueryData<ChatMessageType[]>(
-        ["chatMessages", { roomId: data.roomId }],
-        (oldMessages) => {
-          if (!oldMessages) return [data];
-          // Avoid duplicates by checking if message already exists
-          const exists = oldMessages.some(
-            (msg) =>
-              msg.timestamp === data.timestamp &&
-              msg.senderId === data.senderId &&
-              msg.message === data.message
-          );
-          if (exists) return oldMessages;
-          return [...oldMessages, data];
-        }
-      );
+    if (chatRecords.length === 0) return;
 
-      // Update lastMessageTime in chatRooms cache (for red dot indicator)
-      queryClient.setQueryData<ChatRoom[]>(
-        ["chatRooms", { userId: user?._id }],
-        (oldRooms) =>
-          oldRooms?.map((room) =>
-            room._id === data.roomId
-              ? { ...room, lastMessageTime: data.timestamp }
-              : room
-          )
-      );
-
-      console.log("Received message via socket:", data);
-    };
-
-    // Invalidate cache on reconnect to fetch any missed messages
-    const handleReconnect = () => {
-      if (isFirstConnect.current) {
-        isFirstConnect.current = false;
-        return; // Skip invalidation on first connect
-      }
-      if (roomId) {
-        queryClient.invalidateQueries({
-          queryKey: ["chatMessages", { roomId }],
-        });
+    const setLastReadTime = async () => {
+      try {
+        await api.put(`/chat/lastReadAt/${roomId}`);
+        // Use HK timezone to match backend format
+        const hkTime = dayjs()
+          .tz("Asia/Hong_Kong")
+          .format("YYYY-MM-DDTHH:mm:ss");
+        // set directly to avoid extra refetch
+        queryClient.setQueryData<ChatRoom[]>(
+          ["chatRooms", { userId: user?._id }],
+          (oldRooms) =>
+            oldRooms?.map((room) =>
+              room._id === roomId ? { ...room, lastReadTime: hkTime } : room
+            )
+        );
+      } catch (error) {
+        console.error("Error marking room as read:", error);
       }
     };
 
-    socket.on("receiveMessage", handleReceiveMessage);
-    socket.on("connect", handleReconnect);
+    setLastReadTime();
+  }, [queryClient, user?._id, roomId, chatRecords.length]);
 
-    return () => {
-      socket.off("receiveMessage", handleReceiveMessage);
-      socket.off("connect", handleReconnect);
-    };
-  }, [socket, queryClient, roomId]);
+  // Socket listener is now in CsPanel so it stays active even when this component unmounts
 
   if (!user) return <div>User not exist</div>;
   if (isLoading)

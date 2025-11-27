@@ -11,9 +11,17 @@ function CsRoomTab({ room }: CsRoomTabProps) {
   const { roomId: currentRoomId } = useRoomContext();
 
   // Check if there are unread messages
+  // ignore if last message is from current user
   const hasUnread =
     room.lastMessageTime &&
+    room.lastMessageSenderId !== user?._id &&
     (!room.lastReadTime || room.lastMessageTime > room.lastReadTime);
+
+  // console.log("Room:", room._id, {
+  //   lastMessageTime: room.lastMessageTime,
+  //   lastReadTime: room.lastReadTime,
+  //   hasUnread,
+  // });
 
   return (
     <div className="flex w-full h-full items-center justify-center relative">

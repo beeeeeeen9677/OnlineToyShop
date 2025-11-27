@@ -1,9 +1,6 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useRoomContext } from "../../context/useRoomContext";
-import { useUserContext } from "../../context/app";
 import type { ChatRoom } from "../../interface/chatRoom";
 import CsRoomTab from "./CsRoomTab";
-import api from "../../services/api";
 
 type CsRoomListProps = {
   rooms?: ChatRoom[];
@@ -11,8 +8,6 @@ type CsRoomListProps = {
 
 function CsRoomList({ rooms = [] }: CsRoomListProps) {
   const { roomId, setRoomId } = useRoomContext();
-  const user = useUserContext();
-  const queryClient = useQueryClient();
 
   /*
   const {
@@ -41,22 +36,6 @@ function CsRoomList({ rooms = [] }: CsRoomListProps) {
       );
     }
     */
-    try {
-      await api.put(`/chat/lastReadAt/${selectedRoomId}`);
-      //console.log("Marked room as read:", selectedRoomId);
-      // set directly to avoid extra refetch
-      queryClient.setQueryData<ChatRoom[]>(
-        ["chatRooms", { userId: user?._id }],
-        (oldRooms) =>
-          oldRooms?.map((room) =>
-            room._id === selectedRoomId
-              ? { ...room, lastReadTime: new Date().toISOString() }
-              : room
-          )
-      );
-    } catch (error) {
-      console.error("Error marking room as read:", error);
-    }
   };
 
   return (
