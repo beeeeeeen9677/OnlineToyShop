@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import ChatRoom from "../models/ChatRoom.js";
+import Message from "../models/Message.js";
 import User from "../models/User.js";
 
 // Setup dayjs plugins
@@ -9,6 +10,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 const HK_TIMEZONE = "Asia/Hong_Kong";
 
+// create a room with userId for specific user and all adminIds
 export const createChatRoom = async (req, res) => {
   try {
     const { userId } = req.body; // user excluding admin
@@ -29,6 +31,7 @@ export const createChatRoom = async (req, res) => {
   }
 };
 
+// get all chat rooms with provided userId
 export const getChatRoomsForUser = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -36,17 +39,60 @@ export const getChatRoomsForUser = async (req, res) => {
       .lean()
       .exec();
 
-    // Convert createdAt from UTC to HK timezone
-    const roomsWithHKTime = chatRooms.map((room) => ({
-      ...room,
-      createdAt: dayjs(room.createdAt)
-        .tz(HK_TIMEZONE)
-        .format("YYYY-MM-DDTHH:mm:ss"),
-    }));
+    // Get latest message timestamp for each room
+    // without promise.all will get array of promise
+    const roomsWithExtraData = await Promise.all(
+      chatRooms.map(async (room) => {
+        const latestMessageTime = await Message.findOne({ roomId: room._id })
+          .sort({ timestamp: -1 }) // latest msg
+          .select("timestamp") // only need timestamp field
+          .lean()
+          .exec();
 
-    res.json(roomsWithHKTime);
+        // Get user's lastReadAt from the Map
+        const userLastReadAt = room.lastReadTime?.[userId] || null;
+
+        // convert all time to HK timezone
+        return {
+          ...room,
+          createdAt: dayjs(room.createdAt)
+            .tz(HK_TIMEZONE)
+            .format("YYYY-MM-DDTHH:mm:ss"),
+          lastMessageTime: latestMessageTime
+            ? dayjs(latestMessageTime.timestamp)
+                .tz(HK_TIMEZONE)
+                .format("YYYY-MM-DDTHH:mm:ss")
+            : null,
+          lastReadTime: userLastReadAt
+            ? dayjs(userLastReadAt)
+                .tz(HK_TIMEZONE)
+                .format("YYYY-MM-DDTHH:mm:ss")
+            : null,
+        };
+      })
+    );
+
+    res.json(roomsWithExtraData);
   } catch (err) {
     console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Mark room as read for current user
+export const setLastReadAt = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const userId = req.session.user._id;
+
+    await ChatRoom.updateOne(
+      { _id: roomId },
+      { $set: { [`lastReadTime.${userId}`]: new Date() } }
+    ).exec();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error marking room as read:", err);
     res.status(500).json({ error: err.message });
   }
 };

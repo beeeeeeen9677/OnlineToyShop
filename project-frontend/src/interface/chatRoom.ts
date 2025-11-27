@@ -3,6 +3,8 @@ interface ChatRoom {
   // roomId: string;  // use MongoDB _id directly
   createdAt: string; // ISO date string from API
   joinedUsers: string[]; // Array of User IDs
+  lastMessageTime: string | null; // Timestamp of latest message in room
+  lastReadTime: string | null; // Last read timestamp for current user in this room
 }
 
 interface ChatMessage {

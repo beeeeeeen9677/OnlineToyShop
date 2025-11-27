@@ -6,7 +6,10 @@ import { useSocketContext } from "../../context/socket";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
 import { useRoomContext } from "../../context/useRoomContext";
 import ChatMessage from "./ChatMessage";
-import type { ChatMessage as ChatMessageType } from "../../interface/chatRoom";
+import type {
+  ChatMessage as ChatMessageType,
+  ChatRoom,
+} from "../../interface/chatRoom";
 import { useMessageQuery } from "../../hooks/useMessageQuery";
 
 function CsChatWindow() {
@@ -32,7 +35,7 @@ function CsChatWindow() {
   // Listen for socket messages and merge into React Query cache
   useEffect(() => {
     const handleReceiveMessage = (data: ChatMessageType) => {
-      // Merge new message into the cached data for this room
+      // Merge new message into the cached data (msg record) for this room
       queryClient.setQueryData<ChatMessageType[]>(
         ["chatMessages", { roomId: data.roomId }],
         (oldMessages) => {
@@ -48,6 +51,19 @@ function CsChatWindow() {
           return [...oldMessages, data];
         }
       );
+
+      // Update lastMessageTime in chatRooms cache (for red dot indicator)
+      queryClient.setQueryData<ChatRoom[]>(
+        ["chatRooms", { userId: user?._id }],
+        (oldRooms) =>
+          oldRooms?.map((room) =>
+            room._id === data.roomId
+              ? { ...room, lastMessageTime: data.timestamp }
+              : room
+          )
+      );
+
+      console.log("Received message via socket:", data);
     };
 
     // Invalidate cache on reconnect to fetch any missed messages
@@ -116,7 +132,7 @@ function CsChatWindow() {
           return (
             <React.Fragment key={index}>
               {showDate && (
-                <div className="bg-white text-black text-xs w-fit mx-auto p-0.75 rounded-lg">
+                <div className="bg-white text-black text-xs w-fit mx-auto p-0.75 px-2 rounded-lg sticky top-0 z-10 shadow-sm">
                   {currentDate}
                 </div>
               )}
