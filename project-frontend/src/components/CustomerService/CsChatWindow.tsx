@@ -34,7 +34,7 @@ function CsChatWindow() {
     const handleReceiveMessage = (data: ChatMessageType) => {
       // Merge new message into the cached data for this room
       queryClient.setQueryData<ChatMessageType[]>(
-        ["chatMessages", { roomId }],
+        ["chatMessages", { roomId: data.roomId }],
         (oldMessages) => {
           if (!oldMessages) return [data];
           // Avoid duplicates by checking if message already exists
@@ -89,6 +89,7 @@ function CsChatWindow() {
   const sendMessage = () => {
     if (inputMessage.trim() !== "") {
       socket.emit("sendMessage", {
+        //senderId: user._id,
         roomId,
         message: inputMessage,
       });
@@ -120,7 +121,7 @@ function CsChatWindow() {
                 </div>
               )}
               <ChatMessage
-                userId={user._id}
+                senderId={msg.senderId}
                 isSender={msg.senderId === user._id}
                 message={msg.message}
                 timestamp={msg.timestamp}

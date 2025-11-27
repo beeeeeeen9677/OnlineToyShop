@@ -17,7 +17,9 @@ const createNewUser = async (req, res) => {
   try {
     const duplicate = await User.findOne({
       firebaseUID: userData.firebaseUID,
-    }).exec();
+    })
+      .lean()
+      .exec();
     if (duplicate) {
       return res
         .status(409)
@@ -47,7 +49,9 @@ const getUserByFirebaseUID = async (req, res) => {
   try {
     const user = await User.findOne({
       firebaseUID: firebaseUID,
-    }).exec();
+    })
+      .lean()
+      .exec();
     if (!user) {
       return res
         .status(404)
@@ -67,7 +71,9 @@ const getLimitedUserDataByID = async (req, res) => {
   try {
     const user = await User.findOne({
       _id: id,
-    }).exec();
+    })
+      .lean()
+      .exec();
     if (!user) {
       return res
         .status(404)

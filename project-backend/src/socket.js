@@ -3,6 +3,7 @@ import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import Message from "./mongodb/models/Message.js";
 import OnlineUser from "./mongodb/models/OnlineUser.js";
+import ChatRoom from "./mongodb/models/ChatRoom.js";
 
 // Setup dayjs plugins
 dayjs.extend(utc);
@@ -21,32 +22,45 @@ const initSocket = async (io) => {
       ).exec();
 
       //console.log(`User ${userId} connected, socket-id: ${socket.id}`);
+
+      // Auto-join all rooms
+      const userRooms = await ChatRoom.find({ joinedUsers: { $in: [userId] } })
+        .select("_id") // only need room IDs
+        .lean()
+        .exec();
+      userRooms.forEach((room) => {
+        socket.join(room._id.toString());
+        //console.log(`User ${userId} auto-joined room ${room._id}`);
+      });
     } catch (err) {
       console.error("Error creating online user:", err);
     }
 
-    // Join a room
-    socket.on("joinRoom", (roomId) => {
-      socket.join(roomId);
-      console.log(`Socket ${socket.id} joined room ${roomId}`);
-    });
+    // join in backend instead of frontend emit
+    // socket.on("joinRoom", (roomId) => {
+    //   socket.join(roomId);
+    //   console.log(`User ${userId} Socket ${socket.id} joined room ${roomId}`);
+    // });
 
     // Send message to a room
     socket.on("sendMessage", async ({ roomId, message }) => {
+      console.log("Send message :", userId, message);
       const timestamp = dayjs().tz(HK_TIMEZONE).format("YYYY-MM-DDTHH:mm:ss");
 
       try {
         const msg = await Message.create({
+          senderId: userId,
+          roomId,
+          message,
+          timestamp,
+        });
+        io.to(roomId).emit("receiveMessage", {
           roomId,
           senderId: userId,
           message,
           timestamp,
         });
-        io.to(roomId).emit("receiveMessage", {
-          senderId: userId,
-          message,
-          timestamp,
-        });
+        console.log(`Message sent to room ${roomId}`);
       } catch (error) {
         console.error("Error saving or sending message:", error);
       }

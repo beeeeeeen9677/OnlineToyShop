@@ -1,5 +1,27 @@
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+import timezone from "dayjs/plugin/timezone.js";
 import { supabase } from "../../../server.js";
 import Good from "../models/Good.js";
+
+// Setup dayjs plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
+const HK_TIMEZONE = "Asia/Hong_Kong";
+
+// Helper function to convert date fields to HK timezone
+const convertGoodDatesToHK = (good) => ({
+  ...good,
+  createdAt: dayjs(good.createdAt)
+    .tz(HK_TIMEZONE)
+    .format("YYYY-MM-DDTHH:mm:ss"),
+  preorderCloseDate: dayjs(good.preorderCloseDate)
+    .tz(HK_TIMEZONE)
+    .format("YYYY-MM-DDTHH:mm:ss"),
+  shippingDate: dayjs(good.shippingDate)
+    .tz(HK_TIMEZONE)
+    .format("YYYY-MM-DDTHH:mm:ss"),
+});
 
 export const createNewGoods = async (req, res) => {
   try {
@@ -137,18 +159,18 @@ export const fetchGoods = async (req, res) => {
 
     if (id) {
       // Fetch single product by ID
-      const good = await Good.findById(id).exec();
+      const good = await Good.findById(id).lean().exec();
       if (!good) {
         return res.status(404).json({ error: `Product ${id} not found` });
       }
-      res.json(good);
+      res.json(convertGoodDatesToHK(good));
     } else {
       // Fetch all products
-      const goods = await Good.find().exec();
+      const goods = await Good.find().lean().exec();
       if (!goods) {
         return res.status(404).json({ error: "No products found" });
       }
-      res.json(goods);
+      res.json(goods.map(convertGoodDatesToHK));
     }
   } catch (err) {
     console.error("Error fetching goods:", err);

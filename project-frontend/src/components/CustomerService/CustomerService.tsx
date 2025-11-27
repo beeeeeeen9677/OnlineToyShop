@@ -1,4 +1,4 @@
-import { Activity, useEffect, useState } from "react";
+import { Activity, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { RiCustomerService2Fill } from "react-icons/ri";
 import { auth } from "../../firebase/firebase";
@@ -6,7 +6,6 @@ import api from "../../services/api";
 import type { AxiosError } from "axios";
 import { RoomContext } from "../../context/useRoomContext";
 import { useUserContext } from "../../context/app";
-import { useSocketContext } from "../../context/socket";
 import type { ChatRoom } from "../../interface/chatRoom";
 import CsPanel from "./CsPanel";
 
@@ -16,10 +15,9 @@ function CustomerService() {
   const [roomId, setRoomId] = useState<string>("");
 
   const user = useUserContext();
-  const socket = useSocketContext();
 
   const {
-    data: chatRooms, // rooms current user joined
+    data: chatRooms, // rooms of current user joined
     isLoading,
     isError,
     error,
@@ -31,14 +29,6 @@ function CustomerService() {
     },
     enabled: !!user,
   });
-
-  useEffect(() => {
-    if (!chatRooms) return;
-
-    chatRooms.forEach((room) => {
-      socket.emit("joinRoom", room._id);
-    });
-  }, [chatRooms, socket]);
 
   if (isError) {
     console.error(

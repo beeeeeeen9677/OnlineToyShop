@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
 
 type ChatMessageProps = {
-  userId: string;
+  senderId: string;
   isSender: boolean;
   message: string;
   timestamp: string;
@@ -16,7 +16,7 @@ type ChatUserData = {
 };
 
 function ChatMessage({
-  userId,
+  senderId,
   isSender,
   message,
   timestamp,
@@ -27,9 +27,9 @@ function ChatMessage({
     isError,
     error,
   } = useQuery<ChatUserData>({
-    queryKey: ["chatUser", userId],
+    queryKey: ["chatUser", senderId],
     queryFn: async () => {
-      const response = await api.get(`user/limited-data/${userId}`);
+      const response = await api.get(`user/limited-data/${senderId}`);
       return response.data;
     },
     enabled: !isSender,
