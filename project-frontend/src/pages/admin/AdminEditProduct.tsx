@@ -48,16 +48,16 @@ function AdminEditProduct() {
   } = useQuery<Good, AxiosError>({
     queryKey: ["good", { id }],
     queryFn: async () => {
-      const response = await api.get(`/goods/${id}`);
-      return response.data;
+      const res = await api.get(`/goods/${id}`);
+      return res.data;
     },
   });
 
   const { mutateAsync: setProductMutation, isPending } = useMutation({
     mutationFn: async (formData: FormData) => {
       const path = `admin/goods/${product?._id}`;
-      const response = await api.put(path, formData);
-      return response.data;
+      const res = await api.put(path, formData);
+      return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["good", { id }] });
@@ -99,7 +99,7 @@ function AdminEditProduct() {
       <Link to="/admin/product">
         <div className="mx-6 mt-3 underline text-2xl"> &lt;Back</div>
       </Link>
-      <div className="bg-yellow-100 dark:bg-zinc-600 rounded-lg p-4 m-4 relative flex flex-col gap-4 h-fit">
+      <div className="border-2 border-primary dark:border-white dark:bg-zinc-600 rounded-lg p-4 m-4 relative flex flex-col gap-4 h-fit">
         <div className="text-4xl mx-auto underline">UPDATE</div>
         <div className="p-2 text-3xl">ID: {product._id}</div>
         <div className="p-2 text-2xl">

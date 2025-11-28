@@ -8,7 +8,7 @@ function BannerItem({ itemDetails }: { itemDetails: Good }) {
 
   return (
     <Link
-      to={""}
+      to={"/item/" + itemDetails._id}
       className="flex transition duration-150 ease-in hover:brightness-80 w-full h-full"
     >
       <div className="bg-white flex-5 lg:flex-4 flex flex-col justify-center">

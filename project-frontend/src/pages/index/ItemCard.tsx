@@ -11,7 +11,7 @@ function ItemCard({ itemDetails, dateType }: ItemCardProps) {
   const { t } = useTranslation("index");
   return (
     <div className="w-[calc(100%/3-0.5rem)] aspect-1/2 md:w-36 md:h-80 lg:w-44 lg:h-88 xl:w-48 xl:h-96 bg-white shrink-0">
-      <Link to={""} className="group">
+      <Link to={`/item/${itemDetails._id}`} className="group">
         <div className="w-full h-1/2 sm:h-2/3 md:h-1/2 lg:h-2/3 overflow-hidden items-center flex ">
           <img
             src={itemDetails.imageUrl}

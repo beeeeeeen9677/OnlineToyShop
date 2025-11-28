@@ -17,7 +17,9 @@ function BannerSlides({ goods }: { goods: Good[] }) {
     });
   }, [goods]);
 
-  const enableLoop = sortedGoods.length > 3;
+  const slicedGoods = sortedGoods.slice(0, 9);
+
+  const enableLoop = slicedGoods.length > 3;
 
   const bannerWidth = "clamp(27.5rem, calc(100% - 14rem), 80rem)";
 
@@ -40,7 +42,7 @@ function BannerSlides({ goods }: { goods: Good[] }) {
         spaceBetween={20}
         centeredSlides={true}
       >
-        {sortedGoods.map((good) => (
+        {slicedGoods.map((good) => (
           <SwiperSlide key={good._id} style={bannerSlideStyle}>
             <BannerItem itemDetails={good} />
           </SwiperSlide>

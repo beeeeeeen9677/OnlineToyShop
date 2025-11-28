@@ -16,7 +16,15 @@ const goodSchema = new Schema({
   category: [
     {
       type: String,
-      enum: ["gunpla", "model", "figure", "puzzle", "board game", "electronic"],
+      enum: [
+        "gunpla",
+        "model",
+        "figure",
+        "puzzle",
+        "board game",
+        "electronic",
+        "other",
+      ],
       required: false,
     },
   ],

@@ -3,6 +3,7 @@ import api from "../../../services/api";
 import { FaUpload } from "react-icons/fa";
 import { useTranslation } from "../../../i18n/hooks";
 import { categories, type Category, type Good } from "../../../interface/good";
+import LoadingPanel from "../../../components/LoadingPanel";
 
 type MutationResult<T> = { message: string; result: T };
 type ProductFormProps = {
@@ -16,6 +17,7 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
 
   // Mode: add or edit
   const mode = product ? "edit" : "add";
+  const [isLoading, setIsLoading] = useState(false);
 
   // Form refs
   const nameRef = useRef<HTMLInputElement | null>(null);
@@ -166,13 +168,14 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
       try {
         const path = "admin/goods";
         const method = api.post;
-
+        setIsLoading(true);
         const response = await method(path, formData);
         console.log("Upload" + " success:", response.data);
 
         // Show success alert and clear form
         alert(t("messages.uploadSuccess"));
         clearForm();
+        setIsLoading(false);
 
         // if (mode === "edit") {
         //   // refresh
@@ -181,16 +184,20 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
       } catch (error) {
         console.error("Upload failed:", error);
         alert(t("messages.uploadFailed"));
+        setIsLoading(false);
       }
     } else if (mode === "edit" && mutationFn) {
       try {
+        //setIsLoading(true); // edit mode loading is handled by mutation
         const updatedProduct = await mutationFn(formData);
         // Call the onSuccess callback if provided
         //console.log("Update success:", updatedProduct);
         if (onSuccessCB) onSuccessCB(updatedProduct.result as Good);
+        //setIsLoading(false);
       } catch (error) {
         console.error("Update failed:", error);
         alert(t("messages.updateFailed"));
+        //setIsLoading(false);
       }
     }
   };
@@ -223,6 +230,7 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
 
   return (
     <>
+      {isLoading && <LoadingPanel />}
       <div className="flex flex-col">
         <label className="ml-2">{t("labels.productName")}</label>
         <input

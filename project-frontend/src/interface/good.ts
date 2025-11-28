@@ -4,7 +4,8 @@ type Category =
   | "figure"
   | "puzzle"
   | "board game"
-  | "electronic";
+  | "electronic"
+  | "other";
 
 export const categories: Category[] = [
   "gunpla",
@@ -13,6 +14,7 @@ export const categories: Category[] = [
   "puzzle",
   "board game",
   "electronic",
+  "other",
 ];
 
 interface Good {

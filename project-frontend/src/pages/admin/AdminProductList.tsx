@@ -93,7 +93,7 @@ function AdminProductList() {
           <Link
             key={good._id}
             to={`/admin/edit-product/${good._id}`}
-            className="min-w-60 max-w-75 h-90 flex-1 bg-gray-300 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer overflow-hidden"
+            className="min-w-60 max-w-75 h-90 flex-1 bg-gray-100 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer overflow-hidden"
           >
             <img
               src={good.imageUrl}
