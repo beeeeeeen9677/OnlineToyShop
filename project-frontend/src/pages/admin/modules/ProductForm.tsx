@@ -1,5 +1,4 @@
 import { Activity, useEffect, useRef, useState } from "react";
-
 import api from "../../../services/api";
 import { FaUpload } from "react-icons/fa";
 import { useTranslation } from "../../../i18n/hooks";
@@ -23,8 +22,12 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
   const preorderCloseDateRef = useRef<HTMLInputElement | null>(null);
   const shippingDateRef = useRef<HTMLInputElement | null>(null);
   const priceRef = useRef<HTMLInputElement | null>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Description language states
+  const [descriptionEn, setDescriptionEn] = useState<string>("");
+  const [descriptionZh, setDescriptionZh] = useState<string>("");
+  const [descriptionLang, setDescriptionLang] = useState<"en" | "zh">("en");
   //const stockRef = useRef<HTMLInputElement | null>(null);
 
   // File and image preview
@@ -81,7 +84,9 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
     if (preorderCloseDateRef.current) preorderCloseDateRef.current.value = "";
     if (shippingDateRef.current) shippingDateRef.current.value = "";
     if (priceRef.current) priceRef.current.value = "";
-    if (descriptionRef.current) descriptionRef.current.value = "";
+    setDescriptionEn("");
+    setDescriptionZh("");
+    setDescriptionLang("en");
 
     // Clear category selection
     setSelectedCategories([]);
@@ -104,12 +109,17 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
     const shippingDate = shippingDateRef.current?.value;
     const price = priceRef.current?.value;
     //const stock = stockRef.current?.value;
-    const description = descriptionRef.current?.value.trim();
+
+    // Build description object from language states
+    const description = {
+      en: descriptionEn.trim(),
+      zh: descriptionZh.trim(),
+    };
 
     // Get selected categories from state
     const categoryData = selectedCategories;
 
-    // Check basic required fields
+    // Check basic required fields (require both en and zh descriptions)
     if (
       !name ||
       !preorderCloseDate ||
@@ -194,8 +204,13 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
         .toISOString()
         .split("T")[0];
     if (priceRef.current) priceRef.current.value = product.price.toString();
-    if (descriptionRef.current)
-      descriptionRef.current.value = product.description;
+    setDescriptionEn(
+      (product.description as { en?: string; zh?: string })?.en || ""
+    );
+    setDescriptionZh(
+      (product.description as { en?: string; zh?: string })?.zh || ""
+    );
+    setDescriptionLang("en");
     setSelectedCategories(product.category);
     setImagePreview(product.imageUrl);
   }, [product, mode]);
@@ -283,12 +298,45 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
       </div> */}
       <div className="flex gap-2">
         <div className="grow flex flex-col">
-          <label className="ml-2">{t("labels.description")}</label>
+          <div className="gap-6 flex">
+            <label className="ml-2  ">{t("labels.description")}</label>
+            {/* Language selector */}
+            <span className="flex gap-4 mb-2 ml-2 ">
+              <label className="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="radio"
+                  value="en"
+                  checked={descriptionLang === "en"}
+                  onChange={() => setDescriptionLang("en")}
+                  className="cursor-pointer"
+                />
+                <span>en</span>
+              </label>
+              <label className="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="radio"
+                  value="zh"
+                  checked={descriptionLang === "zh"}
+                  onChange={() => setDescriptionLang("zh")}
+                  className="cursor-pointer"
+                />
+                <span>zh</span>
+              </label>
+            </span>
+          </div>
+
           <textarea
-            ref={descriptionRef}
+            value={descriptionLang === "zh" ? descriptionZh : descriptionEn}
+            onChange={(e) => {
+              if (descriptionLang === "zh") {
+                setDescriptionZh(e.target.value);
+              } else {
+                setDescriptionEn(e.target.value);
+              }
+            }}
             rows={4}
             placeholder={t("placeholders.productDescription")}
-            className="tw-input-field resize-none "
+            className="tw-input-field resize-none"
           />
         </div>
         <div className="flex">

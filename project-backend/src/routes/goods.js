@@ -4,19 +4,16 @@ import { fetchGoods } from "../mongodb/collections/goodsColl.js";
 const router = express.Router();
 router.get("/", fetchGoods);
 router.get("/:id", fetchGoods); // Same function handles both
-export default router;
-
 /*
+//import Good from "../mongodb/models/Good.js";
+// Move this func above the /:id route before use
 router.get("/updateExisitingGoods", async (req, res) => {
   try {
-    // Update all existing goods to add the new fields
     const result = await Good.updateMany(
       {}, // Empty filter to match all documents
       {
         $set: {
-          viewedCount: 0,
-          broughtCount: 0,
-          createdAt: new Date(),
+          description: { en: "$description", zh: "" },
         },
       }
     );
@@ -36,3 +33,4 @@ router.get("/updateExisitingGoods", async (req, res) => {
   }
 });
 */
+export default router;

@@ -22,7 +22,8 @@ interface Good {
   preorderCloseDate: string; // ISO date string from API
   shippingDate: string; // ISO date string from API
   price: number;
-  description: string;
+  //description: string;
+  description: Record<"en" | "zh", string>; // { en: "text", zh: "text" }
   imageUrl: string;
   viewedCount: number;
   broughtCount: number;
