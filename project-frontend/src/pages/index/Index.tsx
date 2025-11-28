@@ -50,7 +50,7 @@ function Index() {
     queryKey: ["allGoods"],
     queryFn: async () => {
       const response = await api.get("/goods/");
-      return response.data;
+      return response.data.filter((good: Good) => good.available);
     },
   });
 
@@ -78,8 +78,11 @@ function Index() {
         goods={allGoods}
         sortingKey="createdAt"
       />
-      Closing Soon
-      {/* Closing Soon */}
+      <HorizontalContainer
+        title={t("title.closingSoon")}
+        goods={allGoods}
+        sortingKey="preorderCloseDate"
+      />
     </div>
   );
 }

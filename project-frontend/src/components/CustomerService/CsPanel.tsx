@@ -33,7 +33,6 @@ function CsPanel({ isLoading, chatRooms, setShowWindow }: CsPanelProps) {
   }, [chatRooms]);
 
   const refetchData = () => {
-    // Invalidate both chat rooms and messages queries
     queryClient.invalidateQueries({ queryKey: ["chatRooms"] });
     queryClient.invalidateQueries({ queryKey: ["chatMessages"] });
   };
@@ -47,7 +46,7 @@ function CsPanel({ isLoading, chatRooms, setShowWindow }: CsPanelProps) {
       <CsRoomList rooms={chatRooms} />
       {roomId ? <CsChatWindow /> : <StartConversationWindow />}
       <button
-        className="absolute top-0 right-0 bg-red-700 rounded-full size-6 cursor-pointer text-white flex items-center justify-center hover:bg-red-800"
+        className="absolute top-0 right-0 bg-red-700 rounded-full size-6 cursor-pointer text-white flex items-center justify-center hover:bg-red-800 select-none"
         onClick={() => setShowWindow(false)}
       >
         X

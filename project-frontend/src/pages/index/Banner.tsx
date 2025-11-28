@@ -6,9 +6,7 @@ const BannerSlides = lazy(() => import("./BannerSlides"));
 function Banner({ goods }: { goods: Good[] }) {
   return (
     <div className="bg-black dark:bg-gray-600 py-3 select-none">
-      <Suspense
-        fallback={<div className="p-4 text-white">Loading banner…</div>}
-      >
+      <Suspense fallback={<div></div>}>
         <BannerSlides goods={goods} />
       </Suspense>
     </div>
