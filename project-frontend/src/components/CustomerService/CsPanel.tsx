@@ -1,10 +1,12 @@
-import { useRoomContext } from "../../context/useRoomContext";
+import { MdRefresh } from "react-icons/md";
+import { useRoomIdContext } from "../../context/useRoomContext";
 import StartConversationWindow from "./StartConversationWindow";
 import CsChatWindow from "./CsChatWindow";
 import type { ChatRoom } from "../../interface/chatRoom";
 import CsRoomList from "./CsRoomList";
 import LoadingPanel from "../LoadingPanel";
 import { useEffect, useEffectEvent } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 type CsPanelProps = {
   isLoading: boolean;
@@ -13,7 +15,8 @@ type CsPanelProps = {
 };
 
 function CsPanel({ isLoading, chatRooms, setShowWindow }: CsPanelProps) {
-  const { roomId, setRoomId } = useRoomContext();
+  const { roomId, setRoomId } = useRoomIdContext();
+  const queryClient = useQueryClient();
 
   // Socket listener is now in CustomerService.tsx so it stays active even when panel is closed
 
@@ -29,6 +32,12 @@ function CsPanel({ isLoading, chatRooms, setShowWindow }: CsPanelProps) {
     setRoomIdEvent(chatRooms);
   }, [chatRooms]);
 
+  const refetchData = () => {
+    // Invalidate both chat rooms and messages queries
+    queryClient.invalidateQueries({ queryKey: ["chatRooms"] });
+    queryClient.invalidateQueries({ queryKey: ["chatMessages"] });
+  };
+
   if (isLoading) {
     return <LoadingPanel />;
   }
@@ -42,6 +51,12 @@ function CsPanel({ isLoading, chatRooms, setShowWindow }: CsPanelProps) {
         onClick={() => setShowWindow(false)}
       >
         X
+      </button>
+      <button
+        className="absolute top-0 right-8 bg-yellow-500 rounded-full size-6 cursor-pointer text-white flex items-center justify-center hover:bg-yellow-700"
+        onClick={() => refetchData()}
+      >
+        <MdRefresh />
       </button>
     </div>
   );

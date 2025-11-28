@@ -56,6 +56,7 @@ export const createNewGoods = async (req, res) => {
       shippingDate,
       price,
       description,
+      quota,
       category,
     } = goodsData;
 
@@ -65,7 +66,7 @@ export const createNewGoods = async (req, res) => {
       shippingDate,
       price,
       description,
-      //stock,
+      quota,
       imageUrl: publicUrlData.publicUrl,
       category: category || [], // Use empty array if no category provided
     };
@@ -125,7 +126,9 @@ export const updateGoods = async (req, res) => {
       shippingDate,
       price,
       description,
+      quota,
       category,
+      available,
     } = goodsData;
 
     // Update the product
@@ -137,8 +140,10 @@ export const updateGoods = async (req, res) => {
         shippingDate,
         price,
         description,
+        quota,
         imageUrl,
         category: category || [], // Use empty array if no category provided
+        available,
       },
       { new: true, runValidators: true } // Return updated document and run validation
     );

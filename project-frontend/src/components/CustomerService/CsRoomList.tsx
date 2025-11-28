@@ -1,4 +1,4 @@
-import { useRoomContext } from "../../context/useRoomContext";
+import { useRoomIdContext } from "../../context/useRoomContext";
 import type { ChatRoom } from "../../interface/chatRoom";
 import CsRoomTab from "./CsRoomTab";
 
@@ -7,7 +7,7 @@ type CsRoomListProps = {
 };
 
 function CsRoomList({ rooms = [] }: CsRoomListProps) {
-  const { roomId, setRoomId } = useRoomContext();
+  const { roomId, setRoomId } = useRoomIdContext(); // current selected room
 
   /*
   const {

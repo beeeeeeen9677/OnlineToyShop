@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useUserContext } from "../../context/app";
 import { useSocketContext } from "../../context/socket";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
-import { useRoomContext } from "../../context/useRoomContext";
+import { useRoomIdContext } from "../../context/useRoomContext";
 import ChatMessage from "./ChatMessage";
 import type {
   ChatMessage as ChatMessageType,
@@ -22,7 +22,7 @@ dayjs.extend(timezone);
 function CsChatWindow() {
   const { t } = useTranslation("chat");
   const user = useUserContext();
-  const { roomId } = useRoomContext();
+  const { roomId } = useRoomIdContext();
   const maxMessageLength = 300;
   const socket = useSocketContext();
 
@@ -50,7 +50,7 @@ function CsChatWindow() {
         const hkTime = dayjs()
           .tz("Asia/Hong_Kong")
           .format("YYYY-MM-DDTHH:mm:ss");
-        // set directly to avoid extra refetch
+        // set cache directly to avoid extra refetch
         queryClient.setQueryData<ChatRoom[]>(
           ["chatRooms", { userId: user?._id }],
           (oldRooms) =>
@@ -59,7 +59,7 @@ function CsChatWindow() {
             )
         );
       } catch (error) {
-        console.error("Error marking room as read:", error);
+        console.error("Error when marking room as read:", error);
       }
     };
 

@@ -14,7 +14,9 @@
     "category": "Category:",
     "createdAt": "Created At:",
     "broughtCount": "Brought Count:",
-    "viewedCount": "Viewed Count:"
+    "viewedCount": "Viewed Count:",
+    "available": "Available:",
+    "quota": "Quota:"
   },
   "placeholders": {
     "productName": "PRODUCT NAME",

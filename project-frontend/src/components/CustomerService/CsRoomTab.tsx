@@ -1,5 +1,5 @@
 import { useUserContext } from "../../context/app";
-import { useRoomContext } from "../../context/useRoomContext";
+import { useRoomIdContext } from "../../context/useRoomContext";
 import type { ChatRoom } from "../../interface/chatRoom";
 
 type CsRoomTabProps = {
@@ -8,7 +8,7 @@ type CsRoomTabProps = {
 
 function CsRoomTab({ room }: CsRoomTabProps) {
   const user = useUserContext();
-  const { roomId: currentRoomId } = useRoomContext();
+  const { roomId: currentRoomId } = useRoomIdContext();
 
   // Check if there are unread messages
   // ignore if last message is from current user

@@ -8,7 +8,7 @@ const goodSchema = new Schema({
   price: { type: Number, required: true },
   //description: { type: String, required: true },
   description: { type: Map, of: String, required: true },
-  //stock: { type: Number, required: true },
+  quota: { type: Number, required: true },
   imageUrl: { type: String, required: true },
   viewedCount: { type: Number, default: 0 },
   broughtCount: { type: Number, default: 0 },
@@ -20,6 +20,7 @@ const goodSchema = new Schema({
       required: false,
     },
   ],
+  available: { type: Boolean, default: true },
 });
 
 const Good = mongoose.model("Good", goodSchema);

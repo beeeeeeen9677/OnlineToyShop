@@ -4,7 +4,7 @@ import { RiCustomerService2Fill } from "react-icons/ri";
 import { auth } from "../../firebase/firebase";
 import api from "../../services/api";
 import type { AxiosError } from "axios";
-import { RoomContext } from "../../context/useRoomContext";
+import { RoomIdContext } from "../../context/useRoomContext";
 import { useUserContext } from "../../context/app";
 import { useSocketContext } from "../../context/socket";
 import type { ChatRoom, ChatMessage } from "../../interface/chatRoom";
@@ -110,7 +110,7 @@ function CustomerService() {
   );
 
   return (
-    <RoomContext.Provider value={{ roomId, setRoomId }}>
+    <RoomIdContext.Provider value={{ roomId, setRoomId }}>
       <button
         onClick={() => setShowWindow((prev) => !prev)}
         className={`bg-primary text-white hover:bg-primary-hover hover:text-purple-50 dark:bg-white dark:text-primary dark:hover:bg-purple-50 dark:hover:text-primary-hover border-2 border-primary rounded-full flex items-center justify-center font-extrabold text-3xl size-12 fixed bottom-10 right-10 lg:right-30 cursor-pointer transition-transform duration-300 z-20`}
@@ -128,7 +128,7 @@ function CustomerService() {
           setShowWindow={setShowWindow}
         />
       </Activity>
-    </RoomContext.Provider>
+    </RoomIdContext.Provider>
   );
 }
 

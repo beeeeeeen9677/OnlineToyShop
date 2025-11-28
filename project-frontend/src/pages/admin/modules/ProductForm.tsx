@@ -28,7 +28,8 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
   const [descriptionEn, setDescriptionEn] = useState<string>("");
   const [descriptionZh, setDescriptionZh] = useState<string>("");
   const [descriptionLang, setDescriptionLang] = useState<"en" | "zh">("en");
-  //const stockRef = useRef<HTMLInputElement | null>(null);
+  const [quota, setQuota] = useState<number>(0);
+  const [available, setAvailable] = useState<boolean>(true); // for edit mode only
 
   // File and image preview
   const [file, setFile] = useState<File | null>(null);
@@ -87,6 +88,7 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
     setDescriptionEn("");
     setDescriptionZh("");
     setDescriptionLang("en");
+    setQuota(0);
 
     // Clear category selection
     setSelectedCategories([]);
@@ -119,13 +121,14 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
     // Get selected categories from state
     const categoryData = selectedCategories;
 
-    // Check basic required fields (require both en and zh descriptions)
+    // Validation for basic required fields (excluding image)
     if (
       !name ||
       !preorderCloseDate ||
       !shippingDate ||
       !price ||
-      !description
+      !description ||
+      quota < 0
     ) {
       setShowError(true);
       return;
@@ -147,9 +150,10 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
       preorderCloseDate,
       shippingDate,
       price: parseInt(price),
-      //stock: parseInt(stock),
+      quota,
       description,
       category: categoryData,
+      available,
     };
 
     const formData = new FormData();
@@ -191,9 +195,9 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
     }
   };
 
+  // Pre-fill form fields with product data (for edit mode)
   useEffect(() => {
     if (mode !== "edit" || !product) return;
-    // Pre-fill form fields with product data
     if (nameRef.current) nameRef.current.value = product.name;
     if (preorderCloseDateRef.current)
       preorderCloseDateRef.current.value = new Date(product.preorderCloseDate)
@@ -212,6 +216,8 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
     );
     setDescriptionLang("en");
     setSelectedCategories(product.category);
+    setQuota(product.quota);
+    setAvailable(product.available);
     setImagePreview(product.imageUrl);
   }, [product, mode]);
 
@@ -249,20 +255,50 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
             }}
           />
         </div>
+        {mode === "edit" && (
+          <div className="flex items-center gap-2 ">
+            <label
+              className="cursor-pointer select-none"
+              htmlFor="availableCheckbox"
+            >
+              {t("labels.available")}
+            </label>
+            <input
+              type="checkbox"
+              id="availableCheckbox"
+              checked={available}
+              onChange={(e) => setAvailable(e.target.checked)}
+              className="cursor-pointer"
+            />
+          </div>
+        )}
       </div>
       <div className="flex gap-1">
-        <div className="flex flex-col grow-2">
-          <label className="ml-2">{t("labels.price")}</label>
-          <input
-            ref={priceRef}
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder={t("currency.hkd", { ns: "common" })}
-            className="tw-input-field"
-          />
+        <div className="flex flex-col gap-2 flex-1">
+          <div className="flex flex-col">
+            <label className="ml-2">{t("labels.quota")}</label>
+            <input
+              type="number"
+              min="0"
+              className="tw-input-field"
+              value={quota}
+              onChange={(e) => setQuota(Number(e.target.value))}
+            />
+          </div>
+          <div className="flex flex-col flex-3">
+            <label className="ml-2">{t("labels.price")}</label>
+            <input
+              ref={priceRef}
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder={t("currency.hkd", { ns: "common" })}
+              className="tw-input-field"
+            />
+          </div>
         </div>
-        <div className="flex flex-col grow">
+
+        <div className="flex flex-col flex-2">
           <label className="ml-2">{t("labels.category")}</label>
           <div className="tw-input-field max-h-32 overflow-y-auto space-y-1">
             {categories.map((category) => (
@@ -286,16 +322,6 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
         </div>
       </div>
 
-      {/* <div className="flex flex-col">
-        <label className="ml-2">Stock:</label>
-        <input
-          ref={stockRef}
-          type="number"
-          min="0"
-          placeholder="100"
-          className="tw-input-field"
-        />
-      </div> */}
       <div className="flex gap-2">
         <div className="grow flex flex-col">
           <div className="gap-6 flex">

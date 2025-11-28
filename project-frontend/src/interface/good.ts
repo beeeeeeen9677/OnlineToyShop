@@ -24,10 +24,12 @@ interface Good {
   price: number;
   //description: string;
   description: Record<"en" | "zh", string>; // { en: "text", zh: "text" }
+  quota: number;
   imageUrl: string;
   viewedCount: number;
   broughtCount: number;
   createdAt: string; // ISO date string from API
   category: Category[];
+  available: boolean;
 }
 export type { Good, Category };
