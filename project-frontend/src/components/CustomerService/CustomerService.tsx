@@ -122,7 +122,11 @@ function CustomerService() {
       </button>
 
       <Activity mode={showWindow ? "visible" : "hidden"}>
-        <CsPanel isLoading={isLoading} chatRooms={chatRooms ?? []} />
+        <CsPanel
+          isLoading={isLoading}
+          chatRooms={chatRooms ?? []}
+          setShowWindow={setShowWindow}
+        />
       </Activity>
     </RoomContext.Provider>
   );
