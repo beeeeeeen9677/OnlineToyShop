@@ -7,5 +7,20 @@
     "board game": "桌游",
     "electronic": "電子產品",
     "other": "其他"
+  },
+  "status": {
+    "outOfQuota": "名額已滿",
+    "preorder": "可預購"
+  },
+  "info": {
+    "openTo": "截止預購",
+    "preorderOpen": "開始預購",
+    "shippingDate": "發貨日期",
+    "quantity": "數量",
+    "reachLimit": "已達購買上限。",
+    "productIntroduction": "產品介紹"
+  },
+  "buttons": {
+    "placeOrder": "送出訂單"
   }
 }

@@ -1,30 +1,7 @@
-import { useState, useEffect } from "react";
+import { useScrollToggleVisibility } from "../hooks/useScrollToggleVisibility";
 
 const BackToTopButton = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  const visibleThreshold = 300;
-
-  // Show button when page is scrolled down
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > visibleThreshold) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
+  const { isVisible, scrollToTop } = useScrollToggleVisibility(300);
 
   return (
     <>

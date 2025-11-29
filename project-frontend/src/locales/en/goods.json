@@ -7,5 +7,20 @@
     "board game": "Board Game",
     "electronic": "Electronic",
     "other": "Other"
+  },
+  "status": {
+    "outOfQuota": "Out of Quota",
+    "preorder": "PRE-ORDER"
+  },
+  "info": {
+    "openTo": "Open To",
+    "preorderOpen": "Preorder Open",
+    "shippingDate": "Shipping Date",
+    "quantity": "Quantity",
+    "reachLimit": "The purchase limit has been reached.",
+    "productIntroduction": "PRODUCT INTRODUCTION"
+  },
+  "buttons": {
+    "placeOrder": "PLACE ORDER"
   }
 }

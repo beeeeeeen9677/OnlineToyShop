@@ -7,12 +7,14 @@ type HorizontalContainerProps = {
   title: string;
   goods: Good[];
   sortingKey: keyof Good;
+  titleColor?: string;
 };
 
 function HorizontalContainer({
   title,
   goods,
   sortingKey,
+  titleColor = "text-blue-500",
 }: HorizontalContainerProps) {
   const { containerRef, handleMouseDown, handleTouchStart, containerStyle } =
     useDragHook();
@@ -42,7 +44,9 @@ function HorizontalContainer({
 
   return (
     <div>
-      <div className="font-oswald text-center m-6 font-semibold text-3xl md:text-5xl text-blue-500 dark:text-white">
+      <div
+        className={`font-oswald text-center m-6 font-semibold text-3xl md:text-5xl ${titleColor} dark:text-white`}
+      >
         <div> {title}</div>
       </div>
       <div

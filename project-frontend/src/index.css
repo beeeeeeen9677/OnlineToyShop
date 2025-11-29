@@ -54,6 +54,28 @@
       opacity: 1;
     }
   }
+  --animate-appear: appear 0.3s ease-in-out;
+  @keyframes appear {
+    from {
+      opacity: 0;
+      display: block;
+    }
+    to {
+      opacity: 1;
+      display: block;
+    }
+  }
+  --animate-disappear: disappear 0.3s ease-in-out forwards;
+  @keyframes disappear {
+    from {
+      opacity: 1;
+      display: block;
+    }
+    to {
+      opacity: 0;
+      display: none;
+    }
+  }
 
   /* font */
   --font-oswald: "Oswald", sans-serif;

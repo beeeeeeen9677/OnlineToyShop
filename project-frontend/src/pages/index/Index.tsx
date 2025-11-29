@@ -82,6 +82,7 @@ function Index() {
         title={t("title.closingSoon")}
         goods={allGoods}
         sortingKey="preorderCloseDate"
+        titleColor="text-red-500"
       />
     </div>
   );
