@@ -8,11 +8,21 @@
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb {
-  background: #000000; /* Thumb color */
+  background: #858181; /* Thumb color */
 }
 
 .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-  background: #2e2d2d;
+  background: #a8a5a5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: #000000; /* Thumb color */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: #2e2d2d;
+  }
 }
 
 .swipe-slide {

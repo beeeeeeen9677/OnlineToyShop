@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { Activity, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "../../i18n/hooks";
 import i18n from "../../i18n";
 import api from "../../services/api";

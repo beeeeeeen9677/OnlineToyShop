@@ -16,8 +16,13 @@ function HorizontalContainer({
   sortingKey,
   titleColor = "text-blue-500",
 }: HorizontalContainerProps) {
-  const { containerRef, handleMouseDown, handleTouchStart, containerStyle } =
-    useDragHook();
+  const {
+    containerRef,
+    handleMouseDown,
+    handleTouchStart,
+    containerStyle,
+    dragged,
+  } = useDragHook();
 
   const sortedGoods = [...goods].sort((a, b) => {
     const aValue = a[sortingKey];
@@ -64,6 +69,7 @@ function HorizontalContainer({
             dateType={
               sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
             }
+            dragged={dragged}
           />
         ))}
         {/* Use Repeated Data for test */}
@@ -74,6 +80,7 @@ function HorizontalContainer({
             dateType={
               sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
             }
+            dragged={dragged}
           />
         ))}
         {sortedGoods.map((good) => (
@@ -83,6 +90,7 @@ function HorizontalContainer({
             dateType={
               sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
             }
+            dragged={dragged}
           />
         ))}
       </div>

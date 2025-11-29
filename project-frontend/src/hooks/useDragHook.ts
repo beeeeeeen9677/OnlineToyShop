@@ -5,6 +5,7 @@ export function useDragHook() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [dragged, setDragged] = useState(false); //  detect if the user dragged and then prevent the click
 
   // Common logic for starting drag operation
   const startDrag = useCallback((pageX: number) => {
@@ -35,6 +36,7 @@ export function useDragHook() {
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (startDrag(e.pageX)) {
+        setDragged(false); // Reset
         e.preventDefault();
       }
     },
@@ -47,6 +49,7 @@ export function useDragHook() {
       if (e.touches.length !== 1) return;
       const touch = e.touches[0];
       if (startDrag(touch.pageX)) {
+        setDragged(false); // Reset
         e.preventDefault();
       }
     },
@@ -58,6 +61,7 @@ export function useDragHook() {
     (e: MouseEvent) => {
       e.preventDefault();
       performDrag(e.pageX);
+      setDragged(true); // Mark as dragged when movement occurs
     },
     [performDrag]
   );
@@ -69,6 +73,7 @@ export function useDragHook() {
       e.preventDefault();
       const touch = e.touches[0];
       performDrag(touch.pageX);
+      setDragged(true); // Mark as dragged when movement occurs
     },
     [performDrag]
   );
@@ -76,11 +81,13 @@ export function useDragHook() {
   // Handle mouse up - stop dragging (document-level when dragging)
   const handleMouseUp = useCallback(() => {
     endDrag();
+    setTimeout(() => setDragged(false), 50); // Reset after short delay
   }, [endDrag]);
 
   // Handle touch end - stop dragging for mobile
   const handleTouchEnd = useCallback(() => {
     endDrag();
+    setTimeout(() => setDragged(false), 50); // Reset after short delay
   }, [endDrag]);
 
   // Remove mouse leave handler - we want dragging to continue outside container
@@ -128,5 +135,6 @@ export function useDragHook() {
     handleTouchStart,
     containerStyle,
     isDragging,
+    dragged,
   };
 }
