@@ -57,5 +57,8 @@
     "banned": "Banned",
     "verified": "Verified",
     "unverified": "Unverified"
+  },
+  "placeholders": {
+    "search": "Search..."
   }
 }

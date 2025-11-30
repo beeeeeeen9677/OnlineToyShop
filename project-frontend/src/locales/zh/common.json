@@ -57,5 +57,8 @@
     "banned": "封鎖",
     "verified": "已驗證",
     "unverified": "未驗證"
+  },
+  "placeholders": {
+    "search": "搜尋..."
   }
 }

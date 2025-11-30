@@ -10,6 +10,7 @@ import Banner from "./Banner";
 import { useQuery } from "@tanstack/react-query";
 import BackToTopButton from "../../components/BackToTopButton";
 import CustomerService from "../../components/CustomerService/CustomerService";
+import SearchBar from "../../components/SearchBar";
 
 // type IndexProps = {
 //   isLoggedIn: boolean;
@@ -71,6 +72,7 @@ function Index() {
       </Activity>
       <CustomerService />
       <BackToTopButton />
+      <SearchBar />
       <Banner goods={allGoods} />
       {/* New Arriavals */}
       <HorizontalContainer

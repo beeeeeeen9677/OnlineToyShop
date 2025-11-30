@@ -12,6 +12,7 @@ import AdminEditProduct from "./pages/admin/AdminEditProduct";
 import Profile from "./pages/profile/Profile";
 import ItemDetails from "./pages/itemDetails/ItemDetails";
 import LoadingPanel from "./components/LoadingPanel";
+import Search from "./pages/search/Search";
 import NotFound from "./pages/NotFound";
 
 // Firebase
@@ -173,6 +174,7 @@ function RouteContainer() {
       <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />
       <Route path="/user" element={<Profile />} />
       <Route path="/item/:id" element={<ItemDetails />} />
+      <Route path="/search" element={<Search />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
