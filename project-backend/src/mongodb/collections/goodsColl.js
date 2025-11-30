@@ -182,3 +182,50 @@ export const fetchGoods = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Increment view count for a product (only once per session)
+export const incrementViewCount = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Initialize viewedItems array in session if not exists
+    if (!req.session.viewedItems) {
+      req.session.viewedItems = [];
+    }
+
+    // Check if user already viewed this item in current session
+    if (req.session.viewedItems.includes(id)) {
+      const product = await Good.findById(id)
+        //.select("viewedCount")
+        .lean()
+        .exec();
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      return res.json({
+        alreadyViewed: true,
+      });
+    }
+
+    // Add to session's viewed items
+    req.session.viewedItems.push(id);
+
+    // increment view count in database
+    const result = await Good.findByIdAndUpdate(
+      id,
+      { $inc: { viewedCount: 1 } },
+      { new: true } // return updated document
+    )
+      .lean()
+      .exec();
+
+    if (!result) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.json({ alreadyViewed: false });
+  } catch (err) {
+    console.error("Error incrementing view count:", err);
+    res.status(500).json({ error: err.message });
+  }
+};

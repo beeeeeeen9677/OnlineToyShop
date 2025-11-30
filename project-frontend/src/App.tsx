@@ -23,6 +23,9 @@ const socket: Socket = io(import.meta.env.VITE_SERVER_URL, {
   autoConnect: false,
 });
 
+// i18n
+import { useLanguage, type SupportedLanguage } from "./i18n/hooks";
+
 // Other Imports
 import api from "./services/api";
 import { AxiosError } from "axios";
@@ -110,6 +113,7 @@ function App() {
   });
   const queryClient = useQueryClient();
 
+  // login/logout socket connection handling
   useEffect(() => {
     if (!isLoggedIn) {
       //setUser(undefined);
@@ -124,6 +128,21 @@ function App() {
     // Fetch user data from backend
     //setUserEvent();
   }, [isLoggedIn, queryClient, user]);
+
+  const { changeLanguage } = useLanguage();
+  // language init
+  useEffect(() => {
+    let lang = localStorage.getItem("language");
+
+    if (lang) {
+      console.log("Setting language to:", lang);
+    } else {
+      lang = navigator.language.split("-")[0];
+      console.log("Browser language detected:", lang);
+    }
+
+    changeLanguage(lang as SupportedLanguage);
+  }, [changeLanguage]);
 
   if (isLoading) {
     return <LoadingPanel />;

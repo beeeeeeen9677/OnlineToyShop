@@ -33,7 +33,7 @@ function ItemDetails() {
   const minQuantity = 1;
   const maxQuantity = 3;
   const quantityBtnStyle =
-    "bg-gray-700 text-white disabled:bg-gray-300 disabled:text-black px-3 py-1 cursor-pointer";
+    "bg-primary text-white disabled:bg-orange-200 disabled:text-black px-3 py-1 cursor-pointer";
   const quantityBtnOnClick = (mode: "+" | "-") => {
     if (mode === "+" && quantity < maxQuantity) {
       setQuantity(quantity + 1);
@@ -52,6 +52,24 @@ function ItemDetails() {
       document.title = itemDetails.name;
     }
   }, [itemDetails?.name]);
+
+  // track viewed count (only once per user/session)
+  useEffect(() => {
+    const updateViewedCount = async () => {
+      if (id) {
+        try {
+          await api.put(`/goods/${id}/view`);
+        } catch (err) {
+          const axiosError = err as AxiosError<{ error: string }>;
+          console.error(
+            "Error updating viewed count:",
+            axiosError.response?.data?.error
+          );
+        }
+      }
+    };
+    updateViewedCount();
+  }, [id]);
 
   if (isError) {
     return (

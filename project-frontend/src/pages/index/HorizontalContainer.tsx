@@ -29,14 +29,14 @@ function HorizontalContainer({
     const bValue = b[sortingKey];
 
     // Handle date string sorting (for createdAt, preorderCloseDate, shippingDate)
-    if (
-      sortingKey === "createdAt" ||
-      sortingKey === "preorderCloseDate" ||
-      sortingKey === "shippingDate"
-    ) {
+    if (sortingKey === "createdAt" || sortingKey === "shippingDate") {
       const aDate = new Date(aValue as string);
       const bDate = new Date(bValue as string);
       return bDate.getTime() - aDate.getTime(); // Newest first
+    } else if (sortingKey === "preorderCloseDate") {
+      const aDate = new Date(aValue as string);
+      const bDate = new Date(bValue as string);
+      return aDate.getTime() - bDate.getTime(); // Earliest first
     }
 
     // Handle numeric sorting
@@ -50,7 +50,7 @@ function HorizontalContainer({
   return (
     <div>
       <div
-        className={`font-oswald text-center m-6 font-semibold text-3xl md:text-5xl ${titleColor} dark:text-white`}
+        className={`font-oswald text-center m-6 font-semibold text-3xl md:text-5xl ${titleColor}`}
       >
         <div> {title}</div>
       </div>
