@@ -229,3 +229,55 @@ export const incrementViewCount = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// GET /api/goods/search?keyword=gundam&category=gunpla&minPrice=100&maxPrice=500&sort=price_asc&page=1
+export const searchGoods = async (req, res) => {
+  try {
+    const {
+      keyword,
+      category,
+      minPrice,
+      maxPrice,
+      sort,
+      page = 1,
+      limit = 20,
+    } = req.query;
+
+    // Build dynamic filter object
+    const filter = {};
+
+    if (keyword) {
+      filter.name = { $regex: keyword, $options: "i" }; // Case-insensitive search
+    }
+    if (category) {
+      filter.category = category;
+    }
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+
+    // sort by options
+    const sortOptions = {
+      price_asc: { price: 1 },
+      price_desc: { price: -1 },
+      newest: { createdAt: -1 },
+      popular: { viewedCount: -1 },
+    };
+
+    const results = await Good.find(filter)
+      .sort(sortOptions[sort] || { createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    //const total = await Good.countDocuments(filter);
+    const total = await Good.estimatedDocumentCount(filter);
+
+    res.json({ results, total, page, totalPages: Math.ceil(total / limit) });
+  } catch (err) {
+    console.error("Error searching goods:", err);
+    res.status(500).json({ error: err.message });
+  }
+};

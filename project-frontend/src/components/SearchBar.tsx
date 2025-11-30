@@ -1,6 +1,7 @@
 import { useEffect, useEffectEvent, useState } from "react";
 import { useTranslation } from "../i18n/hooks";
 import { CiSearch } from "react-icons/ci";
+import { FaLocationArrow } from "react-icons/fa";
 import { useNavigate } from "react-router";
 
 function SearchBar() {
@@ -9,9 +10,13 @@ function SearchBar() {
   const [inputValue, setInputValue] = useState("");
 
   // enter key for handling search
+  const redirectToSearch = (keyword: string) => {
+    navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+  };
+
   const handleEnterEvent = useEffectEvent((event: { key: string }) => {
     if (event.key === "Enter") {
-      navigate(`/search?query=${encodeURIComponent(inputValue)}`);
+      redirectToSearch(inputValue);
     }
   });
 
@@ -37,6 +42,12 @@ function SearchBar() {
           className="flex-1  outline-none"
           placeholder={t("placeholders.search")}
         />
+        <button
+          onClick={() => redirectToSearch(inputValue)}
+          className="cursor-pointer "
+        >
+          <FaLocationArrow className="rotate-45 " />
+        </button>
       </div>
     </div>
   );

@@ -2,12 +2,15 @@ import express from "express";
 import {
   fetchGoods,
   incrementViewCount,
+  searchGoods,
 } from "../mongodb/collections/goodsColl.js";
 
 const router = express.Router();
-router.get("/", fetchGoods);
+router.get("/", fetchGoods); // fetch all
+router.get("/search", searchGoods);
 router.put("/:id/view", incrementViewCount); // Track view count
-router.get("/:id", fetchGoods); // Same function handles both
+router.get("/:id", fetchGoods); // fettch by id
+
 /*
 //import Good from "../mongodb/models/Good.js";
 // Move this func above the /:id route before use
