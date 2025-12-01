@@ -3,5 +3,16 @@
   "noResultsFound": "No results found",
   "results": "results",
   "resultsCount": "{{count}} results",
-  "filter": "Filter"
+  "filter": "FILTER",
+  "selectedFilters": "SELECTED FILTERS",
+  "sortBy": "SORT BY",
+  "sortOptions": {
+    "relevance": "Relevance",
+    "priceLowToHigh": "Price: Low to High",
+    "priceHighToLow": "Price: High to Low",
+    "newest": "Newest Arrivals",
+    "mostPopular": "Most Popular",
+    "preorderCloseDateAsc": "Preorder Close Date: Earliest",
+    "preorderCloseDateDesc": "Preorder Close Date: Latest"
+  }
 }

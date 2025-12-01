@@ -1,7 +1,18 @@
 {
-  "searchResults": "搜索结果",
-  "noResultsFound": "未找到结果",
-  "results": "结果",
+  "searchResults": "搜索結果",
+  "noResultsFound": "未找到結果",
+  "results": "結果",
   "resultsCount": "總共{{count}}件",
-  "filter": "篩選"
+  "filter": "篩選",
+  "selectedFilters": "已選篩選條件",
+  "sortBy": "排序方式",
+  "sortOptions": {
+    "relevance": "相關性",
+    "priceLowToHigh": "價格：由低至高",
+    "priceHighToLow": "價格：由高至低",
+    "newest": "最新上架",
+    "mostPopular": "最受歡迎",
+    "preorderCloseDateAsc": "預購截止日期：由近至遠",
+    "preorderCloseDateDesc": "預購截止日期：由遠至近"
+  }
 }

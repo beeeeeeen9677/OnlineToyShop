@@ -1,4 +1,4 @@
-import { Activity } from "react";
+import { Activity, useState } from "react";
 import { useLocation } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "../../i18n/hooks";
@@ -12,6 +12,7 @@ import CustomerService from "../../components/CustomerService/CustomerService";
 import SearchItem from "./SearchItem";
 import type { Good } from "../../interface/good";
 import Filter from "./Filter";
+import { sortingOptions } from "./sortingOptions";
 
 interface SearchGoodsResponse {
   results: Good[];
@@ -25,6 +26,7 @@ function Search() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const keyword = queryParams.get("keyword");
+  const [sortBy, setSortBy] = useState<string>(sortingOptions.relevance.value);
 
   const queryString = keyword ? `keyword=${encodeURIComponent(keyword)}` : "";
   const {
@@ -59,7 +61,6 @@ function Search() {
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <LoadingPanel />
       </Activity>
-
       <CustomerService />
       <BackToTopButton />
       <SearchBar />
@@ -78,8 +79,32 @@ function Search() {
                 {t("resultsCount", { count: searchResult?.total || 0 })}
               </div>
             </div>
+            {searchResult && searchResult.total > 0 && (
+              <div className="mb-6 flex flex-col gap-2">
+                <label htmlFor="options">{t("sortBy")}</label>
+                <select
+                  id="options"
+                  name="options"
+                  onChange={(e) => {
+                    setSortBy(e.target.value);
+                  }}
+                  className="border-2 px-4 py-2 w-fit rounded-2xl outline-none"
+                >
+                  {Object.values(sortingOptions).map((option) => (
+                    <option
+                      key={option.value}
+                      value={option.value}
+                      className="text-black mx-4 my-2"
+                    >
+                      {t(`${option.translateKey}`)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* search results */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 ">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
               {searchResult &&
                 searchResult.results.length > 0 &&
                 searchResult.total > 0 &&

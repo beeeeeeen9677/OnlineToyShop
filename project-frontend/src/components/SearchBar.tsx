@@ -37,8 +37,8 @@ function SearchBar() {
   }, []);
 
   return (
-    <div className="bg-black h-14 flex justify-center items-center py-2">
-      <div className="bg-white text-black relative flex h-full w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mx-2 pl-15 pr-5 py-2 rounded-full shadow-xl">
+    <div className="h-14 flex justify-center items-center py-2">
+      <div className="bg-white text-black relative flex h-full w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mx-2 pl-15 pr-5 py-2 rounded-full shadow-md dark:shadow-none shadow-primary">
         <CiSearch className="size-6 absolute left-6" />
         <input
           type="text"

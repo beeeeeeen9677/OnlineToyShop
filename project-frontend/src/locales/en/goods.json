@@ -10,7 +10,8 @@
   },
   "status": {
     "outOfQuota": "Out of Quota",
-    "preorder": "PRE-ORDER"
+    "preorder": "PRE-ORDER",
+    "preorderClosed": "PRE-ORDER CLOSED"
   },
   "info": {
     "openTo": "Open To",

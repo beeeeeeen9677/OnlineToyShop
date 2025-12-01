@@ -10,7 +10,8 @@
   },
   "status": {
     "outOfQuota": "名額已滿",
-    "preorder": "可預購"
+    "preorder": "可預購",
+    "preorderClosed": "預購已截止"
   },
   "info": {
     "openTo": "截止預購",

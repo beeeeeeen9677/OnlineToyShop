@@ -42,8 +42,15 @@ function ItemDetails() {
     }
   };
 
+  const preorderEnded = itemDetails
+    ? new Date() > new Date(itemDetails.preorderCloseDate)
+    : false;
   const placeOrder = () => {
     // Implement place order functionality here
+    if (preorderEnded) {
+      alert("Pre-order has ended.");
+      return;
+    }
   };
 
   // dynamic title
@@ -102,8 +109,14 @@ function ItemDetails() {
                 {itemDetails.price}
               </span>
             </div>
-            <div className="text-white bg-red-400 w-fit p-0.5 text-xs">
-              {t("status.preorder")}
+            <div
+              className={`text-white ${
+                preorderEnded ? "bg-gray-400" : "bg-red-400"
+              } w-fit p-0.5 text-xs`}
+            >
+              {preorderEnded
+                ? t("status.preorderClosed")
+                : t("status.preorder")}
             </div>
             {/*  Break line  */}
             <div className="border border-orange-100   dark:border-gray-500 " />
@@ -161,8 +174,9 @@ function ItemDetails() {
             {/*  Break line  */}
             <div className="border border-orange-100   dark:border-gray-500 " />
             <button
-              className="rounded-full bg-primary text-white  py-2 w-full hover:bg-primary-hover cursor-pointer font-extrabold text-lg transition-colors"
+              className="rounded-full bg-primary text-white  py-2 w-full hover:bg-primary-hover cursor-pointer font-extrabold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-default"
               onClick={placeOrder}
+              disabled={preorderEnded}
             >
               {t("buttons.placeOrder")}
             </button>
@@ -198,8 +212,9 @@ function ItemDetails() {
           </div>
 
           <button
-            className="mx-auto border-white border-4 rounded-full bg-primary py-2 w-80 hover:bg-white hover:text-primary cursor-pointer font-extrabold text-lg transition-colors"
+            className="mx-auto border-white border-4 rounded-full bg-primary py-2 w-80 hover:bg-white hover:text-primary cursor-pointer font-extrabold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-default disabled:hover:text-white"
             onClick={placeOrder}
+            disabled={preorderEnded}
           >
             {t("buttons.placeOrder")}
           </button>

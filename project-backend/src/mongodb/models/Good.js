@@ -30,7 +30,11 @@ const goodSchema = new Schema({
   ],
   available: { type: Boolean, default: true },
 });
-
+goodSchema.index({
+  name: "text",
+  "description.en": "text",
+  "description.zh": "text",
+});
 const Good = mongoose.model("Good", goodSchema);
 
 export default Good;

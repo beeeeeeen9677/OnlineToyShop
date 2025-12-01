@@ -247,7 +247,11 @@ export const searchGoods = async (req, res) => {
     const filter = {};
 
     if (keyword) {
-      filter.name = { $regex: keyword, $options: "i" }; // Case-insensitive search
+      if (sort === "relevance") {
+        filter.$text = { $search: keyword };
+      } else {
+        filter.name = { $regex: keyword, $options: "i" }; // case-insensitive search
+      }
     }
     if (category) {
       filter.category = category;
@@ -260,13 +264,19 @@ export const searchGoods = async (req, res) => {
 
     // sort by options
     const sortOptions = {
+      relevance: { score: { $meta: "textScore" } },
       price_asc: { price: 1 },
       price_desc: { price: -1 },
       newest: { createdAt: -1 },
-      popular: { viewedCount: -1 },
+      mostPopular: { viewedCount: -1 },
+      preorderCloseDate_asc: { preorderCloseDate: 1 },
+      preorderCloseDate_desc: { preorderCloseDate: -1 },
     };
 
-    const results = await Good.find(filter)
+    const results = await Good.find(
+      filter,
+      sort === "relevance" ? { score: { $meta: "textScore" } } : {}
+    )
       .sort(sortOptions[sort] || { createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
