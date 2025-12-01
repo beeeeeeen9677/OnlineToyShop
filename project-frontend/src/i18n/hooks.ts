@@ -14,7 +14,8 @@ export type Namespace =
   | "header"
   | "goods"
   | "index"
-  | "firebase";
+  | "firebase"
+  | "search";
 
 // Custom hook for translation with namespace support
 export const useTranslation = (namespace: Namespace = "common") => {

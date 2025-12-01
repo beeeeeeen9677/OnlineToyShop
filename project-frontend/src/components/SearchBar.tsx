@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useTranslation } from "../i18n/hooks";
 import { CiSearch } from "react-icons/ci";
 import { FaLocationArrow } from "react-icons/fa";
@@ -8,6 +8,7 @@ function SearchBar() {
   const { t } = useTranslation("common");
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
+  const inputElem = useRef<HTMLInputElement>(null);
 
   // enter key for handling search
   const redirectToSearch = (keyword: string) => {
@@ -17,6 +18,10 @@ function SearchBar() {
   const handleEnterEvent = useEffectEvent((event: { key: string }) => {
     if (event.key === "Enter") {
       redirectToSearch(inputValue);
+      setInputValue("");
+      if (inputElem.current) {
+        inputElem.current.blur();
+      }
     }
   });
 
@@ -37,6 +42,7 @@ function SearchBar() {
         <CiSearch className="size-6 absolute left-6" />
         <input
           type="text"
+          ref={inputElem}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           className="flex-1  outline-none"

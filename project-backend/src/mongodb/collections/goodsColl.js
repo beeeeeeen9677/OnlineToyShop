@@ -272,8 +272,8 @@ export const searchGoods = async (req, res) => {
       .limit(limit)
       .lean();
 
-    //const total = await Good.countDocuments(filter);
-    const total = await Good.estimatedDocumentCount(filter);
+    //const total = await Good.estimatedDocumentCount(filter); // cannot use with filter
+    const total = await Good.countDocuments(filter);
 
     res.json({ results, total, page, totalPages: Math.ceil(total / limit) });
   } catch (err) {

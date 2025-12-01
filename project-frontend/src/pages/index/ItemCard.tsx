@@ -1,5 +1,5 @@
-import { useTranslation } from "../i18n/hooks";
-import type { Good } from "../interface/good";
+import { useTranslation } from "../../i18n/hooks";
+import type { Good } from "../../interface/good";
 import { useNavigate } from "react-router";
 
 type ItemCardProps = {

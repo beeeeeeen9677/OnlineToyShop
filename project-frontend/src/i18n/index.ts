@@ -10,6 +10,7 @@ import enHeader from "../locales/en/header.json";
 import enGoods from "../locales/en/goods.json";
 import enIndex from "../locales/en/index.json";
 import enFirebase from "../locales/en/firebase.json";
+import enSearch from "../locales/en/search.json";
 
 import zhCommon from "../locales/zh/common.json";
 import zhAuth from "../locales/zh/auth.json";
@@ -19,6 +20,7 @@ import zhHeader from "../locales/zh/header.json";
 import zhGoods from "../locales/zh/goods.json";
 import zhIndex from "../locales/zh/index.json";
 import zhFirebase from "../locales/zh/firebase.json";
+import zhSearch from "../locales/zh/search.json";
 
 // Define resources
 const resources = {
@@ -31,6 +33,7 @@ const resources = {
     goods: enGoods,
     index: enIndex,
     firebase: enFirebase,
+    search: enSearch,
   },
   zh: {
     common: zhCommon,
@@ -41,6 +44,7 @@ const resources = {
     goods: zhGoods,
     index: zhIndex,
     firebase: zhFirebase,
+    search: zhSearch,
   },
 };
 
@@ -62,6 +66,7 @@ i18n.use(initReactI18next).init({
     "goods",
     "index",
     "firebase",
+    "search",
   ],
 
   interpolation: {

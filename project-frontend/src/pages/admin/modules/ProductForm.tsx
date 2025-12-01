@@ -264,7 +264,7 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
           />
         </div>
         {mode === "edit" && (
-          <div className="flex items-center gap-2 ">
+          <div className="flex items-center gap-2 mx-4">
             <label
               className="cursor-pointer select-none"
               htmlFor="availableCheckbox"

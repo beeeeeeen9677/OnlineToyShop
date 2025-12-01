@@ -1,5 +1,5 @@
 import type { Good } from "../../interface/good";
-import ItemCard from "../../components/ItemCard";
+import ItemCard from "./ItemCard";
 import "./IndexPage.css";
 import { useDragHook } from "../../hooks/useDragHook";
 
