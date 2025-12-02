@@ -9,7 +9,7 @@ function SearchItem({ itemDetails }: SearchItemProps) {
   const navigate = useNavigate();
   return (
     <div
-      className="group bg-white shrink-0 cursor-pointer"
+      className="group max-w-75 bg-white shrink-0 cursor-pointer"
       onClick={() => {
         navigate(`/item/${itemDetails._id}`);
       }}

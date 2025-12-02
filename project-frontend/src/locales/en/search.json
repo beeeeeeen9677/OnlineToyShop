@@ -29,5 +29,6 @@
     "min": "Min",
     "max": "Max",
     "apply": "Apply"
-  }
+  },
+  "confirm": "Confirm"
 }

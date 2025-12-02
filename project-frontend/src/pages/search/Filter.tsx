@@ -4,7 +4,7 @@ import { categories } from "../../interface/good";
 import type { PriceRange } from "./Search";
 import FilterSection from "./FilterSection";
 import FilterTag from "./FilterTag";
-import { FaFilter } from "react-icons/fa";
+import { FaFilter, FaTimes } from "react-icons/fa";
 
 // Sales status options
 const salesStatusOptions = ["available", "preorderClosed"] as const;
@@ -21,6 +21,9 @@ interface FilterProps {
     value?: string
   ) => void;
   onClearAll: () => void;
+  // Mobile overlay props
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 function Filter({
@@ -32,6 +35,8 @@ function Filter({
   onPriceRangeChange,
   onRemoveFilter,
   onClearAll,
+  isOpen = false,
+  onClose,
 }: FilterProps) {
   const { t } = useTranslation("search");
   const { t: tGoods } = useTranslation("goods");
@@ -54,8 +59,9 @@ function Filter({
     priceRange.min !== undefined ||
     priceRange.max !== undefined;
 
-  return (
-    <div className="hidden md:block bg-orange-100 dark:bg-gray-500 w-65 shrink-0 h-fit px-4 py-6 space-y-4 sticky top-20 self-start rounded-md">
+  // Shared filter content
+  const filterContent = (
+    <>
       <div className="font-oswald font-bold text-2xl flex items-center gap-2">
         <FaFilter />
         {t("filter")}
@@ -179,7 +185,45 @@ function Filter({
           </div>
         </FilterSection>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop: Sidebar */}
+      <div className="hidden md:block bg-orange-100 dark:bg-gray-500 w-65 shrink-0 h-fit px-4 py-6 space-y-4 sticky top-20 self-start rounded-md">
+        {filterContent}
+      </div>
+
+      {/* Mobile: Overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Backdrop: tap outside to close the panel */}
+          <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+          {/* Panel */}
+          <div className="absolute inset-y-0 left-0 w-100 max-w-[85%] bg-orange-100 dark:bg-gray-500 p-4 space-y-4 overflow-y-auto animate-slide-in-left">
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 hover:bg-orange-200 dark:hover:bg-gray-400 rounded"
+              aria-label="Close filter"
+            >
+              <FaTimes size={20} />
+            </button>
+
+            {filterContent}
+
+            {/* Confirm button */}
+            <button
+              onClick={onClose}
+              className="w-full py-3 bg-primary text-white font-oswald text-lg rounded-lg hover:bg-primary-hover transition-colors"
+            >
+              {t("confirm")}
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

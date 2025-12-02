@@ -139,6 +139,13 @@ function Search() {
   const initialSort = queryParams.get("sort") || sortingOptions.relevance.value;
   const [sortBy, setSortBy] = useState<string>(initialSort);
 
+  // Initialize page from URL or default to 1
+  const initialPage = Number(queryParams.get("page")) || 1;
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
+
+  // Mobile filter overlay state
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+
   // Initialize filter state from URL params
   const [filterState, dispatch] = useReducer(
     filterReducer,
@@ -170,6 +177,9 @@ function Search() {
     if (priceRange.max !== undefined)
       params.set("maxPrice", String(priceRange.max));
 
+    // Add page (only if not page 1)
+    if (currentPage > 1) params.set("page", String(currentPage));
+
     // Update URL without triggering navigation (replace current history entry)
     const newSearch = params.toString();
     if (location.search !== `?${newSearch}`) {
@@ -178,6 +188,7 @@ function Search() {
   }, [
     keyword,
     sortBy,
+    currentPage,
     selectedCategories,
     selectedSalesStatus,
     priceRange,
@@ -202,6 +213,7 @@ function Search() {
       params.append("minPrice", String(priceRange.min));
     if (priceRange.max !== undefined)
       params.append("maxPrice", String(priceRange.max));
+    if (currentPage > 1) params.append("page", String(currentPage));
     return params.toString();
   };
 
@@ -216,7 +228,14 @@ function Search() {
   } = useQuery<SearchGoodsResponse>({
     queryKey: [
       "searchResult",
-      { keyword, sortBy, selectedCategories, selectedSalesStatus, priceRange },
+      {
+        keyword,
+        sortBy,
+        currentPage,
+        selectedCategories,
+        selectedSalesStatus,
+        priceRange,
+      },
     ],
     queryFn: async () => {
       const res = await api.get(`/goods/search?${queryString}`);
@@ -227,14 +246,17 @@ function Search() {
   // Dispatch wrapper functions for cleaner API to Filter component
   const handleCategoryChange = (category: string) => {
     dispatch({ type: "TOGGLE_CATEGORY", payload: category });
+    setCurrentPage(1); // Reset to page 1 when filter changes
   };
 
   const handleSalesStatusChange = (status: string) => {
     dispatch({ type: "TOGGLE_SALES_STATUS", payload: status });
+    setCurrentPage(1); // Reset to page 1 when filter changes
   };
 
   const handlePriceRangeChange = (newPriceRange: PriceRange) => {
     dispatch({ type: "SET_PRICE_RANGE", payload: newPriceRange });
+    setCurrentPage(1); // Reset to page 1 when filter changes
   };
 
   const handleRemoveFilter = (
@@ -246,6 +268,7 @@ function Search() {
 
   const handleClearAllFilters = () => {
     dispatch({ type: "CLEAR_ALL" });
+    setCurrentPage(1); // Reset to page 1 when clearing filters
   };
 
   //console.log("searchResult:", searchResult);
@@ -274,7 +297,7 @@ function Search() {
         <div className="font-oswald font-bold text-3xl mt-10 mb-6 pb-6 border-b-2 ">
           {t("searchResults")}
         </div>
-        <div className="flex gap-6">
+        <div className="flex gap-6 ">
           {/* left part */}
           <Filter
             selectedCategories={selectedCategories}
@@ -285,17 +308,22 @@ function Search() {
             onPriceRangeChange={handlePriceRangeChange}
             onRemoveFilter={handleRemoveFilter}
             onClearAll={handleClearAllFilters}
+            isOpen={isMobileFilterOpen}
+            onClose={() => setIsMobileFilterOpen(false)}
           />
           {/* right part */}
-          <div>
-            <div className="flex justify-between items-center">
+          <div className="flex-1">
+            <div className="flex justify-between items-center w-full">
               <div className="font-oswald mb-6 gap-2 flex flex-col md:flex-row-reverse md:justify-end md:items-end">
                 <span className="text-2xl ">{keyword}</span>
                 <span className="text-xl ">
                   {t("resultsCount", { count: searchResult?.total || 0 })}
                 </span>
               </div>
-              <button className="md:hidden border-2 h-fit px-6 py-2 rounded-2xl mb-6 font-oswald font-medium text-xl cursor-pointer flex items-center gap-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition duration-300">
+              <button
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="md:hidden border-2 h-fit px-6 py-2 rounded-2xl mb-6 font-oswald font-medium text-xl cursor-pointer flex items-center gap-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition duration-300"
+              >
                 <FaFilter />
                 {t("filter")}
               </button>
@@ -335,6 +363,67 @@ function Search() {
                   <SearchItem key={good._id} itemDetails={good} />
                 ))}
             </div>
+
+            {/* Pagination */}
+            {searchResult && searchResult.totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                {/* Previous button */}
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border-2 rounded-lg font-oswald disabled:opacity-50 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition duration-300"
+                >
+                  ←
+                </button>
+
+                {/* Page numbers */}
+                {Array.from(
+                  { length: searchResult.totalPages },
+                  (_, i) => i + 1
+                )
+                  .filter((page) => {
+                    // Show first, last, current, and neighbors
+                    return (
+                      page === 1 ||
+                      page === searchResult.totalPages ||
+                      Math.abs(page - currentPage) <= 1
+                    );
+                  })
+                  .map((page, index, array) => (
+                    <span key={page} className="flex items-center">
+                      {/* Show ellipsis if there's a gap */}
+                      {index > 0 && array[index - 1] !== page - 1 && (
+                        <span className="px-2">...</span>
+                      )}
+                      <button
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-10 h-10 rounded-lg font-oswald transition duration-300 ${
+                          currentPage === page
+                            ? "bg-primary text-white"
+                            : "border-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    </span>
+                  ))}
+
+                {/* Next button */}
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) =>
+                      Math.min(prev + 1, searchResult.totalPages)
+                    )
+                  }
+                  disabled={currentPage === searchResult.totalPages}
+                  className="px-4 py-2 border-2 rounded-lg font-oswald disabled:opacity-50 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition duration-300"
+                >
+                  →
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
