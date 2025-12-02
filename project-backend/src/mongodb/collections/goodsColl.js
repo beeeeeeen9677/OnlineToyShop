@@ -248,8 +248,12 @@ export const searchGoods = async (req, res) => {
     const filter = {};
 
     // Keyword search
+    // Note: relevance sort requires $text search, which requires a keyword
+    // prevent error caused by search bar empty with relevance sort
+    const useTextSearch = keyword && sort === "relevance";
+
     if (keyword) {
-      if (sort === "relevance") {
+      if (useTextSearch) {
         filter.$text = { $search: keyword };
       } else {
         filter.name = { $regex: keyword, $options: "i" }; // case-insensitive search
@@ -314,9 +318,13 @@ export const searchGoods = async (req, res) => {
 
     const results = await Good.find(
       filter,
-      sort === "relevance" ? { score: { $meta: "textScore" } } : {}
+      useTextSearch ? { score: { $meta: "textScore" } } : {}
     )
-      .sort(sortOptions[sort] || { createdAt: -1 })
+      .sort(
+        useTextSearch
+          ? sortOptions.relevance
+          : sortOptions[sort] || { createdAt: -1 }
+      )
       .skip((page - 1) * limit)
       .limit(limit)
       .lean();

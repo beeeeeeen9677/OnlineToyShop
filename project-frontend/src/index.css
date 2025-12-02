@@ -123,3 +123,7 @@ body {
 .tw-user-form-field {
   @apply border-b border-gray-300 dark:border-gray-500 mx-6 px-3 py-6;
 }
+
+.tw-page-arrow-btn {
+  @apply px-4 py-2 border-2 rounded-full font-oswald disabled:opacity-50 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition duration-300 hover:cursor-pointer disabled:hover:cursor-default;
+}

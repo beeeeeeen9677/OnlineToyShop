@@ -1,5 +1,5 @@
 import { Activity, useEffect, useReducer, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import { FaFilter } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "../../i18n/hooks";
@@ -131,12 +131,15 @@ function filterReducer(state: FilterState, action: FilterAction): FilterState {
 function Search() {
   const { t } = useTranslation("search");
   const location = useLocation();
-  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const keyword = queryParams.get("keyword");
 
   // Initialize sortBy from URL or default
-  const initialSort = queryParams.get("sort") || sortingOptions.relevance.value;
+  // If no keyword, default to "newest" instead of "relevance" (relevance requires keyword)
+  const defaultSort = keyword
+    ? sortingOptions.relevance.value
+    : sortingOptions.newest.value;
+  const initialSort = queryParams.get("sort") || defaultSort;
   const [sortBy, setSortBy] = useState<string>(initialSort);
 
   // Initialize page from URL or default to 1
@@ -155,7 +158,7 @@ function Search() {
   );
   const { selectedCategories, selectedSalesStatus, priceRange } = filterState;
 
-  // Sync filter state to URL when it changes
+  // Sync filter state to URL when it changes (using replaceState to avoid re-render)
   useEffect(() => {
     const params = new URLSearchParams();
 
@@ -180,10 +183,11 @@ function Search() {
     // Add page (only if not page 1)
     if (currentPage > 1) params.set("page", String(currentPage));
 
-    // Update URL without triggering navigation (replace current history entry)
+    // Update URL without triggering React Router re-render
     const newSearch = params.toString();
-    if (location.search !== `?${newSearch}`) {
-      navigate(`?${newSearch}`, { replace: true });
+    const newUrl = newSearch ? `?${newSearch}` : window.location.pathname;
+    if (window.location.search !== `?${newSearch}`) {
+      window.history.replaceState(null, "", newUrl);
     }
   }, [
     keyword,
@@ -192,15 +196,16 @@ function Search() {
     selectedCategories,
     selectedSalesStatus,
     priceRange,
-    navigate,
-    location.search,
   ]);
 
   // Build query string with filters (for API call)
   const buildQueryString = () => {
     const params = new URLSearchParams();
     if (keyword) params.append("keyword", keyword);
-    if (sortBy) params.append("sort", sortBy);
+    // Don't send relevance sort if no keyword
+    const effectiveSort =
+      sortBy === "relevance" && !keyword ? sortingOptions.newest.value : sortBy;
+    if (effectiveSort) params.append("sort", effectiveSort);
     if (selectedCategories.length > 0) {
       selectedCategories.forEach((cat) => params.append("category", cat));
     }
@@ -293,7 +298,7 @@ function Search() {
       <CustomerService />
       <BackToTopButton />
       <SearchBar />
-      <div className="w-full max-w-290 px-8 mx-auto">
+      <div className="w-full max-w-290 px-8 mx-auto mb-20">
         <div className="font-oswald font-bold text-3xl mt-10 mb-6 pb-6 border-b-2 ">
           {t("searchResults")}
         </div>
@@ -336,6 +341,7 @@ function Search() {
                 <select
                   id="options"
                   name="options"
+                  value={sortBy}
                   onChange={(e) => {
                     setSortBy(e.target.value);
                   }}
@@ -373,9 +379,9 @@ function Search() {
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
-                  className="px-4 py-2 border-2 rounded-lg font-oswald disabled:opacity-50 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition duration-300"
+                  className="tw-page-arrow-btn"
                 >
-                  ←
+                  &lt;
                 </button>
 
                 {/* Page numbers */}
@@ -388,7 +394,7 @@ function Search() {
                     return (
                       page === 1 ||
                       page === searchResult.totalPages ||
-                      Math.abs(page - currentPage) <= 1
+                      Math.abs(page - currentPage) <= 1 // Show current ± 1 neighbor
                     );
                   })
                   .map((page, index, array) => (
@@ -418,9 +424,9 @@ function Search() {
                     )
                   }
                   disabled={currentPage === searchResult.totalPages}
-                  className="px-4 py-2 border-2 rounded-lg font-oswald disabled:opacity-50 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition duration-300"
+                  className="tw-page-arrow-btn"
                 >
-                  →
+                  &gt;
                 </button>
               </div>
             )}
