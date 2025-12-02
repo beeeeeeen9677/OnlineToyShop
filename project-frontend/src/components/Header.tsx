@@ -8,6 +8,7 @@ import {
   type SupportedLanguage,
 } from "../i18n/hooks";
 import { CgLogIn, CgLogOut } from "react-icons/cg";
+import { FiShoppingCart } from "react-icons/fi";
 
 function Header() {
   const { currentLanguage, changeLanguage } = useLanguage();
@@ -112,6 +113,19 @@ function Header() {
               </p>
             </Link>
           </Activity>
+          <Link
+            to="/cart"
+            className="group text-white flex flex-col justify-center items-center h-full w-16 transition duration-1000"
+          >
+            <FiShoppingCart
+              className={`absolute top-3 scale-160 group-hover:scale-250 group-hover:translate-y-3 transition duration-${duration}`}
+            />
+            <p
+              className={`absolute bottom-2 group-hover:hidden transition duration-${duration}`}
+            >
+              {t("navigation.cart")}
+            </p>
+          </Link>
           <Link
             to="/auth"
             className="group text-white flex flex-col justify-center items-center h-full w-16 transition duration-1000"

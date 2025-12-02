@@ -42,6 +42,7 @@ export default admin;
 // Routes
 import adminRoutes from "./src/routes/admin.js";
 import authRoutes from "./src/routes/auth.js";
+import cartRoutes from "./src/routes/cart.js";
 import chatRoutes from "./src/routes/chat.js";
 import goodRoutes from "./src/routes/goods.js";
 import userRoutes from "./src/routes/user.js";
@@ -78,6 +79,7 @@ app.use(verifyFirebaseToken);
 
 // Protected routes
 app.use("/api/user", userRoutes);
+app.use("/api/cart", cartRoutes);
 app.use("/api/chat", chatRoutes);
 
 // Admin Authorization Middleware

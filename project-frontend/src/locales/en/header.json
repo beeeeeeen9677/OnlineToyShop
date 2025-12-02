@@ -4,7 +4,8 @@
     "login": "Log In",
     "logout": "Log Out",
     "user": "User",
-    "profile": "Profile"
+    "profile": "Profile",
+    "cart": "Cart"
   },
   "alt": {
     "logo": "Logo"

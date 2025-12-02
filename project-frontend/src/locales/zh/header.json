@@ -4,7 +4,8 @@
     "login": "登入",
     "logout": "登出",
     "user": "用戶",
-    "profile": "個人檔案"
+    "profile": "個人檔案",
+    "cart": "購物車"
   },
   "alt": {
     "logo": "標誌"
