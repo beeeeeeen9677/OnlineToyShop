@@ -22,6 +22,7 @@
     "productIntroduction": "產品介紹"
   },
   "buttons": {
-    "placeOrder": "送出訂單"
+    "placeOrder": "送出訂單",
+    "addToCart": "加入購物車"
   }
 }

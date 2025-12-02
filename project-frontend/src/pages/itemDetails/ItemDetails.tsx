@@ -163,7 +163,7 @@ function ItemDetails() {
               onClick={placeOrder}
               disabled={preorderEnded}
             >
-              {t("buttons.placeOrder")}
+              {t("buttons.addToCart")}
             </button>
           </div>
         </div>
@@ -201,7 +201,7 @@ function ItemDetails() {
             onClick={placeOrder}
             disabled={preorderEnded}
           >
-            {t("buttons.placeOrder")}
+            {t("buttons.addToCart")}
           </button>
         </div>
       </div>

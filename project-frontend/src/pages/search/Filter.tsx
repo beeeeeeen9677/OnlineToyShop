@@ -197,7 +197,7 @@ function Filter({
 
       {/* Mobile: Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-40 md:hidden">
           {/* Backdrop: tap outside to close the panel */}
           <div className="absolute inset-0 bg-black/50" onClick={onClose} />
           {/* Panel */}

@@ -22,6 +22,7 @@
     "productIntroduction": "PRODUCT INTRODUCTION"
   },
   "buttons": {
-    "placeOrder": "PLACE ORDER"
+    "placeOrder": "PLACE ORDER",
+    "addToCart": "ADD TO CART"
   }
 }
