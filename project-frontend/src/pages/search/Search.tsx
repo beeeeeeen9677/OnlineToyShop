@@ -1,5 +1,6 @@
-import { Activity, useState } from "react";
-import { useLocation } from "react-router";
+import { Activity, useEffect, useReducer, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { FaFilter } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "../../i18n/hooks";
 import api from "../../services/api";
@@ -21,28 +22,233 @@ interface SearchGoodsResponse {
   totalPages: number;
 }
 
+export interface PriceRange {
+  min?: number;
+  max?: number;
+}
+
+export interface FilterState {
+  selectedCategories: string[];
+  selectedSalesStatus: string[];
+  priceRange: PriceRange;
+}
+
+// Action types for the reducer
+type FilterAction =
+  | { type: "TOGGLE_CATEGORY"; payload: string }
+  | { type: "TOGGLE_SALES_STATUS"; payload: string }
+  | { type: "SET_PRICE_RANGE"; payload: PriceRange }
+  | {
+      type: "REMOVE_FILTER";
+      payload: {
+        filterType: "category" | "salesStatus" | "price";
+        value?: string;
+      };
+    }
+  | { type: "CLEAR_ALL" }
+  | { type: "INIT_FROM_URL"; payload: FilterState };
+
+// Initial state
+const initialFilterState: FilterState = {
+  selectedCategories: [],
+  selectedSalesStatus: [],
+  priceRange: {},
+};
+
+// Helper function to parse URL params into FilterState
+const parseFiltersFromURL = (searchParams: URLSearchParams): FilterState => {
+  const categories = searchParams.getAll("category");
+  const salesStatus = searchParams.getAll("salesStatus");
+  const minPrice = searchParams.get("minPrice");
+  const maxPrice = searchParams.get("maxPrice");
+
+  return {
+    selectedCategories: categories,
+    selectedSalesStatus: salesStatus,
+    priceRange: {
+      ...(minPrice ? { min: Number(minPrice) } : {}),
+      ...(maxPrice ? { max: Number(maxPrice) } : {}),
+    },
+  };
+};
+
+// Reducer function - all state logic in one place
+function filterReducer(state: FilterState, action: FilterAction): FilterState {
+  switch (action.type) {
+    case "INIT_FROM_URL":
+      return action.payload;
+    case "TOGGLE_CATEGORY":
+      return {
+        ...state,
+        selectedCategories: state.selectedCategories.includes(action.payload)
+          ? state.selectedCategories.filter((c) => c !== action.payload)
+          : [...state.selectedCategories, action.payload],
+      };
+    case "TOGGLE_SALES_STATUS":
+      return {
+        ...state,
+        selectedSalesStatus: state.selectedSalesStatus.includes(action.payload)
+          ? state.selectedSalesStatus.filter((s) => s !== action.payload)
+          : [...state.selectedSalesStatus, action.payload],
+      };
+    case "SET_PRICE_RANGE":
+      return {
+        ...state,
+        priceRange: action.payload,
+      };
+    case "REMOVE_FILTER":
+      if (action.payload.filterType === "category" && action.payload.value) {
+        return {
+          ...state,
+          selectedCategories: state.selectedCategories.filter(
+            (c) => c !== action.payload.value
+          ),
+        };
+      } else if (
+        action.payload.filterType === "salesStatus" &&
+        action.payload.value
+      ) {
+        return {
+          ...state,
+          selectedSalesStatus: state.selectedSalesStatus.filter(
+            (s) => s !== action.payload.value
+          ),
+        };
+      } else if (action.payload.filterType === "price") {
+        return {
+          ...state,
+          priceRange: {},
+        };
+      }
+      return state;
+    case "CLEAR_ALL":
+      return initialFilterState;
+    default:
+      return state;
+  }
+}
+
 function Search() {
   const { t } = useTranslation("search");
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const keyword = queryParams.get("keyword");
-  const [sortBy, setSortBy] = useState<string>(sortingOptions.relevance.value);
 
-  const queryString = keyword ? `keyword=${encodeURIComponent(keyword)}` : "";
+  // Initialize sortBy from URL or default
+  const initialSort = queryParams.get("sort") || sortingOptions.relevance.value;
+  const [sortBy, setSortBy] = useState<string>(initialSort);
+
+  // Initialize filter state from URL params
+  const [filterState, dispatch] = useReducer(
+    filterReducer,
+    //initialFilterState,
+    null,
+    () => parseFiltersFromURL(queryParams) //lazy initializer
+  );
+  const { selectedCategories, selectedSalesStatus, priceRange } = filterState;
+
+  // Sync filter state to URL when it changes
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    // Preserve keyword
+    if (keyword) params.set("keyword", keyword);
+
+    // Add sort
+    if (sortBy && sortBy !== sortingOptions.relevance.value) {
+      params.set("sort", sortBy);
+    }
+
+    // Add filters
+    selectedCategories.forEach((cat) => params.append("category", cat));
+    selectedSalesStatus.forEach((status) =>
+      params.append("salesStatus", status)
+    );
+    if (priceRange.min !== undefined)
+      params.set("minPrice", String(priceRange.min));
+    if (priceRange.max !== undefined)
+      params.set("maxPrice", String(priceRange.max));
+
+    // Update URL without triggering navigation (replace current history entry)
+    const newSearch = params.toString();
+    if (location.search !== `?${newSearch}`) {
+      navigate(`?${newSearch}`, { replace: true });
+    }
+  }, [
+    keyword,
+    sortBy,
+    selectedCategories,
+    selectedSalesStatus,
+    priceRange,
+    navigate,
+    location.search,
+  ]);
+
+  // Build query string with filters (for API call)
+  const buildQueryString = () => {
+    const params = new URLSearchParams();
+    if (keyword) params.append("keyword", keyword);
+    if (sortBy) params.append("sort", sortBy);
+    if (selectedCategories.length > 0) {
+      selectedCategories.forEach((cat) => params.append("category", cat));
+    }
+    if (selectedSalesStatus.length > 0) {
+      selectedSalesStatus.forEach((status) =>
+        params.append("salesStatus", status)
+      );
+    }
+    if (priceRange.min !== undefined)
+      params.append("minPrice", String(priceRange.min));
+    if (priceRange.max !== undefined)
+      params.append("maxPrice", String(priceRange.max));
+    return params.toString();
+  };
+
+  const queryString = buildQueryString();
+  //console.log("Query String:", queryString);
+
   const {
     data: searchResult,
     isLoading,
     isError,
     error,
   } = useQuery<SearchGoodsResponse>({
-    queryKey: ["searchResult", { queryString }],
+    queryKey: [
+      "searchResult",
+      { keyword, sortBy, selectedCategories, selectedSalesStatus, priceRange },
+    ],
     queryFn: async () => {
       const res = await api.get(`/goods/search?${queryString}`);
       return res.data;
     },
   });
 
-  console.log("searchResult:", searchResult);
+  // Dispatch wrapper functions for cleaner API to Filter component
+  const handleCategoryChange = (category: string) => {
+    dispatch({ type: "TOGGLE_CATEGORY", payload: category });
+  };
+
+  const handleSalesStatusChange = (status: string) => {
+    dispatch({ type: "TOGGLE_SALES_STATUS", payload: status });
+  };
+
+  const handlePriceRangeChange = (newPriceRange: PriceRange) => {
+    dispatch({ type: "SET_PRICE_RANGE", payload: newPriceRange });
+  };
+
+  const handleRemoveFilter = (
+    filterType: "category" | "salesStatus" | "price",
+    value?: string
+  ) => {
+    dispatch({ type: "REMOVE_FILTER", payload: { filterType, value } });
+  };
+
+  const handleClearAllFilters = () => {
+    dispatch({ type: "CLEAR_ALL" });
+  };
+
+  //console.log("searchResult:", searchResult);
 
   if (isError) {
     return (
@@ -70,15 +276,32 @@ function Search() {
         </div>
         <div className="flex gap-6">
           {/* left part */}
-          <Filter />
+          <Filter
+            selectedCategories={selectedCategories}
+            selectedSalesStatus={selectedSalesStatus}
+            priceRange={priceRange}
+            onCategoryChange={handleCategoryChange}
+            onSalesStatusChange={handleSalesStatusChange}
+            onPriceRangeChange={handlePriceRangeChange}
+            onRemoveFilter={handleRemoveFilter}
+            onClearAll={handleClearAllFilters}
+          />
           {/* right part */}
           <div>
-            <div className="font-oswald text-xl mb-6 gap-2 flex flex-col md:flex-row-reverse md:justify-end">
-              <div>{keyword}</div>
-              <div>
-                {t("resultsCount", { count: searchResult?.total || 0 })}
+            <div className="flex justify-between items-center">
+              <div className="font-oswald mb-6 gap-2 flex flex-col md:flex-row-reverse md:justify-end md:items-end">
+                <span className="text-2xl ">{keyword}</span>
+                <span className="text-xl ">
+                  {t("resultsCount", { count: searchResult?.total || 0 })}
+                </span>
               </div>
+              <button className="md:hidden border-2 h-fit px-6 py-2 rounded-2xl mb-6 font-oswald font-medium text-xl cursor-pointer flex items-center gap-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition duration-300">
+                <FaFilter />
+                {t("filter")}
+              </button>
             </div>
+
+            {/* sorting options */}
             {searchResult && searchResult.total > 0 && (
               <div className="mb-6 flex flex-col gap-2">
                 <label htmlFor="options">{t("sortBy")}</label>

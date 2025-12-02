@@ -230,12 +230,13 @@ export const incrementViewCount = async (req, res) => {
   }
 };
 
-// GET /api/goods/search?keyword=gundam&category=gunpla&minPrice=100&maxPrice=500&sort=price_asc&page=1
+// GET /api/goods/search?keyword=gundam&category=gunpla&category=figure&salesStatus=available&minPrice=100&maxPrice=500&sort=price_asc&page=1
 export const searchGoods = async (req, res) => {
   try {
     const {
       keyword,
       category,
+      salesStatus,
       minPrice,
       maxPrice,
       sort,
@@ -246,6 +247,7 @@ export const searchGoods = async (req, res) => {
     // Build dynamic filter object
     const filter = {};
 
+    // Keyword search
     if (keyword) {
       if (sort === "relevance") {
         filter.$text = { $search: keyword };
@@ -253,9 +255,46 @@ export const searchGoods = async (req, res) => {
         filter.name = { $regex: keyword, $options: "i" }; // case-insensitive search
       }
     }
+
+    // Category filter - supports multiple categories with $in
     if (category) {
-      filter.category = category;
+      const categories = Array.isArray(category) ? category : [category];
+      filter.category = { $in: categories };
     }
+
+    // Sales status filter - supports multiple statuses
+    if (salesStatus) {
+      const statuses = Array.isArray(salesStatus) ? salesStatus : [salesStatus];
+      const statusConditions = [];
+
+      if (statuses.includes("available")) {
+        // Available: available=true AND preorderCloseDate > now
+        statusConditions.push({
+          available: true,
+          preorderCloseDate: { $gt: new Date() },
+        });
+      }
+      if (statuses.includes("preorderClosed")) {
+        // Preorder closed: preorderCloseDate <= now OR available=false
+        statusConditions.push({
+          $or: [
+            { preorderCloseDate: { $lte: new Date() } },
+            { available: false },
+          ],
+        });
+      }
+
+      // If both statuses selected, use $or to combine them
+      if (statusConditions.length > 0) {
+        if (statusConditions.length === 1) {
+          Object.assign(filter, statusConditions[0]);
+        } else {
+          filter.$or = statusConditions;
+        }
+      }
+    }
+
+    // Price range filter
     if (minPrice || maxPrice) {
       filter.price = {};
       if (minPrice) filter.price.$gte = Number(minPrice);

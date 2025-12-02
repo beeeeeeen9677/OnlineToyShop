@@ -5,6 +5,7 @@
   "resultsCount": "{{count}} results",
   "filter": "FILTER",
   "selectedFilters": "SELECTED FILTERS",
+  "clearAll": "Clear All",
   "sortBy": "SORT BY",
   "sortOptions": {
     "relevance": "Relevance",
@@ -14,5 +15,19 @@
     "mostPopular": "Most Popular",
     "preorderCloseDateAsc": "Preorder Close Date: Earliest",
     "preorderCloseDateDesc": "Preorder Close Date: Latest"
+  },
+  "filterSections": {
+    "salesStatus": "Sales Status",
+    "categories": "Categories",
+    "priceRange": "Price Range"
+  },
+  "salesStatus": {
+    "available": "Available",
+    "preorderClosed": "Preorder Closed"
+  },
+  "priceRange": {
+    "min": "Min",
+    "max": "Max",
+    "apply": "Apply"
   }
 }

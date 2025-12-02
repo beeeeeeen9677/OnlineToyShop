@@ -5,6 +5,7 @@
   "resultsCount": "總共{{count}}件",
   "filter": "篩選",
   "selectedFilters": "已選篩選條件",
+  "clearAll": "清除全部",
   "sortBy": "排序方式",
   "sortOptions": {
     "relevance": "相關性",
@@ -14,5 +15,19 @@
     "mostPopular": "最受歡迎",
     "preorderCloseDateAsc": "預購截止日期：由近至遠",
     "preorderCloseDateDesc": "預購截止日期：由遠至近"
+  },
+  "filterSections": {
+    "salesStatus": "銷售狀態",
+    "categories": "商品類別",
+    "priceRange": "價格範圍"
+  },
+  "salesStatus": {
+    "available": "可購買",
+    "preorderClosed": "預購已截止"
+  },
+  "priceRange": {
+    "min": "最低",
+    "max": "最高",
+    "apply": "套用"
   }
 }

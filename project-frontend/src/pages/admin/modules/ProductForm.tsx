@@ -264,13 +264,11 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
           />
         </div>
         {mode === "edit" && (
-          <div className="flex items-center gap-2 mx-4">
-            <label
-              className="cursor-pointer select-none"
-              htmlFor="availableCheckbox"
-            >
-              {t("labels.available")}
-            </label>
+          <label
+            className="cursor-pointer select-none gap-2 flex items-center mx-4"
+            htmlFor="availableCheckbox"
+          >
+            <span> {t("labels.available")}</span>
             <input
               type="checkbox"
               id="availableCheckbox"
@@ -278,7 +276,7 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
               onChange={(e) => setAvailable(e.target.checked)}
               className="cursor-pointer"
             />
-          </div>
+          </label>
         )}
       </div>
       <div className="flex gap-1">
