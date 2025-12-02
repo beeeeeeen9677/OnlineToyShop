@@ -15,6 +15,7 @@ function ItemDetails() {
   const { id } = useParams();
   const { isVisible } = useScrollToggleVisibility(150);
 
+  // Fetch product details and track view count in a single API call
   const {
     data: itemDetails,
     isLoading,
@@ -23,10 +24,12 @@ function ItemDetails() {
   } = useQuery<Good, AxiosError<{ error: string }>>({
     queryKey: ["good", { id }],
     queryFn: async () => {
-      const res = await api.get(`/goods/${id}`);
+      // tracks view count and returns product data
+      const res = await api.put(`/goods/${id}/view`);
       return res.data;
     },
     refetchOnWindowFocus: false,
+    staleTime: 60 * 1000, // 1 minute
   });
 
   const [quantity, setQuantity] = useState<number>(1);
@@ -59,24 +62,6 @@ function ItemDetails() {
       document.title = itemDetails.name;
     }
   }, [itemDetails?.name]);
-
-  // track viewed count (only once per user/session)
-  useEffect(() => {
-    const updateViewedCount = async () => {
-      if (id) {
-        try {
-          await api.put(`/goods/${id}/view`);
-        } catch (err) {
-          const axiosError = err as AxiosError<{ error: string }>;
-          console.error(
-            "Error updating viewed count:",
-            axiosError.response?.data?.error
-          );
-        }
-      }
-    };
-    updateViewedCount();
-  }, [id]);
 
   if (isError) {
     return (

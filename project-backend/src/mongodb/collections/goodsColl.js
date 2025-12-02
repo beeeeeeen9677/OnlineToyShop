@@ -183,8 +183,8 @@ export const fetchGoods = async (req, res) => {
   }
 };
 
-// Increment view count for a product (only once per session)
-export const incrementViewCount = async (req, res) => {
+// Middleware to increment view count for a product (only once per session)
+export const incrementViewCount = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -195,35 +195,18 @@ export const incrementViewCount = async (req, res) => {
 
     // Check if user already viewed this item in current session
     if (req.session.viewedItems.includes(id)) {
-      const product = await Good.findById(id)
-        //.select("viewedCount")
-        .lean()
-        .exec();
-      if (!product) {
-        return res.status(404).json({ error: "Product not found" });
-      }
-      return res.json({
-        alreadyViewed: true,
-      });
+      // Already viewed, skip increment and continue to fetchGoods
+      return next();
     }
 
     // Add to session's viewed items
     req.session.viewedItems.push(id);
 
-    // increment view count in database
-    const result = await Good.findByIdAndUpdate(
-      id,
-      { $inc: { viewedCount: 1 } },
-      { new: true } // return updated document
-    )
-      .lean()
-      .exec();
+    // Increment view count in database
+    await Good.findByIdAndUpdate(id, { $inc: { viewedCount: 1 } }).exec();
 
-    if (!result) {
-      return res.status(404).json({ error: "Product not found" });
-    }
-
-    res.json({ alreadyViewed: false });
+    // Continue to fetchGoods
+    next();
   } catch (err) {
     console.error("Error incrementing view count:", err);
     res.status(500).json({ error: err.message });

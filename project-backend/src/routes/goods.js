@@ -8,8 +8,8 @@ import {
 const router = express.Router();
 router.get("/", fetchGoods); // fetch all
 router.get("/search", searchGoods);
-router.put("/:id/view", incrementViewCount); // Track view count
-router.get("/:id", fetchGoods); // fettch by id
+router.put("/:id/view", incrementViewCount, fetchGoods); // Track view count + return product
+router.get("/:id", fetchGoods); // fetch by id
 
 /*
 //import Good from "../mongodb/models/Good.js";
