@@ -23,6 +23,12 @@
   },
   "buttons": {
     "placeOrder": "PLACE ORDER",
-    "addToCart": "ADD TO CART"
+    "addToCart": "ADD TO CART",
+    "adding": "ADDING..."
+  },
+  "messages": {
+    "addedToCart": "Added to cart!",
+    "addToCartFailed": "Failed to add to cart. Please try again.",
+    "quantityLimitReached": "Maximum quantity (3) already in cart."
   }
 }

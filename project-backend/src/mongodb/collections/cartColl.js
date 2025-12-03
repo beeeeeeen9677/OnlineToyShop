@@ -54,11 +54,19 @@ export const addToCart = async (req, res) => {
     );
 
     if (existingItemIndex > -1) {
+      const currentQuantity = user.cart[existingItemIndex].quantity;
+
+      // Check if already at max quantity
+      if (currentQuantity >= 3) {
+        return res.status(400).json({
+          error: "QUANTITY_LIMIT_REACHED",
+          message: "Maximum quantity (3) already in cart",
+          currentQuantity: currentQuantity,
+        });
+      }
+
       // Update quantity (cap at 3)
-      const newQuantity = Math.min(
-        user.cart[existingItemIndex].quantity + quantity,
-        3
-      );
+      const newQuantity = Math.min(currentQuantity + quantity, 3);
       user.cart[existingItemIndex].quantity = newQuantity;
     } else {
       // Add new item

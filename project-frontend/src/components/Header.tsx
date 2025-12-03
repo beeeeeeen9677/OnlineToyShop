@@ -31,7 +31,7 @@ function Header() {
         {/* Right Hand Side */}
         <div className="flex items-center gap-5">
           <select
-            className="cursor-pointer hover:scale-125 transition duration-150 text-white"
+            className="cursor-pointer hover:scale-125 transition duration-150 text-white outline-none"
             value={currentLanguage}
             onChange={(e) =>
               changeLanguage(e.target.value as SupportedLanguage)

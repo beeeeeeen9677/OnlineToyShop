@@ -9,11 +9,18 @@ import type { Good } from "../../interface/good";
 import Header from "../../components/Header";
 import LoadingPanel from "../../components/LoadingPanel";
 import { useScrollToggleVisibility } from "../../hooks/useScrollToggleVisibility";
+import { useCart, CartLimitError } from "../cart/useCart";
 
 function ItemDetails() {
   const { t } = useTranslation("goods");
   const { id } = useParams();
   const { isVisible } = useScrollToggleVisibility(150);
+  const { addItem } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+  const [cartMessage, setCartMessage] = useState<{
+    type: "success" | "error" | "limit";
+    transKey: string;
+  } | null>(null);
 
   // Fetch product details and track view count in a single API call
   const {
@@ -48,11 +55,39 @@ function ItemDetails() {
   const preorderEnded = itemDetails
     ? new Date() > new Date(itemDetails.preorderCloseDate)
     : false;
-  const placeOrder = () => {
-    // Implement place order functionality here
-    if (preorderEnded) {
-      alert("Pre-order has ended.");
-      return;
+
+  const handleAddToCart = async () => {
+    if (preorderEnded || !id) return;
+
+    setIsAdding(true);
+    setCartMessage(null);
+
+    try {
+      await addItem(id, quantity);
+      setCartMessage({ type: "success", transKey: t("messages.addedToCart") });
+      // Clear success message after 3 seconds
+      setTimeout(() => setCartMessage(null), 3000);
+    } catch (err) {
+      // Check for quantity limit error
+      if (err instanceof CartLimitError) {
+        setCartMessage({
+          type: "limit",
+          transKey: "messages.quantityLimitReached",
+        });
+      } else if (
+        (err as AxiosError<{ error: string }>)?.response?.data?.error ===
+        "QUANTITY_LIMIT_REACHED"
+      ) {
+        setCartMessage({
+          type: "limit",
+          transKey: "messages.quantityLimitReached",
+        });
+      } else {
+        console.error("Failed to add to cart:", err);
+        setCartMessage({ type: "error", transKey: "messages.addToCartFailed" });
+      }
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -160,11 +195,25 @@ function ItemDetails() {
             <div className="border border-orange-100   dark:border-gray-500 " />
             <button
               className="rounded-full bg-primary text-white  py-2 w-full hover:bg-primary-hover cursor-pointer font-extrabold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-default"
-              onClick={placeOrder}
-              disabled={preorderEnded}
+              onClick={handleAddToCart}
+              disabled={preorderEnded || isAdding}
             >
-              {t("buttons.addToCart")}
+              {isAdding ? t("buttons.adding") : t("buttons.addToCart")}
             </button>
+            {/* Cart feedback message */}
+            {cartMessage && (
+              <div
+                className={`text-sm mt-2 p-2 rounded text-center ${
+                  cartMessage.type === "success"
+                    ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                    : cartMessage.type === "limit"
+                    ? "bg-yellow-100 text-red-500 dark:bg-yellow-500 dark:text-red-500"
+                    : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
+                }`}
+              >
+                {t(cartMessage.transKey)}
+              </div>
+            )}
           </div>
         </div>
         {/*  Break line  */}
@@ -198,10 +247,10 @@ function ItemDetails() {
 
           <button
             className="mx-auto border-white border-4 rounded-full bg-primary py-2 w-80 hover:bg-white hover:text-primary cursor-pointer font-extrabold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-default disabled:hover:text-white"
-            onClick={placeOrder}
-            disabled={preorderEnded}
+            onClick={handleAddToCart}
+            disabled={preorderEnded || isAdding}
           >
-            {t("buttons.addToCart")}
+            {isAdding ? t("buttons.adding") : t("buttons.addToCart")}
           </button>
         </div>
       </div>
