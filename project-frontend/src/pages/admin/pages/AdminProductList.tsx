@@ -81,7 +81,7 @@ function AdminProductList() {
 
   return (
     <div className="animate-fade-in min-h-screen">
-      <title>Admin Edit</title>
+      <title>ADMIN PRODUCTS | PREMIUM BEN TOYS</title>
       <Header />
       <Link to="/admin/">
         <div className="mx-6 mt-3 underline text-2xl"> &lt;Back</div>

@@ -9,6 +9,7 @@ import {
 } from "../i18n/hooks";
 import { CgLogIn, CgLogOut } from "react-icons/cg";
 import { FiShoppingCart } from "react-icons/fi";
+import { useCart } from "../pages/shoppingCart/useCart";
 
 function Header() {
   const { currentLanguage, changeLanguage } = useLanguage();
@@ -17,6 +18,7 @@ function Header() {
   const isLoggedIn = useLoginContext();
   const user = useUserContext();
   const isAdmin = isLoggedIn && user?.role === "admin";
+  const { totalItems } = useCart();
   const duration = "200";
   return (
     <header className="bg-primary w-full h-16 justify-center flex">
@@ -115,7 +117,7 @@ function Header() {
           </Activity>
           <Link
             to="/cart"
-            className="group text-white flex flex-col justify-center items-center h-full w-16 transition duration-1000"
+            className="group text-white flex flex-col justify-center items-center h-full w-16 transition duration-1000 relative"
           >
             <FiShoppingCart
               className={`absolute top-3 scale-160 group-hover:scale-250 group-hover:translate-y-3 transition duration-${duration}`}
@@ -125,6 +127,11 @@ function Header() {
             >
               {t("navigation.cart")}
             </p>
+            {totalItems > 0 && (
+              <div className="bg-red-600 text-white rounded-full absolute top-1 right-1 size-5 text-xs flex items-center justify-center ">
+                {totalItems}
+              </div>
+            )}
           </Link>
           <Link
             to="/auth"

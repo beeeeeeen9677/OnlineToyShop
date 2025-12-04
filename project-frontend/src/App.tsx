@@ -1,6 +1,6 @@
 // React Imports
 import { Route, Routes, useNavigate, useLocation } from "react-router";
-import { useEffect, useState, useEffectEvent } from "react";
+import { useEffect, useState, useEffectEvent, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Component Imports
@@ -13,7 +13,7 @@ import Profile from "./pages/profile/Profile";
 import ItemDetails from "./pages/itemDetails/ItemDetails";
 import LoadingPanel from "./components/LoadingPanel";
 import Search from "./pages/search/Search";
-import Cart from "./pages/cart/Cart";
+import ShoppingCart from "./pages/shoppingCart/ShoppingCart";
 import NotFound from "./pages/NotFound";
 
 // Firebase
@@ -27,6 +27,9 @@ const socket: Socket = io(import.meta.env.VITE_SERVER_URL, {
 
 // i18n
 import { useLanguage, type SupportedLanguage } from "./i18n/hooks";
+
+// Cart - sync on login
+import { useCart } from "./pages/shoppingCart/useCart";
 
 // Other Imports
 import api from "./services/api";
@@ -131,6 +134,19 @@ function App() {
     //setUserEvent();
   }, [isLoggedIn, queryClient, user]);
 
+  // Sync local cart to server when user logs in
+  const { syncCart } = useCart();
+  const hasSyncedCart = useRef(false);
+  useEffect(() => {
+    if (isLoggedIn && user && !hasSyncedCart.current) {
+      hasSyncedCart.current = true;
+      syncCart();
+    }
+    if (!isLoggedIn) {
+      hasSyncedCart.current = false;
+    }
+  }, [isLoggedIn, user, syncCart]);
+
   const { changeLanguage } = useLanguage();
   // language init
   useEffect(() => {
@@ -176,7 +192,7 @@ function RouteContainer() {
       <Route path="/user" element={<Profile />} />
       <Route path="/item/:id" element={<ItemDetails />} />
       <Route path="/search" element={<Search />} />
-      <Route path="/cart" element={<Cart />} />
+      <Route path="/cart" element={<ShoppingCart />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

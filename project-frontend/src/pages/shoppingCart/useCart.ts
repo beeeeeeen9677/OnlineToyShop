@@ -14,7 +14,7 @@ import {
   removeFromLocalCart,
   clearLocalCart,
   CartLimitError,
-} from "./cartStorage";
+} from "./localCartStorage";
 
 // Re-export for consumers
 export { CartLimitError };
@@ -216,6 +216,7 @@ export const useCart = (): UseCartReturn => {
       return;
     }
 
+    console.log("Syncing local cart to server...");
     await syncMutation.mutateAsync(localCart);
   }, [isLoggedIn, syncMutation, refetch]);
 

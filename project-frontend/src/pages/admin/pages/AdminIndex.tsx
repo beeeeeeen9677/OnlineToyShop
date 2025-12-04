@@ -32,7 +32,7 @@ function AdminIndex() {
 
   return (
     <div className="animate-fade-in min-h-screen">
-      <title>Admin</title>
+      <title>ADMIN | PREMIUM BEN TOYS</title>
       <Header />
       <div>
         <ModuleWrapper

@@ -18,7 +18,7 @@ function Profile() {
 
   return (
     <div className="animate-fade-in min-h-screen">
-      <title>Profile</title>
+      <title>PROFILE | PREMIUM BEN TOYS</title>
       <Header />
       <UserForm user={user} />
     </div>

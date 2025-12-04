@@ -9,7 +9,7 @@ import type { Good } from "../../interface/good";
 import Header from "../../components/Header";
 import LoadingPanel from "../../components/LoadingPanel";
 import { useScrollToggleVisibility } from "../../hooks/useScrollToggleVisibility";
-import { useCart, CartLimitError } from "../cart/useCart";
+import { useCart, CartLimitError } from "../shoppingCart/useCart";
 
 function ItemDetails() {
   const { t } = useTranslation("goods");
@@ -94,7 +94,7 @@ function ItemDetails() {
   // dynamic title
   useEffect(() => {
     if (itemDetails?.name) {
-      document.title = itemDetails.name;
+      document.title = itemDetails.name + " | PREMIUM BEN TOYS";
     }
   }, [itemDetails?.name]);
 
@@ -198,7 +198,11 @@ function ItemDetails() {
               onClick={handleAddToCart}
               disabled={preorderEnded || isAdding}
             >
-              {isAdding ? t("buttons.adding") : t("buttons.addToCart")}
+              {preorderEnded
+                ? t("status.preorderClosed")
+                : isAdding
+                ? t("buttons.adding")
+                : t("buttons.addToCart")}
             </button>
             {/* Cart feedback message */}
             {cartMessage && (
@@ -250,7 +254,11 @@ function ItemDetails() {
             onClick={handleAddToCart}
             disabled={preorderEnded || isAdding}
           >
-            {isAdding ? t("buttons.adding") : t("buttons.addToCart")}
+            {preorderEnded
+              ? t("status.preorderClosed")
+              : isAdding
+              ? t("buttons.adding")
+              : t("buttons.addToCart")}
           </button>
         </div>
       </div>

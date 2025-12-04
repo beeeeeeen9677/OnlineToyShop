@@ -4,12 +4,14 @@ import CustomerService from "../../components/CustomerService/CustomerService";
 import BackToTopButton from "../../components/BackToTopButton";
 import LoadingPanel from "../../components/LoadingPanel";
 import SearchBar from "../../components/SearchBar";
+import { useTranslation } from "react-i18next";
 
-function Cart() {
+function ShoppingCart() {
   const isLoading = false;
+  const { t } = useTranslation("shoppingCart");
   return (
     <div className="animate-fade-in min-h-screen">
-      <title>Cart</title>
+      <title>SHOPPING CART | PREMIUM BEN TOYS</title>
       <Header />
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <LoadingPanel />
@@ -17,8 +19,17 @@ function Cart() {
       <CustomerService />
       <BackToTopButton />
       <SearchBar />
+      <div className="mt-20 flex flex-col">
+        <h1 className="text-5xl font-oswald font-bold text-center">
+          {t("titles.shoppingCart")}
+        </h1>
+        <div className="flex flex-col md:flex-row">
+          <div className="flex-1 flex flex-col"></div>
+          <div className="flex-1 bg-blue-100">asd</div>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default Cart;
+export default ShoppingCart;

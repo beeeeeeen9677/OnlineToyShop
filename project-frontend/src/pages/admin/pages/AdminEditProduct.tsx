@@ -10,6 +10,7 @@ import ProductForm from "../modules/ProductForm";
 import { useTranslation } from "../../../i18n/hooks";
 import { useUserContext } from "../../../context/app";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 function AdminEditProduct() {
   const user = useUserContext();
@@ -70,6 +71,10 @@ function AdminEditProduct() {
     alert(t("messages.updateSuccess") + `:\n${updatedProduct.name}`);
   };
 
+  useEffect(() => {
+    document.title = `Edit: ${product?.name || ""} | PREMIUM BEN TOYS`;
+  }, [product?.name]);
+
   if (user === undefined || user.role !== "admin") {
     return (
       <>
@@ -92,7 +97,6 @@ function AdminEditProduct() {
 
   return (
     <div className="animate-fade-in min-h-screen">
-      <title>Edit Product</title>
       {isPending && <LoadingPanel />}
       <Header />
       {/* Back Btn */}

@@ -11,6 +11,7 @@ import enGoods from "../locales/en/goods.json";
 import enIndex from "../locales/en/index.json";
 import enFirebase from "../locales/en/firebase.json";
 import enSearch from "../locales/en/search.json";
+import enShoppingCart from "../locales/en/shoppingCart.json";
 
 import zhCommon from "../locales/zh/common.json";
 import zhAuth from "../locales/zh/auth.json";
@@ -21,6 +22,7 @@ import zhGoods from "../locales/zh/goods.json";
 import zhIndex from "../locales/zh/index.json";
 import zhFirebase from "../locales/zh/firebase.json";
 import zhSearch from "../locales/zh/search.json";
+import zhShoppingCart from "../locales/zh/shoppingCart.json";
 
 // Define resources
 const resources = {
@@ -34,6 +36,7 @@ const resources = {
     index: enIndex,
     firebase: enFirebase,
     search: enSearch,
+    shoppingCart: enShoppingCart,
   },
   zh: {
     common: zhCommon,
@@ -45,6 +48,7 @@ const resources = {
     index: zhIndex,
     firebase: zhFirebase,
     search: zhSearch,
+    shoppingCart: zhShoppingCart,
   },
 };
 
@@ -67,6 +71,7 @@ i18n.use(initReactI18next).init({
     "index",
     "firebase",
     "search",
+    "shoppingCart",
   ],
 
   interpolation: {
