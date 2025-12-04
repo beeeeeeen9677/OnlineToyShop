@@ -1,9 +1,9 @@
-import type { LocalCartItem } from "../../interface/cart";
+import type { CartItem } from "../../interface/cart";
 
 const CART_KEY = "premiumbentoys:cart";
 
 // Get cart from localStorage
-export const getLocalCart = (): LocalCartItem[] => {
+export const getLocalCart = (): CartItem[] => {
   const data = localStorage.getItem(CART_KEY);
   if (!data) return [];
   try {
@@ -14,7 +14,7 @@ export const getLocalCart = (): LocalCartItem[] => {
 };
 
 // Save cart to localStorage
-export const setLocalCart = (items: LocalCartItem[]): void => {
+export const setLocalCart = (items: CartItem[]): void => {
   localStorage.setItem(CART_KEY, JSON.stringify(items));
 };
 
@@ -35,7 +35,7 @@ export class CartLimitError extends Error {
 export const addToLocalCart = (
   goodId: string,
   quantity: number
-): LocalCartItem[] => {
+): CartItem[] => {
   const cart = getLocalCart();
   const existingIndex = cart.findIndex((item) => item.goodId === goodId);
 
@@ -62,7 +62,7 @@ export const addToLocalCart = (
 export const updateLocalCartItem = (
   goodId: string,
   quantity: number
-): LocalCartItem[] => {
+): CartItem[] => {
   const cart = getLocalCart();
   const itemIndex = cart.findIndex((item) => item.goodId === goodId);
 
@@ -75,7 +75,7 @@ export const updateLocalCartItem = (
 };
 
 // Remove item from local cart
-export const removeFromLocalCart = (goodId: string): LocalCartItem[] => {
+export const removeFromLocalCart = (goodId: string): CartItem[] => {
   const cart = getLocalCart().filter((item) => item.goodId !== goodId);
   setLocalCart(cart);
   return cart;

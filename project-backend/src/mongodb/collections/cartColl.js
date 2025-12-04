@@ -1,22 +1,16 @@
 import User from "../models/User.js";
 import Good from "../models/Good.js";
 
-// Get user's cart with populated good details
+// Get user's cart (returns goodId and quantity only)
 export const getCart = async (req, res) => {
   try {
-    const user = await User.findById(req.session.user._id)
-      .populate("cart.goodId")
-      .lean()
-      .exec();
+    const user = await User.findById(req.session.user._id).lean().exec();
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Filter out any cart items where the good no longer exists
-    const validItems = user.cart.filter((item) => item.goodId !== null);
-
-    res.json({ items: validItems });
+    res.json({ items: user.cart });
   } catch (err) {
     console.error("Error fetching cart:", err);
     res.status(500).json({ error: err.message });
@@ -75,13 +69,7 @@ export const addToCart = async (req, res) => {
 
     await user.save();
 
-    // Return updated cart with populated goods
-    const updatedUser = await User.findById(userId)
-      .populate("cart.goodId")
-      .lean()
-      .exec();
-
-    res.json({ items: updatedUser.cart });
+    res.json({ items: user.cart });
   } catch (err) {
     console.error("Error adding to cart:", err);
     res.status(500).json({ error: err.message });
@@ -113,12 +101,7 @@ export const updateCartItem = async (req, res) => {
     user.cart[itemIndex].quantity = quantity;
     await user.save();
 
-    const updatedUser = await User.findById(userId)
-      .populate("cart.goodId")
-      .lean()
-      .exec();
-
-    res.json({ items: updatedUser.cart });
+    res.json({ items: user.cart });
   } catch (err) {
     console.error("Error updating cart item:", err);
     res.status(500).json({ error: err.message });
@@ -135,12 +118,7 @@ export const removeFromCart = async (req, res) => {
     user.cart = user.cart.filter((item) => item.goodId.toString() !== goodId);
     await user.save();
 
-    const updatedUser = await User.findById(userId)
-      .populate("cart.goodId")
-      .lean()
-      .exec();
-
-    res.json({ items: updatedUser.cart });
+    res.json({ items: user.cart });
   } catch (err) {
     console.error("Error removing from cart:", err);
     res.status(500).json({ error: err.message });
@@ -199,12 +177,7 @@ export const syncCart = async (req, res) => {
 
     await user.save();
 
-    const updatedUser = await User.findById(userId)
-      .populate("cart.goodId")
-      .lean()
-      .exec();
-
-    res.json({ items: updatedUser.cart });
+    res.json({ items: user.cart });
   } catch (err) {
     console.error("Error syncing cart:", err);
     res.status(500).json({ error: err.message });

@@ -1,14 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../i18n/hooks";
 import i18n from "../../i18n";
-import api from "../../services/api";
 import type { AxiosError } from "axios";
-import type { Good } from "../../interface/good";
 import Header from "../../components/Header";
 import LoadingPanel from "../../components/LoadingPanel";
 import { useScrollToggleVisibility } from "../../hooks/useScrollToggleVisibility";
+import { useGood } from "../../hooks/useGood";
 import { useCart, CartLimitError } from "../shoppingCart/useCart";
 
 function ItemDetails() {
@@ -22,22 +20,13 @@ function ItemDetails() {
     transKey: string;
   } | null>(null);
 
-  // Fetch product details and track view count in a single API call
+  // Fetch product details and track view count
   const {
-    data: itemDetails,
+    good: itemDetails,
     isLoading,
     isError,
     error,
-  } = useQuery<Good, AxiosError<{ error: string }>>({
-    queryKey: ["good", { id }],
-    queryFn: async () => {
-      // tracks view count and returns product data
-      const res = await api.put(`/goods/${id}/view`);
-      return res.data;
-    },
-    refetchOnWindowFocus: false,
-    staleTime: 60 * 1000, // 1 minute
-  });
+  } = useGood(id, { trackView: true });
 
   const [quantity, setQuantity] = useState<number>(1);
   const minQuantity = 1;

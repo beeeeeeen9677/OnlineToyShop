@@ -9,8 +9,9 @@ import type { AxiosError } from "axios";
 import ProductForm from "../modules/ProductForm";
 import { useTranslation } from "../../../i18n/hooks";
 import { useUserContext } from "../../../context/app";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useGood } from "../../../hooks/useGood";
 
 function AdminEditProduct() {
   const user = useUserContext();
@@ -41,18 +42,7 @@ function AdminEditProduct() {
   */
 
   const queryClient = useQueryClient();
-  const {
-    data: product = null,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Good, AxiosError>({
-    queryKey: ["good", { id }],
-    queryFn: async () => {
-      const res = await api.get(`/goods/${id}`);
-      return res.data;
-    },
-  });
+  const { good: product, isLoading, isError, error } = useGood(id);
 
   const { mutateAsync: setProductMutation, isPending } = useMutation({
     mutationFn: async (formData: FormData) => {

@@ -2,11 +2,7 @@ import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLoginContext, useUserContext } from "../../context/app";
 import api from "../../services/api";
-import type {
-  LocalCartItem,
-  CartItemWithGood,
-  CartResponse,
-} from "../../interface/cart";
+import type { CartItem, CartResponse } from "../../interface/cart";
 import {
   getLocalCart,
   addToLocalCart,
@@ -20,12 +16,11 @@ import {
 export { CartLimitError };
 
 interface UseCartReturn {
-  items: CartItemWithGood[];
-  localItems: LocalCartItem[];
+  /** Cart items (unified for both logged-in and guest) */
+  items: CartItem[];
   isLoading: boolean;
   error: string | null;
   totalItems: number;
-  totalPrice: number;
   addItem: (goodId: string, quantity: number) => Promise<void>;
   updateQuantity: (goodId: string, quantity: number) => Promise<void>;
   removeItem: (goodId: string) => Promise<void>;
@@ -43,7 +38,7 @@ export const useCart = (): UseCartReturn => {
   const cartQueryKey = ["cart", user?._id];
 
   // Local cart state for guest users
-  const [localItems, setLocalItems] = useState<LocalCartItem[]>(() =>
+  const [localItems, setLocalItems] = useState<CartItem[]>(() =>
     isLoggedIn ? [] : getLocalCart()
   );
 
@@ -61,7 +56,7 @@ export const useCart = (): UseCartReturn => {
       const res = await api.get("/cart");
       return res.data;
     },
-    enabled: isLoggedIn && !!user?._id, // Only fetch when logged in and user exists
+    enabled: isLoggedIn && !!user?._id,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
@@ -123,7 +118,7 @@ export const useCart = (): UseCartReturn => {
 
   // Sync cart mutation
   const syncMutation = useMutation({
-    mutationFn: async (localCart: LocalCartItem[]) => {
+    mutationFn: async (localCart: CartItem[]) => {
       const res = await api.post("/cart/sync", { localCart });
       return res.data;
     },
@@ -136,7 +131,9 @@ export const useCart = (): UseCartReturn => {
 
   // ===== DERIVED STATE =====
 
-  const items = cartData?.items || [];
+  // Unified items - same shape for both logged-in and guest
+  const items: CartItem[] = isLoggedIn ? cartData?.items || [] : localItems;
+
   const isLoading =
     isQueryLoading ||
     addMutation.isPending ||
@@ -144,6 +141,7 @@ export const useCart = (): UseCartReturn => {
     removeMutation.isPending ||
     clearMutation.isPending ||
     syncMutation.isPending;
+
   const error =
     queryError?.message ||
     addMutation.error?.message ||
@@ -151,14 +149,7 @@ export const useCart = (): UseCartReturn => {
     removeMutation.error?.message ||
     null;
 
-  const totalItems = isLoggedIn
-    ? items.reduce((sum, item) => sum + item.quantity, 0)
-    : localItems.reduce((sum, item) => sum + item.quantity, 0);
-
-  const totalPrice = items.reduce(
-    (sum, item) => sum + (item.goodId?.price || 0) * item.quantity,
-    0
-  );
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   // ===== ACTIONS =====
 
@@ -222,11 +213,9 @@ export const useCart = (): UseCartReturn => {
 
   return {
     items,
-    localItems,
     isLoading,
     error,
     totalItems,
-    totalPrice,
     addItem,
     updateQuantity,
     removeItem,
