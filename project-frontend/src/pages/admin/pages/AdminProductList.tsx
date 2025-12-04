@@ -1,12 +1,12 @@
-import Header from "../../components/Header";
+import Header from "../../../components/Header";
 //import { useEffect, useEffectEvent, useState } from "react";
-import type { Good } from "../../interface/good";
-import api from "../../services/api";
+import type { Good } from "../../../interface/good";
+import api from "../../../services/api";
 import type { AxiosError } from "axios";
 import { Link } from "react-router";
-import { useUserContext } from "../../context/app";
+import { useUserContext } from "../../../context/app";
 import { useQuery } from "@tanstack/react-query";
-import LoadingPanel from "../../components/LoadingPanel";
+import LoadingPanel from "../../../components/LoadingPanel";
 
 function AdminProductList() {
   const user = useUserContext();

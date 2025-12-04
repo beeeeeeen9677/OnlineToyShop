@@ -1,10 +1,10 @@
-import Header from "../../components/Header";
-import ModuleWrapper from "../../components/ModuleWrapper";
-import ProductForm from "./modules/ProductForm";
-import { useTranslation } from "../../i18n/hooks";
-import EditGoods from "./modules/EditGoods";
+import Header from "../../../components/Header";
+import ModuleWrapper from "../../../components/ModuleWrapper";
+import ProductForm from "../modules/ProductForm";
+import { useTranslation } from "../../../i18n/hooks";
+import EditGoods from "../modules/EditGoods";
 // import { useNavigate } from "react-router";
-import { useUserContext } from "../../context/app";
+import { useUserContext } from "../../../context/app";
 // import { useEffect } from "react";
 
 function AdminIndex() {

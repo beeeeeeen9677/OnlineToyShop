@@ -6,9 +6,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
-import AdminIndex from "./pages/admin/AdminIndex";
-import AdminProductList from "./pages/admin/AdminProductList";
-import AdminEditProduct from "./pages/admin/AdminEditProduct";
+import AdminIndex from "./pages/admin/pages/AdminIndex";
+import AdminProductList from "./pages/admin/pages/AdminProductList";
+import AdminEditProduct from "./pages/admin/pages/AdminEditProduct";
 import Profile from "./pages/profile/Profile";
 import ItemDetails from "./pages/itemDetails/ItemDetails";
 import LoadingPanel from "./components/LoadingPanel";

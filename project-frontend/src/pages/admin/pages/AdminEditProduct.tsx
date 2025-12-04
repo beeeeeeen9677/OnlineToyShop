@@ -1,14 +1,14 @@
 import { Link, useParams } from "react-router";
 // import { useEffect, useState } from "react";
-import Header from "../../components/Header";
-import api from "../../services/api";
+import Header from "../../../components/Header";
+import api from "../../../services/api";
 
-import LoadingPanel from "../../components/LoadingPanel";
-import type { Good } from "../../interface/good";
+import LoadingPanel from "../../../components/LoadingPanel";
+import type { Good } from "../../../interface/good";
 import type { AxiosError } from "axios";
-import ProductForm from "./modules/ProductForm";
-import { useTranslation } from "../../i18n/hooks";
-import { useUserContext } from "../../context/app";
+import ProductForm from "../modules/ProductForm";
+import { useTranslation } from "../../../i18n/hooks";
+import { useUserContext } from "../../../context/app";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 function AdminEditProduct() {
