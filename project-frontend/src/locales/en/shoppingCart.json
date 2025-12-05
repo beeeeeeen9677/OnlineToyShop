@@ -1,5 +1,20 @@
 {
   "titles": {
     "shoppingCart": "SHOPPIONG CART"
+  },
+  "labels": {
+    "item": "Item",
+    "price": "Price",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "quantity": "Quantity"
+  },
+  "messages": {
+    "cartEmpty": "Your Shopping Cart is Empty."
+  },
+  "buttons": {
+    "checkout": "CHECKOUT",
+    "home": "HOME",
+    "previousPage": "RETURN TO PREVIOUS PAGE"
   }
 }

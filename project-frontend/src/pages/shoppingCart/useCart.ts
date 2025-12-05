@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLoginContext, useUserContext } from "../../context/app";
 import api from "../../services/api";
@@ -14,6 +14,9 @@ import {
 
 // Re-export for consumers
 export { CartLimitError };
+
+// Query key for local cart (shared across all useCart instances)
+const LOCAL_CART_QUERY_KEY = ["cart", "local"];
 
 interface UseCartReturn {
   /** Cart items (unified for both logged-in and guest) */
@@ -38,8 +41,22 @@ export const useCart = (): UseCartReturn => {
   const cartQueryKey = ["cart", user?._id];
 
   // Local cart state for guest users
-  const [localItems, setLocalItems] = useState<CartItem[]>(() =>
-    isLoggedIn ? [] : getLocalCart()
+  // const [localItems, setLocalItems] = useState<CartItem[]>(() =>
+  //   isLoggedIn ? [] : getLocalCart());
+  // ===== LOCAL CART STATE (React Query for shared state) =====
+  const { data: localItems = [] } = useQuery<CartItem[]>({
+    queryKey: LOCAL_CART_QUERY_KEY,
+    queryFn: () => getLocalCart(),
+    enabled: !isLoggedIn,
+    staleTime: Infinity, // Never refetch automatically, we control updates
+  });
+
+  // Helper to update local cart in React Query cache
+  const setLocalItems = useCallback(
+    (items: CartItem[]) => {
+      queryClient.setQueryData<CartItem[]>(LOCAL_CART_QUERY_KEY, items);
+    },
+    [queryClient]
   );
 
   // ===== SERVER STATE (React Query) =====
@@ -119,13 +136,25 @@ export const useCart = (): UseCartReturn => {
   // Sync cart mutation
   const syncMutation = useMutation({
     mutationFn: async (localCart: CartItem[]) => {
+      // Clear local storage immediately before API call
+      // This ensures logout won't see stale data even if sync is slow
+      clearLocalCart();
+      queryClient.setQueryData<CartItem[]>(LOCAL_CART_QUERY_KEY, []);
+
       const res = await api.post("/cart/sync", { localCart });
       return res.data;
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData<CartResponse>(cartQueryKey, data);
-      clearLocalCart();
-      setLocalItems([]);
+    onSuccess: () => {
+      // Invalidate server cart queries to refetch merged cart
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (error, localCart) => {
+      // Restore local cart if sync failed
+      console.error("Sync failed, restoring local cart:", error);
+      localCart.forEach((item) => {
+        addToLocalCart(item.goodId, item.quantity);
+      });
+      queryClient.setQueryData<CartItem[]>(LOCAL_CART_QUERY_KEY, localCart);
     },
   });
 
@@ -162,7 +191,7 @@ export const useCart = (): UseCartReturn => {
         setLocalItems(updatedCart);
       }
     },
-    [isLoggedIn, addMutation]
+    [isLoggedIn, addMutation, setLocalItems]
   );
 
   const updateQuantity = useCallback(
@@ -174,7 +203,7 @@ export const useCart = (): UseCartReturn => {
         setLocalItems(updatedCart);
       }
     },
-    [isLoggedIn, updateMutation]
+    [isLoggedIn, updateMutation, setLocalItems]
   );
 
   const removeItem = useCallback(
@@ -186,7 +215,7 @@ export const useCart = (): UseCartReturn => {
         setLocalItems(updatedCart);
       }
     },
-    [isLoggedIn, removeMutation]
+    [isLoggedIn, removeMutation, setLocalItems]
   );
 
   const clearCartAction = useCallback(async () => {
@@ -196,11 +225,12 @@ export const useCart = (): UseCartReturn => {
       clearLocalCart();
       setLocalItems([]);
     }
-  }, [isLoggedIn, clearMutation]);
+  }, [isLoggedIn, clearMutation, setLocalItems]);
 
   const syncCart = useCallback(async () => {
-    if (!isLoggedIn) return;
-
+    // if (!isLoggedIn) return;
+    // Login check should be done by caller (e.g., App.tsx useEffect)
+    // because this hook may be called outside LoginContext.Provider
     const localCart = getLocalCart();
     if (localCart.length === 0) {
       refetch();
@@ -209,7 +239,7 @@ export const useCart = (): UseCartReturn => {
 
     console.log("Syncing local cart to server...");
     await syncMutation.mutateAsync(localCart);
-  }, [isLoggedIn, syncMutation, refetch]);
+  }, [syncMutation, refetch]);
 
   return {
     items,

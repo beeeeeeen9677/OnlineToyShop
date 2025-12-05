@@ -1,5 +1,20 @@
 {
   "titles": {
     "shoppingCart": "購物車"
+  },
+  "labels": {
+    "item": "商品",
+    "price": "價格",
+    "total": "總計",
+    "subtotal": "小計",
+    "quantity": "數量"
+  },
+  "messages": {
+    "cartEmpty": "購物車空空如也..."
+  },
+  "buttons": {
+    "checkout": "結帳",
+    "home": "首頁",
+    "previousPage": "回到前一頁"
   }
 }

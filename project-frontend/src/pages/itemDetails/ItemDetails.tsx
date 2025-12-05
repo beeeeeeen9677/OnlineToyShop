@@ -5,6 +5,7 @@ import i18n from "../../i18n";
 import type { AxiosError } from "axios";
 import Header from "../../components/Header";
 import LoadingPanel from "../../components/LoadingPanel";
+import QuantityButtons from "../../components/QuantityButtons";
 import { useScrollToggleVisibility } from "../../hooks/useScrollToggleVisibility";
 import { useGood } from "../../hooks/useGood";
 import { useCart, CartLimitError } from "../shoppingCart/useCart";
@@ -31,15 +32,6 @@ function ItemDetails() {
   const [quantity, setQuantity] = useState<number>(1);
   const minQuantity = 1;
   const maxQuantity = 3;
-  const quantityBtnStyle =
-    "bg-primary text-white disabled:bg-orange-200 disabled:text-black px-3 py-1 cursor-pointer";
-  const quantityBtnOnClick = (mode: "+" | "-") => {
-    if (mode === "+" && quantity < maxQuantity) {
-      setQuantity(quantity + 1);
-    } else if (mode === "-" && quantity > minQuantity) {
-      setQuantity(quantity - 1);
-    }
-  };
 
   const preorderEnded = itemDetails
     ? new Date() > new Date(itemDetails.preorderCloseDate)
@@ -53,7 +45,7 @@ function ItemDetails() {
 
     try {
       await addItem(id, quantity);
-      setCartMessage({ type: "success", transKey: t("messages.addedToCart") });
+      setCartMessage({ type: "success", transKey: "messages.addedToCart" });
       // Clear success message after 3 seconds
       setTimeout(() => setCartMessage(null), 3000);
     } catch (err) {
@@ -151,29 +143,12 @@ function ItemDetails() {
             <div className="border border-orange-100   dark:border-gray-500 " />
             <div className="text-sm font-extrabold">
               {t("info.quantity")}
-              <div className="my-2">
-                <button
-                  className={quantityBtnStyle + " rounded-l-full"}
-                  onClick={() => {
-                    quantityBtnOnClick("-");
-                  }}
-                  disabled={quantity <= minQuantity}
-                >
-                  -
-                </button>
-                <span className="px-2 py-1 border border-gray-300 bg-white text-black">
-                  {quantity}
-                </span>
-                <button
-                  className={quantityBtnStyle + " rounded-r-full"}
-                  onClick={() => {
-                    quantityBtnOnClick("+");
-                  }}
-                  disabled={quantity >= maxQuantity}
-                >
-                  +
-                </button>
-              </div>
+              <QuantityButtons
+                quantity={quantity}
+                setQuantity={setQuantity}
+                minQuantity={minQuantity}
+                maxQuantity={maxQuantity}
+              />
               {quantity >= maxQuantity && (
                 <div className="text-red-500 text-sm mt-1">
                   *{t("info.reachLimit")}
@@ -183,7 +158,7 @@ function ItemDetails() {
             {/*  Break line  */}
             <div className="border border-orange-100   dark:border-gray-500 " />
             <button
-              className="rounded-full bg-primary text-white  py-2 w-full hover:bg-primary-hover cursor-pointer font-extrabold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-default"
+              className="tw-round-primary-btn"
               onClick={handleAddToCart}
               disabled={preorderEnded || isAdding}
             >
