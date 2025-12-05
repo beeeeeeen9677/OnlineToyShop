@@ -37,6 +37,7 @@ import { AxiosError } from "axios";
 import type { User } from "./interface/user";
 import { LoginContext, UserContext } from "./context/app";
 import { SocketContext } from "./context/socket";
+import OrderHistory from "./pages/orderHistory/OrderHistory";
 
 function App() {
   const navigate = useNavigate();
@@ -193,6 +194,7 @@ function RouteContainer() {
       <Route path="/item/:id" element={<ItemDetails />} />
       <Route path="/search" element={<Search />} />
       <Route path="/cart" element={<ShoppingCart />} />
+      <Route path="/order-history" element={<OrderHistory />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
