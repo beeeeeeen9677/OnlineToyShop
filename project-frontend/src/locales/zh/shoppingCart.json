@@ -19,6 +19,9 @@
     "cartEmpty": "購物車空空如也...",
     "noExchangeOrReturn": "不接受換貨或退貨。"
   },
+  "locations": {
+    "hongKong": "香港"
+  },
   "errors": {
     "itemLoadError": "無法載入商品資料",
     "loadFailed": "無法載入產品資訊"

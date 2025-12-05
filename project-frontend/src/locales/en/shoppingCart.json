@@ -19,6 +19,9 @@
     "cartEmpty": "Your Shopping Cart is Empty.",
     "noExchangeOrReturn": "NO EXCHANGES OR RETURNS ARE ACCEPTED."
   },
+  "locations": {
+    "hongKong": "HONG KONG"
+  },
   "errors": {
     "itemLoadError": "Failed to load item details",
     "loadFailed": "Unable to load product information"

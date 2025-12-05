@@ -10,12 +10,32 @@ import SearchBar from "../../components/SearchBar";
 import CartItemDetails from "./CartItemDetails";
 import { useTranslation } from "react-i18next";
 import { useCart } from "./useCart";
+import { useLoginContext, useUserContext } from "../../context/app";
+import { auth } from "../../firebase/firebase";
 
 function ShoppingCart() {
   const isLoading = false;
   const { t } = useTranslation("shoppingCart");
   const navigate = useNavigate();
   const { itemsWithDetails, cartTotalAmount } = useCart();
+  const isLoggedIn = useLoginContext();
+  const user = useUserContext();
+  const checkout = () => {
+    if (!isLoggedIn) {
+      navigate("/auth");
+      return;
+    } else if (user) {
+      if (!auth.currentUser?.emailVerified) {
+        alert("Please verify your email before proceeding to checkout.");
+        navigate("/user");
+        return;
+      }
+      // logged in and verified user
+      // purchase logic
+    }
+
+    // do something
+  };
 
   return (
     <div className="animate-fade-in min-h-screen">
@@ -63,10 +83,13 @@ function ShoppingCart() {
                 <div className="flex flex-col">
                   <div>{t("labels.shippingArea")}</div>
                   <div className="text-center text-xl font-bold border rounded-md m-4 py-1 select-none">
-                    Hong Kong
+                    {t("locations.hongKong")}
                   </div>
                 </div>
-                <button className="my-6 tw-round-primary-btn">
+                <button
+                  className="my-6 tw-round-primary-btn"
+                  onClick={checkout}
+                >
                   {t("buttons.checkout")}
                 </button>
                 <div className="font-bold text-sm">
@@ -76,7 +99,7 @@ function ShoppingCart() {
             </>
           ) : (
             <div className="mt-16 flex flex-col items-center text-center w-100 md:w-180 ">
-              <h1 className=""> {t("messages.cartEmpty")}</h1>
+              <h1 className="font-oswald"> {t("messages.cartEmpty")}</h1>
               <div className="mt-10 ">
                 <BiLeaf size={100} className=" inline-block rotate-180" />
                 <GiWindSlap size={48} className="inline-block" />
