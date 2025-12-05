@@ -15,7 +15,7 @@ function ShoppingCart() {
   const isLoading = false;
   const { t } = useTranslation("shoppingCart");
   const navigate = useNavigate();
-  const { itemsWithDetails } = useCart();
+  const { itemsWithDetails, cartTotalAmount } = useCart();
 
   return (
     <div className="animate-fade-in min-h-screen">
@@ -31,17 +31,48 @@ function ShoppingCart() {
         <h1 className="text-2xl md:text-5xl font-oswald font-bold text-center mb-10">
           {t("titles.shoppingCart")}
         </h1>
-        <div className="flex flex-col md:flex-row md:max-w-280">
+        <div className="flex flex-col md:flex-row md:max-w-280 gap-10">
           {itemsWithDetails.length > 0 ? (
             <>
               {/* Cart Items */}
-              <div className="flex-1 flex flex-col gap-8 ">
+              <div className="flex-3 flex flex-col gap-8 ">
                 {itemsWithDetails.map((item) => (
                   <CartItemDetails key={item.goodId} item={item} />
                 ))}
               </div>
               {/* Cart Summary */}
-              <div className="flex-1 "></div>
+              <div className="flex-2 px-5 py-8 h-fit border-10 border-orange-100  dark:border-gray-500 space-y-4 font-oswald">
+                <h1 className="text-2xl font-bold">
+                  {t("labels.billingSummary")}
+                </h1>
+                <div className="border border-orange-100  dark:border-gray-500 " />
+                <div className="flex justify-between text-md">
+                  <div>{t("labels.itemTotal")}</div>
+                  <div>HK$ {cartTotalAmount}</div>
+                </div>
+                <div className="flex justify-between text-md">
+                  <div>{t("labels.shippingFee")}</div>
+                  <div>HK$ 40</div>
+                </div>{" "}
+                <div className="border border-orange-300  dark:border-gray-300 " />
+                <div className="flex justify-between text-md">
+                  <div>{t("labels.orderTotal")}</div>
+                  <div>HK$ {cartTotalAmount + 40}</div>
+                </div>{" "}
+                <div className="border border-orange-100  dark:border-gray-500 " />
+                <div className="flex flex-col">
+                  <div>{t("labels.shippingArea")}</div>
+                  <div className="text-center text-xl font-bold border rounded-md m-4 py-1 select-none">
+                    Hong Kong
+                  </div>
+                </div>
+                <button className="my-6 tw-round-primary-btn">
+                  {t("buttons.checkout")}
+                </button>
+                <div className="font-bold text-sm">
+                  {t("messages.noExchangeOrReturn")}
+                </div>
+              </div>
             </>
           ) : (
             <div className="mt-16 flex flex-col items-center text-center w-100 md:w-180 ">

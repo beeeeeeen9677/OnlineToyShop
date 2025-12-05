@@ -8,10 +8,16 @@
     "total": "Total",
     "subtotal": "Subtotal",
     "quantity": "Quantity",
-    "shippingDate": "Shipping Date"
+    "shippingDate": "Shipping Date",
+    "billingSummary": "BILLING SUMMARY",
+    "itemTotal": "Item Total Amount",
+    "shippingFee": "Shipping Fee",
+    "orderTotal": "Order Total",
+    "shippingArea": "Shipping Area"
   },
   "messages": {
-    "cartEmpty": "Your Shopping Cart is Empty."
+    "cartEmpty": "Your Shopping Cart is Empty.",
+    "noExchangeOrReturn": "NO EXCHANGES OR RETURNS ARE ACCEPTED."
   },
   "errors": {
     "itemLoadError": "Failed to load item details",
