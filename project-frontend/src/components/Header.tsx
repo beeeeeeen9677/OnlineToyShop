@@ -9,6 +9,7 @@ import {
 } from "../i18n/hooks";
 import { CgLogIn, CgLogOut } from "react-icons/cg";
 import { FiShoppingCart } from "react-icons/fi";
+import { MdOutlineWorkHistory } from "react-icons/md";
 import { useCart } from "../pages/shoppingCart/useCart";
 
 function Header() {
@@ -53,6 +54,21 @@ function Header() {
             <Link to="/admin">
               <p className="hover:scale-125 transition duration-150 text-white">
                 {t("navigation.admin")}
+              </p>
+            </Link>
+          </Activity>
+          <Activity mode={isLoggedIn ? "visible" : "hidden"}>
+            <Link
+              to="/order-history"
+              className="group text-white flex flex-col justify-center items-center h-full w-16 transition duration-1000 relative"
+            >
+              <MdOutlineWorkHistory
+                className={`absolute top-3 scale-160 group-hover:scale-250 group-hover:translate-y-3 transition duration-${duration}`}
+              />
+              <p
+                className={`absolute bottom-2 group-hover:hidden transition duration-${duration}`}
+              >
+                {t("navigation.orders")}
               </p>
             </Link>
           </Activity>

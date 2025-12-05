@@ -5,7 +5,8 @@
     "logout": "Log Out",
     "user": "User",
     "profile": "Profile",
-    "cart": "Cart"
+    "cart": "Cart",
+    "orders": "Orders"
   },
   "alt": {
     "logo": "Logo"

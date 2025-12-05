@@ -1,4 +1,5 @@
 import admin from "../../server.js";
+import User from "../mongodb/models/User.js";
 
 export const verifyFirebaseToken = async (req, res, next) => {
   try {
@@ -20,6 +21,21 @@ export const verifyFirebaseToken = async (req, res, next) => {
     // Attach user info to request
     req.firebaseUser = decodedToken;
     //console.log("Verified user:", decodedToken);
+
+    // reset session user if not set
+    if (!req.session.user) {
+      const user = await User.findOne({
+        firebaseUID: decodedToken.uid,
+      })
+        .lean()
+        .exec();
+      if (!user) {
+        return res
+          .status(404)
+          .json({ message: "User with this Firebase UID not found." });
+      }
+      req.session.user = user;
+    }
 
     next();
   } catch (error) {

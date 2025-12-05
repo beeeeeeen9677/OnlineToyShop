@@ -29,5 +29,5 @@ export const startOrderCleanup = () => {
     }
   });
 
-  console.log("🕐 Order cleanup cron job started (runs every 30 minutes)");
+  console.log("Order cleanup cron job started (runs every 30 minutes)");
 };

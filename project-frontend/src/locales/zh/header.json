@@ -5,7 +5,8 @@
     "logout": "登出",
     "user": "用戶",
     "profile": "個人檔案",
-    "cart": "購物車"
+    "cart": "購物車",
+    "orders": "訂單記錄"
   },
   "alt": {
     "logo": "標誌"

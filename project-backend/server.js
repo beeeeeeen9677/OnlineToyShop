@@ -117,6 +117,6 @@ mongoose.connection.once("open", () => {
   startOrderCleanup(); // for mongo
 
   server.listen(PORT, () => {
-    console.log(`🚀 Server is running & listening to port: ${PORT}`);
+    console.log(`Server is running & listening to port: ${PORT}`);
   });
 });
