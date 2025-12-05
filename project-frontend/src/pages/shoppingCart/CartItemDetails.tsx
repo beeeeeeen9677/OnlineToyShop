@@ -18,21 +18,44 @@ function CartItemDetails({ item }: CartItemProps) {
     updateQuantity(item.goodId, newQuantity);
   };
 
+  {
+    /* loading skeleton */
+  }
   if (!good) {
-    return <div>null</div>;
+    return (
+      <div className="bg-white dark:bg-gray-600 h-fit animate-pulse">
+        <div className="h-6 bg-gray-300 dark:bg-gray-500 rounded w-3/4 mb-2"></div>
+        <div className="flex gap-4">
+          <div className="bg-gray-300 dark:bg-gray-500 w-3/10 aspect-square"></div>
+          <div className="flex-1">
+            <div className="h-5 bg-gray-300 dark:bg-gray-500 rounded w-1/3 mb-4"></div>
+            <div className="h-4 bg-gray-300 dark:bg-gray-500 rounded w-1/4 mb-2"></div>
+            <div className="h-10 bg-gray-300 dark:bg-gray-500 rounded w-1/2 mb-2"></div>
+            <div className="h-4 bg-gray-300 dark:bg-gray-500 rounded w-1/3"></div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (isError) {
+    const errorMessage =
+      (error as AxiosError<{ error: string }>)?.response?.data?.error ||
+      t("errors.loadFailed");
     return (
-      <div>
-        Error loading item details:
-        {(error as AxiosError<{ error: string }>)?.response?.data?.error}
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <p className="text-red-600 dark:text-red-400 font-medium">
+          {t("errors.itemLoadError")}
+        </p>
+        <p className="text-red-500 dark:text-red-300 text-sm mt-1">
+          {errorMessage}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-600 h-fit relative">
+    <div className=" h-fit relative">
       <div className="font-oswald text-sm font-semibold md:text-xl mb-2 ">
         {good?.name}
       </div>

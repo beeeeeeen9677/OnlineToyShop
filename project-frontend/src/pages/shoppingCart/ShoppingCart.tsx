@@ -35,8 +35,8 @@ function ShoppingCart() {
             <>
               {/* Cart Items */}
               <div className="flex-1 flex flex-col gap-8 ">
-                {items.map((item, index) => (
-                  <CartItemDetails key={index} item={item} />
+                {items.map((item) => (
+                  <CartItemDetails key={item.goodId} item={item} />
                 ))}
               </div>
               {/* Cart Summary */}

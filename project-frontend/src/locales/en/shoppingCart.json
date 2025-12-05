@@ -12,6 +12,10 @@
   "messages": {
     "cartEmpty": "Your Shopping Cart is Empty."
   },
+  "errors": {
+    "itemLoadError": "Failed to load item details",
+    "loadFailed": "Unable to load product information"
+  },
   "buttons": {
     "checkout": "CHECKOUT",
     "home": "HOME",

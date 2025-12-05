@@ -12,6 +12,10 @@
   "messages": {
     "cartEmpty": "購物車空空如也..."
   },
+  "errors": {
+    "itemLoadError": "無法載入商品資料",
+    "loadFailed": "無法載入產品資訊"
+  },
   "buttons": {
     "checkout": "結帳",
     "home": "首頁",
