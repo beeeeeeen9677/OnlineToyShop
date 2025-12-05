@@ -23,7 +23,7 @@ function QuantityButtons({
     }
   };
   return (
-    <div className="text-sm font-extrabold my-2">
+    <div className="text-sm font-extrabold my-1 flex">
       <button
         className={quantityBtnStyle + " rounded-l-full"}
         onClick={() => {
@@ -33,7 +33,7 @@ function QuantityButtons({
       >
         -
       </button>
-      <span className="px-2 py-1 border border-gray-300 bg-white text-black">
+      <span className="px-2 flex items-center border border-gray-300 bg-white text-black">
         {quantity}
       </span>
       <button

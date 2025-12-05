@@ -6,6 +6,7 @@
   "info": {
     "openTo": "截止預購",
     "preorderOpen": "開始預購",
-    "PRE-ORDER": "可預購"
+    "PRE-ORDER": "可預購",
+    "preorderClosed": "預購已截止"
   }
 }

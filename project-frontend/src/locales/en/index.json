@@ -6,6 +6,7 @@
   "info": {
     "openTo": "Open To",
     "preorderOpen": "Preorder Open",
-    "PRE-ORDER": "PRE-ORDER"
+    "PRE-ORDER": "PRE-ORDER",
+    "preorderClosed": "PRE-ORDER CLOSED"
   }
 }

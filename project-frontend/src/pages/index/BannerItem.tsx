@@ -5,7 +5,9 @@ import i18n from "../../i18n";
 
 function BannerItem({ itemDetails }: { itemDetails: Good }) {
   const { t } = useTranslation("index");
-
+  const preorderEnded = itemDetails
+    ? new Date() > new Date(itemDetails.preorderCloseDate)
+    : false;
   return (
     <Link
       to={"/item/" + itemDetails._id}
@@ -13,8 +15,14 @@ function BannerItem({ itemDetails }: { itemDetails: Good }) {
     >
       <div className="bg-white flex-5 lg:flex-4 flex flex-col justify-center">
         <div className="px-2 md:px-4 xl:px-6">
-          <div className="text-white bg-red-400 w-fit p-0.5 text-xs">
-            {t("info.PRE-ORDER")}
+          <div
+            className={
+              "text-white " +
+              (preorderEnded ? "bg-gray-400" : "bg-red-400") +
+              " w-fit p-0.5 text-xs"
+            }
+          >
+            {preorderEnded ? t("info.preorderClosed") : t("info.PRE-ORDER")}
           </div>
           <div
             className="font-bold font-oswald text-black line-clamp-2 2xl:line-clamp-4

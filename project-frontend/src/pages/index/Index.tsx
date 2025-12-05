@@ -64,7 +64,7 @@ function Index() {
   }
 
   return (
-    <div className="animate-fade-in min-h-screen">
+    <div className="animate-fade-in min-h-screen mb-20">
       <title>PREMIUM BEN TOYS</title>
       <Header />
       <Activity mode={isLoading ? "visible" : "hidden"}>

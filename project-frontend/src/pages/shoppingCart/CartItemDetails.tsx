@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { RiDeleteBin2Line } from "react-icons/ri";
 import type { CartItem } from "../../interface/cart";
 import { useGood } from "../../hooks/useGood";
@@ -10,6 +11,7 @@ type CartItemProps = {
 };
 
 function CartItemDetails({ item }: CartItemProps) {
+  const navigate = useNavigate();
   const { good, isError, error } = useGood(item.goodId);
   const { t } = useTranslation("shoppingCart");
   const { updateQuantity, removeItem } = useCart();
@@ -56,20 +58,29 @@ function CartItemDetails({ item }: CartItemProps) {
 
   return (
     <div className=" h-fit relative">
-      <div className="font-oswald text-sm font-semibold md:text-xl mb-2 ">
+      <h1
+        className="font-oswald underline cursor-pointer text-sm font-semibold md:text-xl mb-2 "
+        onClick={() => {
+          navigate(`/item/${good._id}`);
+        }}
+      >
         {good?.name}
-      </div>
-      <div className="flex gap-4">
+      </h1>
+      <div className="flex gap-4 items-start">
         {/* LHS */}
         <img
           src={good.imageUrl}
           alt={good?.name}
-          className="object-cover max-w-3/10"
+          className="object-contain max-w-3/10 "
         />
         {/* RHS */}
-        <div>
+        <div className="flex-1 flex flex-col ">
           <div className="font-oswald mb-4">HK$ {good?.price}</div>
-          <div>{t("labels.quantity")}</div>
+          <div className="text-xs mb-4 md:mb-0 lg:mb-4">
+            {t("labels.shippingDate")}:{" "}
+            {good.shippingDate.toString().split("T")[0]}
+          </div>
+          <div className="text-sm">{t("labels.quantity")}</div>
           <QuantityButtons
             quantity={item.quantity}
             setQuantity={modifyQuantity}

@@ -7,7 +7,8 @@
     "price": "價格",
     "total": "總計",
     "subtotal": "小計",
-    "quantity": "數量"
+    "quantity": "數量",
+    "shippingDate": "發貨日期"
   },
   "messages": {
     "cartEmpty": "購物車空空如也..."
