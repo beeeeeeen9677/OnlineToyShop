@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
   userId: {
@@ -35,4 +35,6 @@ const orderSchema = new mongoose.Schema({
 // Index for efficient cleanup query
 orderSchema.index({ status: 1, expiresAt: 1 });
 
-module.exports = mongoose.model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
+
+export default Order;

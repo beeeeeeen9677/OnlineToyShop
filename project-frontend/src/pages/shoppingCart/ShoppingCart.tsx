@@ -2,6 +2,7 @@ import { Activity } from "react";
 import { Link, useNavigate } from "react-router";
 import { BiLeaf } from "react-icons/bi";
 import { GiWindSlap } from "react-icons/gi";
+import { useState } from "react";
 import Header from "../../components/Header";
 import CustomerService from "../../components/CustomerService/CustomerService";
 import BackToTopButton from "../../components/BackToTopButton";
@@ -12,36 +13,65 @@ import { useTranslation } from "react-i18next";
 import { useCart } from "./useCart";
 import { useLoginContext, useUserContext } from "../../context/app";
 import { auth } from "../../firebase/firebase";
+import api from "../../services/api";
 
 function ShoppingCart() {
-  const isLoading = false;
   const { t } = useTranslation("shoppingCart");
   const navigate = useNavigate();
-  const { itemsWithDetails, cartTotalAmount } = useCart();
+  const { items, itemsWithDetails, cartTotalAmount, refetch } = useCart();
   const isLoggedIn = useLoginContext();
   const user = useUserContext();
-  const checkout = () => {
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const checkout = async () => {
     if (!isLoggedIn) {
       navigate("/auth");
       return;
-    } else if (user) {
-      if (!auth.currentUser?.emailVerified) {
-        alert("Please verify your email before proceeding to checkout.");
-        navigate("/user");
-        return;
-      }
-      // logged in and verified user
-      // purchase logic
     }
 
-    // do something
+    if (!auth.currentUser?.emailVerified) {
+      alert(t("messages.verifyEmail"));
+      navigate("/user");
+      return;
+    }
+
+    if (items.length === 0) {
+      alert(t("messages.cartEmpty"));
+      return;
+    }
+
+    setIsCheckingOut(true);
+
+    try {
+      // Create order (pending status)
+      const orderResponse = await api.post("/orders", { items });
+      const order = orderResponse.data;
+
+      // TODO: Payment integration will go here
+      // For now, immediately confirm payment (mock payment success)
+      await api.post(`/orders/${order._id}/confirm`);
+
+      // Refresh cart (items should be removed after payment confirmation)
+      refetch();
+
+      alert(t("messages.orderSuccess"));
+      // TODO: Navigate to order confirmation page
+      navigate("/");
+    } catch (error: any) {
+      console.error("Checkout error:", error);
+      const errorMessage =
+        error.response?.data?.error || t("messages.orderFailed");
+      alert(errorMessage);
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   return (
     <div className="animate-fade-in min-h-screen">
       <title>SHOPPING CART | PREMIUM BEN TOYS</title>
       <Header />
-      <Activity mode={isLoading ? "visible" : "hidden"}>
+      <Activity mode={isCheckingOut ? "visible" : "hidden"}>
         <LoadingPanel />
       </Activity>
       <CustomerService />
@@ -89,8 +119,11 @@ function ShoppingCart() {
                 <button
                   className="my-6 tw-round-primary-btn"
                   onClick={checkout}
+                  disabled={isCheckingOut || items.length === 0}
                 >
-                  {t("buttons.checkout")}
+                  {isCheckingOut
+                    ? t("buttons.processing")
+                    : t("buttons.checkout")}
                 </button>
                 <div className="font-bold text-sm">
                   {t("messages.noExchangeOrReturn")}

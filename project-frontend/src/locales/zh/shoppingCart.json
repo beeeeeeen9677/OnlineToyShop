@@ -17,7 +17,10 @@
   },
   "messages": {
     "cartEmpty": "購物車空空如也...",
-    "noExchangeOrReturn": "不接受換貨或退貨。"
+    "noExchangeOrReturn": "不接受換貨或退貨。",
+    "verifyEmail": "請先驗證您的電子郵件。",
+    "orderSuccess": "訂單已成功建立！",
+    "orderFailed": "訂單建立失敗，請重試"
   },
   "locations": {
     "hongKong": "香港"
@@ -28,6 +31,7 @@
   },
   "buttons": {
     "checkout": "結帳",
+    "processing": "處理中...",
     "home": "首頁",
     "previousPage": "回到前一頁"
   }

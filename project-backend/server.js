@@ -13,6 +13,9 @@ import cors from "cors";
 import mongoose from "mongoose";
 import connectDB from "./src/mongodb/dbConnection.js";
 
+// Cron jobs for mongo Order collection
+import { startOrderCleanup } from "./src/cron/cleanupExpiredOrders.js";
+
 // Supabase client (export for use in router)
 import { createClient } from "@supabase/supabase-js";
 export const supabase = createClient(
@@ -45,6 +48,7 @@ import authRoutes from "./src/routes/auth.js";
 import cartRoutes from "./src/routes/cart.js";
 import chatRoutes from "./src/routes/chat.js";
 import goodRoutes from "./src/routes/goods.js";
+import orderRoutes from "./src/routes/order.js";
 import userRoutes from "./src/routes/user.js";
 
 // Import middleware
@@ -74,12 +78,12 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/goods", goodRoutes);
 // User Authentication Middleware (Firebase)
-app.use(verifyFirebaseToken);
-// Test route - Protected (requires token)
+app.use(verifyFirebaseToken); // check token
 
 // Protected routes
 app.use("/api/user", userRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
 app.use("/api/chat", chatRoutes);
 
 // Admin Authorization Middleware
@@ -110,6 +114,8 @@ initSocket(io);
 
 // Start server only after successful DB connection
 mongoose.connection.once("open", () => {
+  startOrderCleanup(); // for mongo
+
   server.listen(PORT, () => {
     console.log(`🚀 Server is running & listening to port: ${PORT}`);
   });

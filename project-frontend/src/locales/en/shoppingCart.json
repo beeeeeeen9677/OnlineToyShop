@@ -17,7 +17,10 @@
   },
   "messages": {
     "cartEmpty": "Your Shopping Cart is Empty.",
-    "noExchangeOrReturn": "NO EXCHANGES OR RETURNS ARE ACCEPTED."
+    "noExchangeOrReturn": "NO EXCHANGES OR RETURNS ARE ACCEPTED.",
+    "verifyEmail": "Please verify your email before checkout.",
+    "orderSuccess": "Order placed successfully!",
+    "orderFailed": "Failed to place order. Please try again."
   },
   "locations": {
     "hongKong": "HONG KONG"
@@ -28,6 +31,7 @@
   },
   "buttons": {
     "checkout": "CHECKOUT",
+    "processing": "PROCESSING...",
     "home": "HOME",
     "previousPage": "RETURN TO PREVIOUS PAGE"
   }

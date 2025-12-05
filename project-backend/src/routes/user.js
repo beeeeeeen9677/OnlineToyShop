@@ -5,7 +5,7 @@ import {
   getUserByID,
 } from "../mongodb/collections/userColl.js";
 
-router.post("/", getUserByFirebaseUID);
+router.post("/", getUserByFirebaseUID); // call when login, also set session user
 router.get("/last-verification-email", async (req, res) => {
   try {
     const lastEmailSentAt = req.session.lastEmailSentAt || null;
