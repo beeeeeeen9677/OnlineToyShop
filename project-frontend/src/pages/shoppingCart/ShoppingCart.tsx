@@ -15,7 +15,8 @@ function ShoppingCart() {
   const isLoading = false;
   const { t } = useTranslation("shoppingCart");
   const navigate = useNavigate();
-  const { items } = useCart();
+  const { itemsWithDetails } = useCart();
+
   return (
     <div className="animate-fade-in min-h-screen">
       <title>SHOPPING CART | PREMIUM BEN TOYS</title>
@@ -31,11 +32,11 @@ function ShoppingCart() {
           {t("titles.shoppingCart")}
         </h1>
         <div className="flex flex-col md:flex-row md:max-w-280">
-          {items.length > 0 ? (
+          {itemsWithDetails.length > 0 ? (
             <>
               {/* Cart Items */}
               <div className="flex-1 flex flex-col gap-8 ">
-                {items.map((item) => (
+                {itemsWithDetails.map((item) => (
                   <CartItemDetails key={item.goodId} item={item} />
                 ))}
               </div>

@@ -1,8 +1,14 @@
 import { useCallback } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueries,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useLoginContext, useUserContext } from "../../context/app";
 import api from "../../services/api";
 import type { CartItem, CartResponse } from "../../interface/cart";
+import type { Good } from "../../interface/good";
 import {
   getLocalCart,
   addToLocalCart,
@@ -18,9 +24,20 @@ export { CartLimitError };
 // Query key for local cart (shared across all useCart instances)
 const LOCAL_CART_QUERY_KEY = ["cart", "local"];
 
+/** Cart item with full product details (Good properties spread) */
+export type CartItemWithDetails =
+  | (CartItem & Good & { isLoaded: true })
+  | (CartItem & { isLoaded: false });
+
 interface UseCartReturn {
   /** Cart items (unified for both logged-in and guest) */
   items: CartItem[];
+  /** Cart items with full product details (for summary/display) */
+  itemsWithDetails: CartItemWithDetails[];
+  /** Whether product details are still loading */
+  isLoadingDetails: boolean;
+  /** Total price of all items in cart */
+  cartTotalAmount: number;
   isLoading: boolean;
   error: string | null;
   totalItems: number;
@@ -163,6 +180,38 @@ export const useCart = (): UseCartReturn => {
   // Unified items - same shape for both logged-in and guest
   const items: CartItem[] = isLoggedIn ? cartData?.items || [] : localItems;
 
+  // ===== FETCH PRODUCT DETAILS FOR ALL CART ITEMS =====
+  const goodQueries = useQueries({
+    queries: items.map((item) => ({
+      queryKey: ["good", { id: item.goodId }],
+      queryFn: async () => {
+        const res = await api.get(`/goods/${item.goodId}`);
+        return res.data as Good;
+      },
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      enabled: items.length > 0,
+    })),
+  });
+
+  // Combine cart items with their product details (spread Good properties)
+  const itemsWithDetails: CartItemWithDetails[] = items.map((item, index) => {
+    const good = goodQueries[index]?.data;
+    if (good) {
+      return { ...item, ...good, isLoaded: true as const };
+    }
+    return { ...item, isLoaded: false as const };
+  });
+
+  const isLoadingDetails = goodQueries.some((q) => q.isLoading);
+
+  // Calculate cart total (only from items with loaded prices)
+  const cartTotalAmount = itemsWithDetails.reduce((sum, item) => {
+    if (item.isLoaded) {
+      return sum + item.price * item.quantity;
+    }
+    return sum;
+  }, 0);
+
   const isLoading =
     isQueryLoading ||
     addMutation.isPending ||
@@ -243,6 +292,9 @@ export const useCart = (): UseCartReturn => {
 
   return {
     items,
+    itemsWithDetails,
+    isLoadingDetails,
+    cartTotalAmount,
     isLoading,
     error,
     totalItems,

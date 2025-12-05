@@ -1,18 +1,15 @@
 import { useNavigate } from "react-router";
 import { RiDeleteBin2Line } from "react-icons/ri";
-import type { CartItem } from "../../interface/cart";
-import { useGood } from "../../hooks/useGood";
-import { useCart } from "./useCart";
+import { useCart, type CartItemWithDetails } from "./useCart";
 import { useTranslation } from "../../i18n/hooks";
 import QuantityButtons from "../../components/QuantityButtons";
-import type { AxiosError } from "axios";
+
 type CartItemProps = {
-  item: CartItem;
+  item: CartItemWithDetails;
 };
 
 function CartItemDetails({ item }: CartItemProps) {
   const navigate = useNavigate();
-  const { good, isError, error } = useGood(item.goodId);
   const { t } = useTranslation("shoppingCart");
   const { updateQuantity, removeItem } = useCart();
 
@@ -20,10 +17,8 @@ function CartItemDetails({ item }: CartItemProps) {
     updateQuantity(item.goodId, newQuantity);
   };
 
-  {
-    /* loading skeleton */
-  }
-  if (!good) {
+  // Loading skeleton - isLoaded is false while fetching
+  if (!item.isLoaded) {
     return (
       <div className="bg-white dark:bg-gray-600 h-fit animate-pulse">
         <div className="h-6 bg-gray-300 dark:bg-gray-500 rounded w-3/4 mb-2"></div>
@@ -40,45 +35,29 @@ function CartItemDetails({ item }: CartItemProps) {
     );
   }
 
-  if (isError) {
-    const errorMessage =
-      (error as AxiosError<{ error: string }>)?.response?.data?.error ||
-      t("errors.loadFailed");
-    return (
-      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-        <p className="text-red-600 dark:text-red-400 font-medium">
-          {t("errors.itemLoadError")}
-        </p>
-        <p className="text-red-500 dark:text-red-300 text-sm mt-1">
-          {errorMessage}
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className=" h-fit relative">
       <h1
         className="font-oswald underline cursor-pointer text-sm font-semibold md:text-xl mb-2 "
         onClick={() => {
-          navigate(`/item/${good._id}`);
+          navigate(`/item/${item._id}`);
         }}
       >
-        {good?.name}
+        {item.name}
       </h1>
       <div className="flex gap-4 items-start">
         {/* LHS */}
         <img
-          src={good.imageUrl}
-          alt={good?.name}
+          src={item.imageUrl}
+          alt={item.name}
           className="object-contain max-w-3/10 "
         />
         {/* RHS */}
         <div className="flex-1 flex flex-col ">
-          <div className="font-oswald mb-4">HK$ {good?.price}</div>
+          <div className="font-oswald mb-4">HK$ {item.price}</div>
           <div className="text-xs mb-4 md:mb-0 lg:mb-4">
             {t("labels.shippingDate")}:{" "}
-            {good.shippingDate.toString().split("T")[0]}
+            {item.shippingDate.toString().split("T")[0]}
           </div>
           <div className="text-sm">{t("labels.quantity")}</div>
           <QuantityButtons
@@ -88,7 +67,7 @@ function CartItemDetails({ item }: CartItemProps) {
             maxQuantity={3}
           />
           <div className="text-xs">
-            {t("labels.subtotal")}: HK$ {good.price * item.quantity}
+            {t("labels.subtotal")}: HK$ {item.price * item.quantity}
           </div>
         </div>
       </div>
