@@ -54,6 +54,7 @@ export const createOrder = async (req, res) => {
         name: good.name,
         price: good.price,
         quantity: item.quantity,
+        shippingDate: good.shippingDate,
         imageUrl: good.imageUrl,
       };
     });

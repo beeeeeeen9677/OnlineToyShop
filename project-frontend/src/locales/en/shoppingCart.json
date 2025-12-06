@@ -1,6 +1,7 @@
 {
   "titles": {
-    "shoppingCart": "SHOPPIONG CART"
+    "shoppingCart": "SHOPPIONG CART",
+    "orderHistory": "ORDER HISTORY"
   },
   "labels": {
     "item": "Item",
@@ -13,14 +14,19 @@
     "itemTotal": "Item Total Amount",
     "shippingFee": "Shipping Fee",
     "orderTotal": "Order Total",
-    "shippingArea": "Shipping Area"
+    "shippingArea": "Shipping Area",
+    "orderID": "Order ID",
+    "status": "Status",
+    "orderDate": "Order Date",
+    "goods": "Goods"
   },
   "messages": {
     "cartEmpty": "Your Shopping Cart is Empty.",
     "noExchangeOrReturn": "NO EXCHANGES OR RETURNS ARE ACCEPTED.",
     "verifyEmail": "Please verify your email before checkout.",
     "orderSuccess": "Order placed successfully!",
-    "orderFailed": "Failed to place order. Please try again."
+    "orderFailed": "Failed to place order. Please try again.",
+    "noOrderFound": "NO ORDER FOUND"
   },
   "locations": {
     "hongKong": "HONG KONG"
@@ -34,5 +40,11 @@
     "processing": "PROCESSING...",
     "home": "HOME",
     "previousPage": "RETURN TO PREVIOUS PAGE"
+  },
+  "status": {
+    "pending": "PENDING",
+    "paid": "PAID",
+    "expired": "EXPIRED",
+    "cancelled": "CANCELLED"
   }
 }

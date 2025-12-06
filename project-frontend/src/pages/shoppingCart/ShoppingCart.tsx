@@ -3,6 +3,10 @@ import { Link, useNavigate } from "react-router";
 import { BiLeaf } from "react-icons/bi";
 import { GiWindSlap } from "react-icons/gi";
 import { useState } from "react";
+import { useLoginContext } from "../../context/app";
+import { auth } from "../../firebase/firebase";
+import api from "../../services/api";
+import type { AxiosError } from "axios";
 import Header from "../../components/Header";
 import CustomerService from "../../components/CustomerService/CustomerService";
 import BackToTopButton from "../../components/BackToTopButton";
@@ -11,16 +15,12 @@ import SearchBar from "../../components/SearchBar";
 import CartItemDetails from "./CartItemDetails";
 import { useTranslation } from "react-i18next";
 import { useCart } from "./useCart";
-import { useLoginContext, useUserContext } from "../../context/app";
-import { auth } from "../../firebase/firebase";
-import api from "../../services/api";
 
 function ShoppingCart() {
   const { t } = useTranslation("shoppingCart");
   const navigate = useNavigate();
   const { items, itemsWithDetails, cartTotalAmount, refetch } = useCart();
   const isLoggedIn = useLoginContext();
-  const user = useUserContext();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const checkout = async () => {
@@ -57,10 +57,11 @@ function ShoppingCart() {
       alert(t("messages.orderSuccess"));
       // TODO: Navigate to order confirmation page
       navigate("/");
-    } catch (error: any) {
+    } catch (error) {
+      const axiosError = error as AxiosError<{ error: string }>;
       console.error("Checkout error:", error);
       const errorMessage =
-        error.response?.data?.error || t("messages.orderFailed");
+        axiosError.response?.data?.error || t("messages.orderFailed");
       alert(errorMessage);
     } finally {
       setIsCheckingOut(false);
@@ -77,8 +78,8 @@ function ShoppingCart() {
       <CustomerService />
       <BackToTopButton />
       <SearchBar />
-      <div className="my-20 flex flex-col px-8 items-center">
-        <h1 className="text-2xl md:text-5xl font-oswald font-bold text-center mb-10">
+      <div className="my-10 md:my-20 flex flex-col px-8 items-center">
+        <h1 className="text-3xl md:text-5xl font-oswald font-bold text-center mb-10">
           {t("titles.shoppingCart")}
         </h1>
         <div className="flex flex-col md:flex-row md:max-w-280 gap-10">
@@ -95,7 +96,7 @@ function ShoppingCart() {
                 <h1 className="text-2xl font-bold">
                   {t("labels.billingSummary")}
                 </h1>
-                <div className="border border-orange-100  dark:border-gray-500 " />
+                <hr className="border border-orange-100  dark:border-gray-500 " />
                 <div className="flex justify-between text-md">
                   <div>{t("labels.itemTotal")}</div>
                   <div>HK$ {cartTotalAmount}</div>
@@ -104,12 +105,12 @@ function ShoppingCart() {
                   <div>{t("labels.shippingFee")}</div>
                   <div>HK$ 40</div>
                 </div>{" "}
-                <div className="border border-orange-300  dark:border-gray-300 " />
+                <hr className="border border-orange-300  dark:border-gray-300 " />
                 <div className="flex justify-between text-md">
                   <div>{t("labels.orderTotal")}</div>
                   <div>HK$ {cartTotalAmount + 40}</div>
                 </div>{" "}
-                <div className="border border-orange-100  dark:border-gray-500 " />
+                <hr className="border border-orange-100  dark:border-gray-500 " />
                 <div className="flex flex-col">
                   <div>{t("labels.shippingArea")}</div>
                   <div className="text-center text-xl font-bold border rounded-md m-4 py-1 select-none">
@@ -144,7 +145,7 @@ function ShoppingCart() {
                 >
                   {t("buttons.previousPage")}
                 </button>
-                <Link className=" tw-round-primary-btn" to="/">
+                <Link className="tw-round-primary-btn" to="/">
                   {t("buttons.home")}
                 </Link>
               </div>

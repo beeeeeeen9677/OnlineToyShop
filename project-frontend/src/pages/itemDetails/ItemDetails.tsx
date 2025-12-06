@@ -123,7 +123,7 @@ function ItemDetails() {
                 : t("status.preorder")}
             </div>
             {/*  Break line  */}
-            <div className="border border-orange-100   dark:border-gray-500 " />
+            <hr className="border border-orange-100   dark:border-gray-500 " />
             <div className="text-sm flex">
               <div className="w-2/5"> {t("info.preorderOpen")}</div>
               <div className="font-extrabold ml-3 flex-1  ">
@@ -143,7 +143,7 @@ function ItemDetails() {
               </div>
             </div>
             {/*  Break line  */}
-            <div className="border border-orange-100   dark:border-gray-500 " />
+            <hr className="border border-orange-100   dark:border-gray-500 " />
             <div className="text-sm font-extrabold">
               {t("info.quantity")}
               <QuantityButtons
@@ -159,7 +159,7 @@ function ItemDetails() {
               )}
             </div>
             {/*  Break line  */}
-            <div className="border border-orange-100   dark:border-gray-500 " />
+            <hr className="border border-orange-100   dark:border-gray-500 " />
             <button
               className="tw-round-primary-btn"
               onClick={handleAddToCart}
@@ -188,7 +188,7 @@ function ItemDetails() {
           </div>
         </div>
         {/*  Break line  */}
-        <div className="border border-orange-100   dark:border-gray-500 " />
+        <hr className="border border-orange-100   dark:border-gray-500 " />
         <div>
           <div className="font-oswald font-extrabold text-xl mb-3">
             {t("info.productIntroduction")}

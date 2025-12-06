@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema({
       name: { type: String, required: true }, // Snapshot
       price: { type: Number, required: true }, // Snapshot
       quantity: { type: Number, required: true },
+      shippingDate: { type: Date, required: true }, // Snapshot
       imageUrl: { type: String, required: true }, // Snapshot
     },
   ],

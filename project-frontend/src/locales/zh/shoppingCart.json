@@ -1,6 +1,7 @@
 {
   "titles": {
-    "shoppingCart": "購物車"
+    "shoppingCart": "購物車",
+    "orderHistory": "訂單記錄"
   },
   "labels": {
     "item": "商品",
@@ -13,14 +14,19 @@
     "itemTotal": "商品合計金額",
     "shippingFee": "運費",
     "orderTotal": "訂單總額",
-    "shippingArea": "送貨地區"
+    "shippingArea": "送貨地區",
+    "orderID": "訂單編號",
+    "status": "狀態",
+    "orderDate": "訂購日期",
+    "goods": "商品"
   },
   "messages": {
     "cartEmpty": "購物車空空如也...",
     "noExchangeOrReturn": "不接受換貨或退貨。",
     "verifyEmail": "請先驗證您的電子郵件。",
     "orderSuccess": "訂單已成功建立！",
-    "orderFailed": "訂單建立失敗，請重試"
+    "orderFailed": "訂單建立失敗，請重試",
+    "noOrderFound": "未找到記錄"
   },
   "locations": {
     "hongKong": "香港"
@@ -34,5 +40,11 @@
     "processing": "處理中...",
     "home": "首頁",
     "previousPage": "回到前一頁"
+  },
+  "status": {
+    "pending": "待處理",
+    "paid": "已付款",
+    "expired": "已過期",
+    "cancelled": "已取消"
   }
 }

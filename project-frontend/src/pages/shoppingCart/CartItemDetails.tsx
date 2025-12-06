@@ -37,9 +37,9 @@ function CartItemDetails({ item }: CartItemProps) {
   }
 
   return (
-    <div className=" h-fit relative">
+    <div className="h-fit relative">
       <h1
-        className="font-oswald underline cursor-pointer text-sm font-semibold md:text-xl mb-2 "
+        className="font-oswald underline cursor-pointer text-md font-semibold md:text-xl mb-2 "
         onClick={() => {
           navigate(`/item/${item._id}`);
         }}
@@ -48,11 +48,20 @@ function CartItemDetails({ item }: CartItemProps) {
       </h1>
       <div className="flex gap-4 items-start">
         {/* LHS */}
-        <img
-          src={item.imageUrl}
-          alt={item.name}
-          className="object-contain max-w-3/10 "
-        />
+
+        <div
+          className="group w-3/10 aspect-square overflow-hidden rounded-md cursor-pointer"
+          onClick={() => {
+            navigate(`/item/${item._id}`);
+          }}
+        >
+          <img
+            src={item.imageUrl}
+            alt={item.name}
+            className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
+          />
+        </div>
+
         {/* RHS */}
         <div className="flex-1 flex flex-col ">
           <div className="font-oswald mb-4">HK$ {item.price}</div>
