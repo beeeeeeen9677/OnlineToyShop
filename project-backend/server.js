@@ -49,6 +49,7 @@ import cartRoutes from "./src/routes/cart.js";
 import chatRoutes from "./src/routes/chat.js";
 import goodRoutes from "./src/routes/goods.js";
 import orderRoutes from "./src/routes/order.js";
+import paymentRoutes from "./src/routes/payment.js";
 import userRoutes from "./src/routes/user.js";
 
 // Import middleware
@@ -84,6 +85,7 @@ app.use(verifyFirebaseToken); // check token
 app.use("/api/user", userRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/payment", paymentRoutes);
 app.use("/api/chat", chatRoutes);
 
 // Admin Authorization Middleware
