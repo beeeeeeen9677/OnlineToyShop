@@ -5,6 +5,7 @@ import { useSocketContext } from "../../context/socket";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
 import { useRoomIdContext } from "../../context/useRoomContext";
 import ChatMessage from "./ChatMessage";
+import { toHKDateString } from "../../utils/dateUtils";
 import type {
   ChatMessage as ChatMessageType,
   ChatRoom,
@@ -103,10 +104,10 @@ function CsChatWindow() {
         className="border-2 border-[#ccc] p-2 overflow-y-auto flex-1 space-y-3"
       >
         {chatRecords.map((msg, index) => {
-          // show same date once
-          const currentDate = msg.timestamp.split("T")[0];
+          // show same date once (HK timezone)
+          const currentDate = toHKDateString(msg.timestamp);
           const previousDate =
-            index > 0 ? chatRecords[index - 1].timestamp.split("T")[0] : null;
+            index > 0 ? toHKDateString(chatRecords[index - 1].timestamp) : null;
           const showDate = currentDate !== previousDate;
 
           return (

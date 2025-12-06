@@ -6,10 +6,11 @@ import BackToTopButton from "../../components/BackToTopButton";
 import { useQuery } from "@tanstack/react-query";
 
 function OrderHistory() {
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["userOrders"],
-    queryFn: async () => {},
-  });
+  const isLoading = false;
+  //   const { data, isLoading, isError, error } = useQuery({
+  //     queryKey: ["userOrders"],
+  //     queryFn: async () => {},
+  //   });
 
   return (
     <div className="animate-fade-in min-h-screen mb-20">

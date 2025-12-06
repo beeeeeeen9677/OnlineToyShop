@@ -15,26 +15,13 @@ function SearchBar() {
     navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
   };
 
-  const handleEnterEvent = useEffectEvent((event: { key: string }) => {
-    if (event.key === "Enter") {
-      redirectToSearch(inputValue);
-      setInputValue("");
-      if (inputElem.current) {
-        inputElem.current.blur();
-      }
+  const handleEnter = () => {
+    redirectToSearch(inputValue);
+    setInputValue("");
+    if (inputElem.current) {
+      inputElem.current.blur();
     }
-  });
-
-  useEffect(() => {
-    const handleKeyDown = (event: { key: string }) => {
-      handleEnterEvent(event);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+  };
 
   return (
     <div className="h-14 flex justify-center items-center py-2">
@@ -47,6 +34,11 @@ function SearchBar() {
           onChange={(e) => setInputValue(e.target.value)}
           className="flex-1  outline-none"
           placeholder={t("placeholders.search")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleEnter();
+            }
+          }}
         />
         <button
           onClick={() => redirectToSearch(inputValue)}

@@ -1,6 +1,7 @@
 import { useTranslation } from "../../i18n/hooks";
 import type { Good } from "../../interface/good";
 import { useNavigate } from "react-router";
+import { toHKDateString } from "../../utils/dateUtils";
 
 type ItemCardProps = {
   itemDetails: Good;
@@ -34,14 +35,11 @@ function ItemCard({ itemDetails, dateType, dragged }: ItemCardProps) {
       >
         {t("info." + (dateType === "createdAt" ? "preorderOpen" : "openTo")) +
           ": "}
-        {
-          (dateType === "createdAt"
+        {toHKDateString(
+          dateType === "createdAt"
             ? itemDetails.createdAt
             : itemDetails.preorderCloseDate
-          )
-            .toString()
-            .split("T")[0]
-        }
+        )}
       </div>
       <div className="font-oswald px-1 pt-1 text-black font-black text-sm line-clamp-2">
         {itemDetails.name}

@@ -1,14 +1,6 @@
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc.js";
-import timezone from "dayjs/plugin/timezone.js";
 import Message from "./mongodb/models/Message.js";
 import OnlineUser from "./mongodb/models/OnlineUser.js";
 import ChatRoom from "./mongodb/models/ChatRoom.js";
-
-// Setup dayjs plugins
-dayjs.extend(utc);
-dayjs.extend(timezone);
-const HK_TIMEZONE = "Asia/Hong_Kong";
 
 const initSocket = async (io) => {
   await OnlineUser.deleteMany().exec(); // Clear online users on server restart
@@ -45,20 +37,19 @@ const initSocket = async (io) => {
     // Send message to a room
     socket.on("sendMessage", async ({ roomId, message }) => {
       // console.log("Send message :", userId, message);
-      const timestamp = dayjs().tz(HK_TIMEZONE).format("YYYY-MM-DDTHH:mm:ss");
 
       try {
         const msg = await Message.create({
           senderId: userId,
           roomId,
           message,
-          timestamp,
+          // timestamp auto-generated as UTC by schema default
         });
         io.to(roomId).emit("receiveMessage", {
           roomId,
           senderId: userId,
           message,
-          timestamp,
+          timestamp: msg.timestamp, // UTC Date from MongoDB
         });
         // console.log(`Message sent to room ${roomId}`);
       } catch (error) {

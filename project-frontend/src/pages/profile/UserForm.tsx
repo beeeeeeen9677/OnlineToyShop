@@ -7,6 +7,7 @@ import api from "../../services/api";
 import type { AxiosError } from "axios";
 import type { User } from "../../interface/user";
 import LoadingPanel from "../../components/LoadingPanel";
+import { toHKDateString } from "../../utils/dateUtils";
 type UserFormProps = {
   user: User;
 };
@@ -187,7 +188,7 @@ function UserForm({ user }: UserFormProps) {
           {t("user.gender")}: {t(`user.${user.gender}`)}
         </div>
         <div className="tw-user-form-field">
-          {t("user.dateOfBirth")}: {user.dateOfBirth.toString().split("T")[0]}
+          {t("user.dateOfBirth")}: {toHKDateString(user.dateOfBirth)}
         </div>
         <Activity mode={isPasswordProvider ? "visible" : "hidden"}>
           <div className="tw-user-form-field flex flex-col gap-3">

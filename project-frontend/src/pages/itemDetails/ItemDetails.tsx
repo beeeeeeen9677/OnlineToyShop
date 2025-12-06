@@ -9,6 +9,7 @@ import QuantityButtons from "../../components/QuantityButtons";
 import { useScrollToggleVisibility } from "../../hooks/useScrollToggleVisibility";
 import { useGood } from "../../hooks/useGood";
 import { useCart, CartLimitError } from "../shoppingCart/useCart";
+import { toHKDateString } from "../../utils/dateUtils";
 
 function ItemDetails() {
   const { t } = useTranslation("goods");
@@ -126,19 +127,19 @@ function ItemDetails() {
             <div className="text-sm flex">
               <div className="w-2/5"> {t("info.preorderOpen")}</div>
               <div className="font-extrabold ml-3 flex-1  ">
-                : {itemDetails.createdAt.toString().split("T")[0]}
+                : {toHKDateString(itemDetails.createdAt)}
               </div>
             </div>
             <div className="text-sm flex">
               <div className="w-2/5"> {t("info.openTo")}</div>
               <div className="font-extrabold ml-3 flex-1  ">
-                : {itemDetails.preorderCloseDate.toString().split("T")[0]}
+                : {toHKDateString(itemDetails.preorderCloseDate)}
               </div>
             </div>
             <div className="text-sm flex">
               <div className="w-2/5">{t("info.shippingDate")}</div>
               <div className="font-extrabold ml-3 flex-1  ">
-                : {itemDetails.shippingDate.toString().split("T")[0]}
+                : {toHKDateString(itemDetails.shippingDate)}
               </div>
             </div>
             {/*  Break line  */}

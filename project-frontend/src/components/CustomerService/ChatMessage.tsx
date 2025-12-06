@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
+import { toHKTimeString } from "../../utils/dateUtils";
 
 type ChatMessageProps = {
   senderId: string;
@@ -69,7 +70,7 @@ function ChatMessage({
           isSender ? "text-right" : ""
         }`}
       >
-        {timestamp.split("T")[1].split(".")[0].substring(0, 5)}
+        {toHKTimeString(timestamp)}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { FaUpload } from "react-icons/fa";
 import { useTranslation } from "../../../i18n/hooks";
 import { categories, type Category, type Good } from "../../../interface/good";
 import LoadingPanel from "../../../components/LoadingPanel";
+import { toHKDateString } from "../../../utils/dateUtils";
 
 type MutationResult<T> = { message: string; result: T };
 type ProductFormProps = {
@@ -207,13 +208,11 @@ function ProductForm({ product, mutationFn, onSuccessCB }: ProductFormProps) {
     if (mode !== "edit" || !product) return;
     if (nameRef.current) nameRef.current.value = product.name;
     if (preorderCloseDateRef.current)
-      preorderCloseDateRef.current.value = new Date(product.preorderCloseDate)
-        .toISOString()
-        .split("T")[0];
+      preorderCloseDateRef.current.value = toHKDateString(
+        product.preorderCloseDate
+      );
     if (shippingDateRef.current)
-      shippingDateRef.current.value = new Date(product.shippingDate)
-        .toISOString()
-        .split("T")[0];
+      shippingDateRef.current.value = toHKDateString(product.shippingDate);
     if (priceRef.current) priceRef.current.value = product.price.toString();
     setDescriptionEn(
       (product.description as { en?: string; zh?: string })?.en || ""

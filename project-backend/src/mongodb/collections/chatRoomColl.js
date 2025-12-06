@@ -1,14 +1,6 @@
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc.js";
-import timezone from "dayjs/plugin/timezone.js";
 import ChatRoom from "../models/ChatRoom.js";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
-
-// Setup dayjs plugins
-dayjs.extend(utc);
-dayjs.extend(timezone);
-const HK_TIMEZONE = "Asia/Hong_Kong";
 
 // create a room with userId for specific user and all adminIds
 export const createChatRoom = async (req, res) => {
@@ -52,23 +44,12 @@ export const getChatRoomsForUser = async (req, res) => {
         // Get user's lastReadAt from the Map
         const userLastReadAt = room.lastReadTime?.[userId] || null;
 
-        // convert all time to HK timezone
+        // Return UTC timestamps
         return {
           ...room,
-          createdAt: dayjs(room.createdAt)
-            .tz(HK_TIMEZONE)
-            .format("YYYY-MM-DDTHH:mm:ss"),
-          lastMessageTime: latestMessage
-            ? dayjs(latestMessage.timestamp)
-                .tz(HK_TIMEZONE)
-                .format("YYYY-MM-DDTHH:mm:ss")
-            : null,
+          lastMessageTime: latestMessage?.timestamp || null,
           lastMessageSenderId: latestMessage?.senderId?.toString() || null,
-          lastReadTime: userLastReadAt
-            ? dayjs(userLastReadAt)
-                .tz(HK_TIMEZONE)
-                .format("YYYY-MM-DDTHH:mm:ss")
-            : null,
+          lastReadTime: userLastReadAt,
         };
       })
     );

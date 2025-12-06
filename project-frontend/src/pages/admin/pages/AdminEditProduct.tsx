@@ -8,6 +8,7 @@ import type { Good } from "../../../interface/good";
 import type { AxiosError } from "axios";
 import ProductForm from "../modules/ProductForm";
 import { useTranslation } from "../../../i18n/hooks";
+import { toHKDateString } from "../../../utils/dateUtils";
 import { useUserContext } from "../../../context/app";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -97,7 +98,7 @@ function AdminEditProduct() {
         <div className="text-4xl mx-auto underline">UPDATE</div>
         <div className="p-2 text-3xl">ID: {product._id}</div>
         <div className="p-2 text-2xl">
-          {t("labels.createdAt")} {product.createdAt.split("T")[0]}
+          {t("labels.createdAt")} {toHKDateString(product.createdAt)}
         </div>
         <div>
           <span className="p-2 text-lg">

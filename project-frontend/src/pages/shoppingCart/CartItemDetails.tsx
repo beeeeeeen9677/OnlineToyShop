@@ -3,6 +3,7 @@ import { RiDeleteBin2Line } from "react-icons/ri";
 import { useCart, type CartItemWithDetails } from "./useCart";
 import { useTranslation } from "../../i18n/hooks";
 import QuantityButtons from "../../components/QuantityButtons";
+import { toHKDateString } from "../../utils/dateUtils";
 
 type CartItemProps = {
   item: CartItemWithDetails;
@@ -56,8 +57,7 @@ function CartItemDetails({ item }: CartItemProps) {
         <div className="flex-1 flex flex-col ">
           <div className="font-oswald mb-4">HK$ {item.price}</div>
           <div className="text-xs mb-4 md:mb-0 lg:mb-4">
-            {t("labels.shippingDate")}:{" "}
-            {item.shippingDate.toString().split("T")[0]}
+            {t("labels.shippingDate")}: {toHKDateString(item.shippingDate)}
           </div>
           <div className="text-sm">{t("labels.quantity")}</div>
           <QuantityButtons
