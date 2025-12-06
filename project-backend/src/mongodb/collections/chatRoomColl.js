@@ -1,6 +1,7 @@
 import ChatRoom from "../models/ChatRoom.js";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
+import OnlineUser from "../models/OnlineUser.js";
 
 // create a room with userId for specific user and all adminIds
 export const createChatRoom = async (req, res) => {
@@ -16,6 +17,29 @@ export const createChatRoom = async (req, res) => {
       joinedUsers: userIds,
     });
     await newRoom.save();
+
+    // Get io instance from app
+    const io = req.app.get("io");
+
+    // Make all online users in this room join the socket room
+    const onlineUsers = await OnlineUser.find({
+      userId: { $in: userIds },
+    })
+      .lean()
+      .exec();
+
+    onlineUsers.forEach((onlineUser) => {
+      onlineUser.socketIds.forEach((socketId) => {
+        const socket = io.sockets.sockets.get(socketId);
+        if (socket) {
+          socket.join(newRoom._id.toString());
+          console.log(
+            `Auto-joined user ${onlineUser.userId} (socket ${socketId}) to new room ${newRoom._id}`
+          );
+        }
+      });
+    });
+
     res.status(201).json(newRoom);
   } catch (err) {
     console.error(err);

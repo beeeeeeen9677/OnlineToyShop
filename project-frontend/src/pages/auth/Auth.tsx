@@ -462,11 +462,14 @@ function Auth() {
               type="date"
               id="date-of-birth"
               name="dateOfBirth"
-              className={`w-full px-4 py-3 dark:bg-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 cursor-pointer dark:bg-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors ${
                 dobErrors !== "" ? "ring-3 ring-red-500 " : ""
               }`}
               onBlur={validateField}
               onChange={validateField}
+              onClick={() => {
+                dateOfBirthRef.current?.showPicker();
+              }}
             />
           </div>
           {/* For login */}
@@ -496,7 +499,7 @@ function Auth() {
           {/* For login */}
           <button
             className={
-              "w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors " +
+              "w-full bg-primary cursor-pointer text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors " +
               (mode === "REGISTER" ? "hidden" : "")
             }
             onClick={emailPwLogin}
@@ -506,7 +509,7 @@ function Auth() {
           {/* For register */}
           <button
             className={
-              "w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors " +
+              "w-full bg-primary cursor-pointer text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors " +
               (mode === "LOGIN" ? "hidden" : "")
             }
             onClick={emailPwRegister}
@@ -529,13 +532,13 @@ function Auth() {
           className={"space-y-6 " + (!auth.currentUser ? "hidden" : "")}
         >
           <button
-            className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+            className="w-full bg-primary cursor-pointer text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
             onClick={logoutAccount}
           >
             {t("buttons.logout")}
           </button>
           <button
-            className="w-full bg-white text-primary border-primary border-2 py-3 px-4 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+            className="w-full bg-white cursor-pointer text-primary border-primary border-2 py-3 px-4 rounded-lg font-medium hover:bg-gray-100 transition-colors"
             onClick={() => {
               navigate("/");
             }}
@@ -553,7 +556,7 @@ function Auth() {
               : t("links.alreadyHaveAccount") + " "}
             <button
               //to="#"
-              className="text-primary font-medium hover:text-orange-600 transition-colors"
+              className="text-primary cursor-pointer font-medium hover:text-orange-600 transition-colors"
               onClick={switchMode}
             >
               {mode === "LOGIN" ? t("buttons.register") : t("buttons.login")}

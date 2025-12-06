@@ -28,12 +28,6 @@ const initSocket = async (io) => {
       console.error("Error creating online user:", err);
     }
 
-    // join in backend instead of frontend emit
-    // socket.on("joinRoom", (roomId) => {
-    //   socket.join(roomId);
-    //   console.log(`User ${userId} Socket ${socket.id} joined room ${roomId}`);
-    // });
-
     // Send message to a room
     socket.on("sendMessage", async ({ roomId, message }) => {
       // console.log("Send message :", userId, message);

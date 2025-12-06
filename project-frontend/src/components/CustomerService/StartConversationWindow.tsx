@@ -20,7 +20,8 @@ function StartConversationWindow() {
       queryClient.invalidateQueries({
         queryKey: ["chatRooms", { userId: user?._id }],
       });
-      console.log("Chat room created:", data.roomId);
+      console.log("Chat room created:", data._id);
+      // Room joining is now handled automatically on backend
     },
   });
 
