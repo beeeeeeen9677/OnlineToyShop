@@ -3,8 +3,8 @@ import Stripe from "stripe";
 
 const router = Router();
 
-// Stripe will be initialized lazily when first request comes in
-// This ensures .env is loaded first by server.js
+// will be initialized when first request comes in
+// ensures .env is loaded first by server.js
 let stripe;
 
 const getStripe = () => {
@@ -13,7 +13,7 @@ const getStripe = () => {
       throw new Error("STRIPE_SECRET_KEY not found in environment variables");
     }
     stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    console.log("✅ Stripe initialized successfully");
+    console.log("Stripe initialized successfully");
   }
   return stripe;
 };
@@ -50,13 +50,12 @@ router.post("/create-payment-intent", async (req, res) => {
     const stripe = getStripe();
 
     // Create PaymentIntent
-    // Amount must be in cents (smallest currency unit)
-    // HKD doesn't have cents, but Stripe requires integer (e.g., 100 HKD = 10000)
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert HKD to smallest unit
+      amount: Math.round(amount * 100), // Convert HKD to cent
       currency: "hkd",
 
-      // Metadata to link payment back to our order
+      // Metadata to link payment back to order
+      // for webhook
       metadata: {
         orderId: orderId,
       },
@@ -68,7 +67,7 @@ router.post("/create-payment-intent", async (req, res) => {
       // After card is entered, payment processes immediately
       automatic_payment_methods: {
         enabled: true,
-        allow_redirects: "never", // Stay on same page (no redirect)
+        allow_redirects: "never", // stay on same page, no redirect
       },
     });
 
