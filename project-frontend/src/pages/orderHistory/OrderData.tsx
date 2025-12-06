@@ -25,7 +25,7 @@ function OrderData({ item }: OrderItemProps) {
       <h1>
         {t("labels.goods")}: {item.items.length}
       </h1>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 mt-2">
         {item.items.map((orderItem: OrderItem, index: number) => (
           <div key={index} className="flex gap-4 items-start">
             {/* LHS */}
@@ -39,21 +39,21 @@ function OrderData({ item }: OrderItemProps) {
             <div className="flex-1 flex flex-col gap-1">
               <div className="text-md underline mb-4">{orderItem.name}</div>
 
-              <div className="border-gray-300 dark:border-gray-500 border-t-2" />
+              <hr className="border-gray-300 dark:border-gray-500 border-t-2" />
 
               <div className="flex justify-between text-md">
                 <span className="flex-1"> {t("labels.price")}</span>
                 <span className="flex-1">{`HK$ ${orderItem.price}`}</span>
               </div>
 
-              <div className="border-gray-300 dark:border-gray-500 border-t-2" />
+              <hr className="border-gray-300 dark:border-gray-500 border-t-2" />
 
               <div className="flex justify-between text-md">
                 <span className="flex-1"> {t("labels.quantity")}</span>
                 <span className="flex-1">{orderItem.quantity}</span>
               </div>
 
-              <div className="border-gray-300 dark:border-gray-500 border-t-2" />
+              <hr className="border-gray-300 dark:border-gray-500 border-t-2" />
 
               <div className="flex justify-between text-sm">
                 <span className="flex-1">{t("labels.subtotal")}</span>
@@ -62,7 +62,7 @@ function OrderData({ item }: OrderItemProps) {
                 }`}</span>
               </div>
 
-              <div className="border-gray-300 dark:border-gray-500 border-t-2" />
+              <hr className="border-gray-300 dark:border-gray-500 border-t-2" />
 
               <div className="flex justify-between text-sm mb-4 md:mb-0 lg:mb-4">
                 <span className="flex-1">{t("labels.shippingDate")}</span>

@@ -59,7 +59,7 @@ function OrderHistory() {
             {items.map((order, index) => (
               <>
                 {index !== 0 && (
-                  <hr className="border-gray-300 dark:border-gray-500" />
+                  <hr className="border border-gray-300 dark:border-gray-500" />
                 )}
                 <OrderData key={order._id} item={order} />
               </>
