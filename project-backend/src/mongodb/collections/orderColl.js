@@ -152,6 +152,7 @@ export const confirmPaymentInternal = async (orderId, userId = null) => {
   }
 };
 
+// deprecated, use webhook for confirmation
 // Confirm payment - API route handler
 export const confirmPayment = async (req, res) => {
   try {

@@ -29,7 +29,8 @@
     "orderSuccess": "訂單已成功建立！",
     "orderFailed": "訂單建立失敗，請重試",
     "noOrderFound": "未找到記錄",
-    "orderConfirmed": "您的訂單已確認。"
+    "orderConfirmed": "您的訂單已確認。",
+    "processingConfirmation": "正在處理付款確認中..."
   },
   "locations": {
     "hongKong": "香港"

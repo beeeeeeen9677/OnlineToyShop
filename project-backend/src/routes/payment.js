@@ -142,7 +142,19 @@ router.post("/webhook", async (req, res) => {
       );
 
       // Call the shared confirmation logic
-      await confirmPaymentInternal(orderId);
+      const confirmedOrder = await confirmPaymentInternal(orderId);
+
+      // Emit WebSocket event to notify user
+      const io = req.app.get("io");
+      if (io) {
+        // Emit to specific user's room
+        io.to(order.userId.toString()).emit("orderConfirmed", {
+          orderId: confirmedOrder._id,
+          status: "paid",
+          paidAt: confirmedOrder.paidAt,
+        });
+        console.log(`WebSocket event sent to user ${order.userId}`);
+      }
 
       console.log(`✓ Order ${orderId} confirmed successfully via webhook`);
       res.json({ received: true });

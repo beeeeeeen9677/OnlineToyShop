@@ -29,7 +29,8 @@
     "orderSuccess": "Order placed successfully!",
     "orderFailed": "Failed to place order. Please try again.",
     "noOrderFound": "NO ORDER FOUND",
-    "orderConfirmed": "Your order has been confirmed."
+    "orderConfirmed": "Your order has been confirmed.",
+    "processingConfirmation": "Processing payment confirmation..."
   },
   "locations": {
     "hongKong": "HONG KONG"

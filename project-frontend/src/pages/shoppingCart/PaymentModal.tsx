@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useStripe,
   useElements,
@@ -9,9 +9,22 @@ import { loadStripe } from "@stripe/stripe-js";
 import api from "../../services/api";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { useSocketContext } from "../../context/socket";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+/**
+ * Payment Modal - Webhook + WebSocket Approach
+ *
+ * Flow:
+ * 1. User enters card details and submits
+ * 2. Frontend confirms payment with Stripe API
+ * 3. Payment succeeds → Frontend waits (does NOT call /confirm)
+ * 4. Stripe sends webhook to backend
+ * 5. Backend confirms order, emits WebSocket event to user
+ * 6. Frontend receives WebSocket event → shows success
+ */
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -32,11 +45,40 @@ function PaymentForm({
 }: Omit<PaymentModalProps, "isOpen">) {
   const stripe = useStripe();
   const elements = useElements();
+  const socket = useSocketContext();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [waitingForWebhook, setWaitingForWebhook] = useState(false);
 
   const { t } = useTranslation("shoppingCart");
+
+  // Listen for webhook confirmation via WebSocket
+  useEffect(() => {
+    const handleOrderConfirmed = (data: {
+      orderId: string;
+      status: string;
+    }) => {
+      if (data.orderId === orderId && data.status === "paid") {
+        console.log("Order confirmed via webhook WebSocket event");
+        setPaymentSuccess(true);
+        setWaitingForWebhook(false);
+
+        // Wait a moment to show success message, then close
+        setTimeout(() => {
+          onSuccess();
+          onClose();
+        }, 1500);
+      }
+    };
+
+    socket.on("orderConfirmed", handleOrderConfirmed);
+
+    // Cleanup listener on unmount
+    return () => {
+      socket.off("orderConfirmed", handleOrderConfirmed);
+    };
+  }, [orderId, socket, onSuccess, onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,16 +110,24 @@ function PaymentForm({
       }
 
       if (paymentIntent?.status === "succeeded") {
-        // Payment succeeded, confirm with backend
-        await api.post(`/api/orders/${orderId}/confirm`);
+        console.log("Payment succeeded, waiting for webhook confirmation...");
 
-        setPaymentSuccess(true);
+        // Don't call confirm API - wait for webhook via WebSocket
+        setWaitingForWebhook(true);
 
-        // Wait a moment to show success message, then close
+        // Timeout after 30 seconds if webhook doesn't arrive
         setTimeout(() => {
-          onSuccess();
-          onClose();
-        }, 1500);
+          if (!paymentSuccess) {
+            setError(
+              "Payment processed but confirmation is delayed. Please check your order history."
+            );
+            setWaitingForWebhook(false);
+            setIsProcessing(false);
+          }
+        }, 30000);
+
+        // Don't set isProcessing to false - keep loading until webhook arrives
+        return;
       }
     } catch (err) {
       console.error("Payment error:", err);
@@ -150,10 +200,19 @@ function PaymentForm({
         </div>
       )}
 
+      {/* Waiting for webhook message */}
+      {waitingForWebhook && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded">
+          <div className="flex items-center gap-2">
+            <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full" />
+            <span>{t("messages.processingConfirmation")}</span>
+          </div>
+        </div>
+      )}
+
       {/* Test Mode Banner */}
       <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded text-sm">
-        <strong>Test Mode:</strong> Use card 4242 4242 4242 4242, any future
-        date, any CVC
+        use 4242 4242 4242 4242 / 1234 / 123 for testing
       </div>
 
       {/* Action Buttons */}

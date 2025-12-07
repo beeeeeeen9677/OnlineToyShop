@@ -15,7 +15,10 @@ const initSocket = async (io) => {
 
       //console.log(`User ${userId} connected, socket-id: ${socket.id}`);
 
-      // Auto-join all rooms
+      // Join user-specific room for payment notifications
+      socket.join(userId);
+
+      // Auto-join all chat rooms
       const userRooms = await ChatRoom.find({ joinedUsers: { $in: [userId] } })
         .select("_id") // only need room IDs
         .lean()
