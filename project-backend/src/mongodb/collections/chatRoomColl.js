@@ -33,9 +33,10 @@ export const createChatRoom = async (req, res) => {
         const socket = io.sockets.sockets.get(socketId);
         if (socket) {
           socket.join(newRoom._id.toString());
-          console.log(
-            `Auto-joined user ${onlineUser.userId} (socket ${socketId}) to new room ${newRoom._id}`
-          );
+          // console.log(
+          //   `Auto-joined user ${onlineUser.userId} (socket ${socketId}) to new room ${newRoom._id}`
+          // );
+          io.to(socketId).emit("newChatRoom", newRoom);
         }
       });
     });

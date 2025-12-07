@@ -20,13 +20,14 @@ function CustomerService() {
   const queryClient = useQueryClient();
   const isFirstConnect = useRef(true);
 
+  const chatRoomsQueryKey = ["chatRooms", { userId: user?._id }];
   const {
     data: chatRooms, // rooms of current user joined
     isLoading,
     isError,
     error,
   } = useQuery<ChatRoom[]>({
-    queryKey: ["chatRooms", { userId: user?._id }],
+    queryKey: chatRoomsQueryKey,
     queryFn: async () => {
       const res = await api.get(`/chat/chatRooms/${user?._id}`);
       return res.data;
@@ -80,12 +81,24 @@ function CustomerService() {
       queryClient.invalidateQueries({ queryKey: ["chatMessages"] });
     };
 
+    const handleNewChatRoom = (newRoom: ChatRoom) => {
+      queryClient.setQueryData<ChatRoom[]>(chatRoomsQueryKey, (oldRooms) => {
+        if (!oldRooms) return [newRoom];
+        // Avoid duplicates
+        const exists = oldRooms.some((room) => room._id === newRoom._id);
+        if (exists) return oldRooms;
+        return [...oldRooms, newRoom];
+      });
+    };
+
     socket.on("receiveMessage", handleReceiveMessage);
     socket.on("connect", handleReconnect);
+    socket.on("newChatRoom", handleNewChatRoom);
 
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
       socket.off("connect", handleReconnect);
+      socket.off("newChatRoom", handleNewChatRoom);
     };
   }, [socket, queryClient, user?._id]);
 
