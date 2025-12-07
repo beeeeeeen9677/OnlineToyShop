@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router";
+import { Link } from "react-router";
 import type { Good } from "../../interface/good";
 import ItemCard from "./ItemCard";
 import "./IndexPage.css";

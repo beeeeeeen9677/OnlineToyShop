@@ -1,10 +1,11 @@
+import { useTranslation } from "../../../i18n/hooks";
+// import { useNavigate } from "react-router";
+import { useUserContext } from "../../../context/app";
 import Header from "../../../components/Header";
 import ModuleWrapper from "../../../components/ModuleWrapper";
 import ProductForm from "../modules/ProductForm";
-import { useTranslation } from "../../../i18n/hooks";
 import EditGoods from "../modules/EditGoods";
-// import { useNavigate } from "react-router";
-import { useUserContext } from "../../../context/app";
+import CheckOrder from "../modules/CheckOrder";
 // import { useEffect } from "react";
 
 function AdminIndex() {
@@ -42,6 +43,9 @@ function AdminIndex() {
         />
         <ModuleWrapper maxHeight={"max-h-30"} title={t("titles.editGoods")}>
           <EditGoods />
+        </ModuleWrapper>
+        <ModuleWrapper maxHeight={"max-h-200"} title={t("titles.checkOrders")}>
+          <CheckOrder />
         </ModuleWrapper>
       </div>
     </div>

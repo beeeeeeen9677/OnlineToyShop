@@ -19,7 +19,8 @@
     "viewedCount": "Viewed Count:",
     "available": "Available:",
     "quota": "Quota:",
-    "userData": "USER DATA"
+    "userData": "USER DATA",
+    "userID": "User ID"
   },
   "placeholders": {
     "productName": "PRODUCT NAME",

@@ -19,7 +19,8 @@
     "viewedCount": "瀏覽次數：",
     "available": "可購買：",
     "quota": "數量：",
-    "userData": "用戶資料"
+    "userData": "用戶資料",
+    "userID": "用戶ID"
   },
   "placeholders": {
     "productName": "產品名稱",
