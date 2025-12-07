@@ -44,7 +44,7 @@ function AdminIndex() {
         <ModuleWrapper maxHeight={"max-h-30"} title={t("titles.editGoods")}>
           <EditGoods />
         </ModuleWrapper>
-        <ModuleWrapper maxHeight={"max-h-200"} title={t("titles.checkOrders")}>
+        <ModuleWrapper maxHeight={"max-h-330"} title={t("titles.checkOrders")}>
           <CheckOrder />
         </ModuleWrapper>
       </div>

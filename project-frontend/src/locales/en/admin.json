@@ -20,12 +20,25 @@
     "available": "Available:",
     "quota": "Quota:",
     "userData": "USER DATA",
-    "userID": "User ID"
+    "userID": "User ID",
+    "orderID": "Order ID",
+    "filters": "Filters",
+    "showPaidOnly": "Show Paid Orders Only",
+    "dateFrom": "Date From",
+    "dateTo": "Date To",
+    "amountFrom": "Amount From",
+    "amountTo": "Amount To",
+    "filtering": "Filtering",
+    "showing": "Showing",
+    "of": "of",
+    "orders": "orders"
   },
   "placeholders": {
     "productName": "PRODUCT NAME",
     "productDescription": "Product description...",
-    "stock": "100"
+    "stock": "100",
+    "searchUserId": "Search by User ID...",
+    "searchOrderId": "Search by Order ID..."
   },
   "buttons": {
     "upload": "Upload",
@@ -39,6 +52,7 @@
     "uploadSuccess": "Product uploaded successfully!",
     "updateSuccess": "Product updated successfully!",
     "uploadFailed": "Upload failed. Please try again.",
-    "invalidField": "*invalid field exist"
+    "invalidField": "*invalid field exist",
+    "noMatchingOrders": "No orders match the current filters"
   }
 }

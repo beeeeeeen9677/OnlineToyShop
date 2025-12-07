@@ -20,12 +20,25 @@
     "available": "可購買：",
     "quota": "數量：",
     "userData": "用戶資料",
-    "userID": "用戶ID"
+    "userID": "用戶ID",
+    "orderID": "訂單編號",
+    "filters": "篩選",
+    "showPaidOnly": "僅顯示已付款訂單",
+    "dateFrom": "開始日期",
+    "dateTo": "結束日期",
+    "amountFrom": "最低金額",
+    "amountTo": "最高金額",
+    "filtering": "篩選中",
+    "showing": "顯示",
+    "of": "共",
+    "orders": "筆訂單"
   },
   "placeholders": {
     "productName": "產品名稱",
     "productDescription": "產品描述...",
-    "stock": "100"
+    "stock": "100",
+    "searchUserId": "搜尋用戶ID...",
+    "searchOrderId": "搜尋訂單ID..."
   },
   "buttons": {
     "upload": "上傳",
@@ -39,6 +52,7 @@
     "uploadSuccess": "商品上傳成功！",
     "updateSuccess": "商品更新成功！",
     "uploadFailed": "上傳失敗，請重試。",
-    "invalidField": "*存在無效欄位"
+    "invalidField": "*存在無效欄位",
+    "noMatchingOrders": "沒有符合篩選條件的訂單"
   }
 }
