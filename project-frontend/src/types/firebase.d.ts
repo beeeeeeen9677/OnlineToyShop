@@ -39,5 +39,22 @@ declare module "./firebase/firebase" {
     failCallback: (errorCode: string) => void
   ): Promise<void>;
 
+  export function sendResetEmail(email: string): Promise<void>;
+
+  export function logInWithGooglePopup(
+    loginSuccessCallback: () => void,
+    loginFailCallback: (errorCode: string) => void
+  ): Promise<void>;
+
+  export function logInWithFacebookPopup(
+    loginSuccessCallback: () => void,
+    loginFailCallback: (errorCode: string) => void
+  ): Promise<void>;
+
+  export function monitorAuthState(
+    logoutCallback: () => void,
+    setIsLoggedIn: (isLoggedIn: boolean) => void
+  ): () => Promise<void>;
+
   export function logout(): Promise<void>;
 }

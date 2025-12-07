@@ -19,7 +19,7 @@ export const handleStripeWebhook = async (req, res) => {
   try {
     // Verify webhook signature
     event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-    console.log(`Webhook verified: ${event.type}`);
+    //console.log(`Webhook verified: ${event.type}`);
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -30,7 +30,7 @@ export const handleStripeWebhook = async (req, res) => {
     const paymentIntent = event.data.object;
     const orderId = paymentIntent.metadata.orderId;
 
-    console.log(`💳 Payment succeeded for order: ${orderId}`);
+    //console.log(`Payment succeeded for order: ${orderId}`);
 
     try {
       // Import Order model and confirmation logic

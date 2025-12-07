@@ -82,7 +82,7 @@ function CartItemDetails({ item }: CartItemProps) {
       </div>
       <RiDeleteBin2Line
         size={32}
-        className="absolute bottom-3 right-3 cursor-pointer"
+        className="absolute bottom-3 right-3 cursor-pointer hover:text-red-600 transition-colors"
         onClick={() => {
           removeItem(item.goodId);
         }}

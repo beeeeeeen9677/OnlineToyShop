@@ -16,6 +16,10 @@ import {
   browserLocalPersistence,
   signOut,
   updatePassword,
+  sendPasswordResetEmail,
+  signInWithPopup,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
 } from "firebase/auth";
 import api from "../services/api";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -36,6 +40,8 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
 
 // Email & Password
 const loginWithEmailAndPassword = async (
@@ -262,6 +268,57 @@ const changePassword = async (
   }
 };
 
+const sendResetEmail = async (email: string) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    console.log("Password reset email sent.");
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+  }
+};
+
+const logInWithGooglePopup = async (
+  loginSuccessCallback: () => void,
+  loginFailCallback: (errorCode: string) => void
+) => {
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+    //const result =
+    await signInWithPopup(auth, googleProvider);
+    loginSuccessCallback();
+  } catch (error: unknown) {
+    let errorCode: string = "auth/unexpected-error";
+
+    if (typeof error === "object" && error !== null && "code" in error) {
+      const firebaseError = error as { code: string };
+      errorCode = getFirebaseAuthErrorMessage(firebaseError.code);
+    }
+
+    loginFailCallback(errorCode);
+  }
+};
+
+const logInWithFacebookPopup = async (
+  loginSuccessCallback: () => void,
+  loginFailCallback: (errorCode: string) => void
+) => {
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+    //const result =
+    await signInWithPopup(auth, facebookProvider);
+    loginSuccessCallback();
+  } catch (error: unknown) {
+    let errorCode: string = "auth/unexpected-error";
+
+    if (typeof error === "object" && error !== null && "code" in error) {
+      const firebaseError = error as { code: string };
+      errorCode = getFirebaseAuthErrorMessage(firebaseError.code);
+    }
+
+    loginFailCallback(errorCode);
+  }
+};
+
 // Monitor
 const monitorAuthState = async (
   logoutCallback: () => void,
@@ -300,6 +357,9 @@ export {
   authEmail,
   verifyUserEmail,
   changePassword,
+  sendResetEmail,
+  logInWithGooglePopup,
+  logInWithFacebookPopup,
   monitorAuthState,
   logout,
 };

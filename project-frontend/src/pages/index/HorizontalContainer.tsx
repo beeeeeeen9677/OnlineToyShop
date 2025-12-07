@@ -58,7 +58,7 @@ function HorizontalContainer({
     (sortingKey as string) === "createdAt" ? "newest" : "preorderCloseDate_asc"
   );
 
-  console.log(searchURL);
+  //console.log(searchURL);
 
   return (
     <div>

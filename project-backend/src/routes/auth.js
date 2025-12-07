@@ -14,4 +14,23 @@ router.post("/logout", verifyFirebaseToken, (req, res) => {
   });
 });
 
+router.get("/last-reset-email", async (req, res) => {
+  try {
+    const lastResetEmailSentAt = req.session.lastResetEmailSentAt || null;
+    res.status(200).json(lastResetEmailSentAt);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/last-reset-email", async (req, res) => {
+  try {
+    const { timeStamp } = req.body;
+    req.session.lastResetEmailSentAt = timeStamp;
+    res.status(200).json({ message: "Last reset email time updated" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router;

@@ -218,7 +218,7 @@ function PaymentForm({
 
       {/* Test Mode Card Num */}
       <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded text-sm">
-        (use 4242 4242 4242 4242 / 1234 / 123 for testing)
+        (use 4242 4242 4242 4242 / 1234 / 123 / 00000)
       </div>
 
       {/* Action Buttons */}

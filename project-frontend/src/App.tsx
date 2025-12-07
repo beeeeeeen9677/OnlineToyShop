@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 // Component Imports
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
+import ForgetPw from "./pages/auth/ForgetPw";
 import AdminIndex from "./pages/admin/pages/AdminIndex";
 import AdminProductList from "./pages/admin/pages/AdminProductList";
 import AdminEditProduct from "./pages/admin/pages/AdminEditProduct";
@@ -190,6 +191,7 @@ function RouteContainer() {
     <Routes>
       <Route index element={<Index />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/auth/forget-password" element={<ForgetPw />} />
       <Route path="/admin" element={<AdminIndex />} />
       <Route path="/admin/product" element={<AdminProductList />} />
       <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />
