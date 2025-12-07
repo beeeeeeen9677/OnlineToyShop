@@ -18,7 +18,9 @@
     "orderID": "Order ID",
     "status": "Status",
     "orderDate": "Order Date",
-    "goods": "Goods"
+    "goods": "Goods",
+    "amount": "Amount",
+    "completePayment": "COMPLETE PAYMENT"
   },
   "messages": {
     "cartEmpty": "Your Shopping Cart is Empty.",
@@ -26,7 +28,8 @@
     "verifyEmail": "Please verify your email before checkout.",
     "orderSuccess": "Order placed successfully!",
     "orderFailed": "Failed to place order. Please try again.",
-    "noOrderFound": "NO ORDER FOUND"
+    "noOrderFound": "NO ORDER FOUND",
+    "orderConfirmed": "Your order has been confirmed."
   },
   "locations": {
     "hongKong": "HONG KONG"
@@ -39,7 +42,9 @@
     "checkout": "CHECKOUT",
     "processing": "PROCESSING...",
     "home": "HOME",
-    "previousPage": "RETURN TO PREVIOUS PAGE"
+    "previousPage": "RETURN TO PREVIOUS PAGE",
+    "cancel": "CANCEL",
+    "payNow": "PAY NOW"
   },
   "status": {
     "pending": "PENDING",

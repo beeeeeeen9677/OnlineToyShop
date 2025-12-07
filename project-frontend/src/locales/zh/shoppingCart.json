@@ -18,7 +18,9 @@
     "orderID": "訂單編號",
     "status": "狀態",
     "orderDate": "訂購日期",
-    "goods": "商品"
+    "goods": "商品",
+    "amount": "金額",
+    "completePayment": "完成付款"
   },
   "messages": {
     "cartEmpty": "購物車空空如也...",
@@ -26,7 +28,8 @@
     "verifyEmail": "請先驗證您的電子郵件。",
     "orderSuccess": "訂單已成功建立！",
     "orderFailed": "訂單建立失敗，請重試",
-    "noOrderFound": "未找到記錄"
+    "noOrderFound": "未找到記錄",
+    "orderConfirmed": "您的訂單已確認。"
   },
   "locations": {
     "hongKong": "香港"
@@ -39,7 +42,9 @@
     "checkout": "結帳",
     "processing": "處理中...",
     "home": "首頁",
-    "previousPage": "回到前一頁"
+    "previousPage": "回到前一頁",
+    "cancel": "取消",
+    "payNow": "付款"
   },
   "status": {
     "pending": "待處理",

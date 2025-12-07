@@ -8,6 +8,7 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import api from "../../services/api";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -34,6 +35,8 @@ function PaymentForm({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  const { t } = useTranslation("shoppingCart");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,19 +104,22 @@ function PaymentForm({
       <div className="text-center py-8">
         <div className="text-6xl mb-4">✓</div>
         <h3 className="text-2xl font-bold text-green-600 mb-2">
-          Payment Successful!
+          {t("messages.orderSuccess")}
         </h3>
-        <p className="text-gray-600">Your order has been confirmed.</p>
+        <p className="text-gray-600">{t("messages.orderConfirmed")}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 text-black">
       <div>
-        <h3 className="text-xl font-bold mb-2">Complete Payment</h3>
+        <h3 className="text-xl font-bold mb-2">
+          {t("labels.completePayment")}
+        </h3>
         <p className="text-gray-600 mb-4">
-          Amount: <span className="font-bold">${amount.toFixed(2)} HKD</span>
+          {t("labels.amount")}:{" "}
+          <span className="font-bold">${amount.toFixed(2)} HKD</span>
         </p>
       </div>
 
@@ -158,14 +164,14 @@ function PaymentForm({
           disabled={isProcessing}
           className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
         >
-          Cancel
+          {t("buttons.cancel")}
         </button>
         <button
           type="submit"
           disabled={!stripe || isProcessing}
           className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isProcessing ? "Processing..." : "Pay Now"}
+          {isProcessing ? t("buttons.processing") : t("buttons.payNow")}
         </button>
       </div>
     </form>
@@ -181,15 +187,24 @@ export default function PaymentModal({
   amount,
   onSuccess,
 }: PaymentModalProps) {
+  const handleClose = async () => {
+    try {
+      // Cancel the pending order when user closes without paying
+      await api.delete(`/orders/${orderId}`);
+      console.log("Order cancelled:", orderId);
+    } catch (error) {
+      console.error("Failed to cancel order:", error);
+      // Still close modal even if cancellation fails
+    }
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
 
       {/* Modal */}
       <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
@@ -198,7 +213,7 @@ export default function PaymentModal({
             clientSecret={clientSecret}
             orderId={orderId}
             amount={amount}
-            onClose={onClose}
+            onClose={handleClose}
             onSuccess={onSuccess}
           />
         </Elements>

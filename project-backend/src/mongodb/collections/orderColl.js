@@ -92,20 +92,17 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// Confirm payment - deduct stock atomically, update to paid
-export const confirmPayment = async (req, res) => {
+// Internal function - shared confirmation logic for both API and webhook
+export const confirmPaymentInternal = async (orderId, userId = null) => {
   const session = await mongoose.startSession();
 
   try {
-    const { orderId } = req.params;
-    const userId = req.session.user._id;
-
     // race condition handling
     session.startTransaction();
 
-    const order = await Order.findOne({ _id: orderId, userId })
-      .session(session)
-      .exec();
+    // Build query - webhook doesn't have userId
+    const query = userId ? { _id: orderId, userId } : { _id: orderId };
+    const order = await Order.findOne(query).session(session).exec();
 
     if (!order) {
       throw new Error("Order not found");
@@ -122,7 +119,7 @@ export const confirmPayment = async (req, res) => {
     // Deduct quota for all items
     for (const item of order.items) {
       const result = await Good.findOneAndUpdate(
-        { _id: item.goodId, quota: { $gte: item.quantity } }, // ensure enough quota
+        { _id: item.goodId, quota: { $gte: item.quantity } },
         { $inc: { quota: -item.quantity, broughtCount: item.quantity } },
         { session, new: true }
       ).exec();
@@ -137,22 +134,35 @@ export const confirmPayment = async (req, res) => {
     order.paidAt = new Date();
     await order.save({ session });
 
-    // remove purchased items from user's cart after successful payment
+    // Remove purchased items from user's cart
     const purchasedGoodIds = order.items.map((item) => item.goodId);
     await User.findByIdAndUpdate(
-      userId,
+      order.userId,
       { $pull: { cart: { goodId: { $in: purchasedGoodIds } } } },
       { session }
     ).exec();
 
     await session.commitTransaction();
-    res.json(order);
+    return order;
   } catch (err) {
     await session.abortTransaction();
-    console.error("Error confirming payment:", err);
-    res.status(500).json({ error: err.message });
+    throw err;
   } finally {
     session.endSession();
+  }
+};
+
+// Confirm payment - API route handler
+export const confirmPayment = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.session.user._id;
+
+    const order = await confirmPaymentInternal(orderId, userId);
+    res.json(order);
+  } catch (err) {
+    console.error("Error confirming payment:", err);
+    res.status(500).json({ error: err.message });
   }
 };
 

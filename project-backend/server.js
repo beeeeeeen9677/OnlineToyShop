@@ -64,6 +64,11 @@ const PORT = process.env.PORT;
 
 // Middleware
 app.use(cors());
+
+// Stripe webhook MUST come before express.json() to preserve raw body
+// This allows the webhook route to access raw body for signature verification
+app.use("/api/payment/webhook", express.raw({ type: "application/json" }));
+
 app.use(express.json());
 app.use(
   session({

@@ -13,15 +13,22 @@ import BackToTopButton from "../../components/BackToTopButton";
 import LoadingPanel from "../../components/LoadingPanel";
 import SearchBar from "../../components/SearchBar";
 import CartItemDetails from "./CartItemDetails";
+import PaymentModal from "./PaymentModal";
 import { useTranslation } from "react-i18next";
 import { useCart } from "./useCart";
 
 function ShoppingCart() {
   const { t } = useTranslation("shoppingCart");
   const navigate = useNavigate();
-  const { items, itemsWithDetails, cartTotalAmount, refetch } = useCart();
+  const { items, itemsWithDetails, cartTotalAmount } = useCart();
   const isLoggedIn = useLoginContext();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [paymentData, setPaymentData] = useState<{
+    clientSecret: string;
+    orderId: string;
+    amount: number;
+  } | null>(null);
 
   const checkout = async () => {
     if (!isLoggedIn) {
@@ -43,20 +50,25 @@ function ShoppingCart() {
     setIsCheckingOut(true);
 
     try {
-      // Create order (pending status)
-      const orderResponse = await api.post("/orders", { items });
-      const order = orderResponse.data;
+      // Step 1: Create order (pending status)
+      const res = await api.post("/orders", { items });
+      const order = res.data;
 
-      // TODO: Payment integration will go here
-      // For now, immediately confirm payment (mock payment success)
-      await api.post(`/orders/${order._id}/confirm`);
+      // Step 2: Create payment intent
+      const paymentRes = await api.post("/payment/create-payment-intent", {
+        amount: order.orderTotal,
+        orderId: order._id,
+      });
 
-      // Refresh cart (items should be removed after payment confirmation)
-      refetch();
+      const { clientSecret } = paymentRes.data;
 
-      alert(t("messages.orderSuccess"));
-      // TODO: Navigate to order confirmation page
-      navigate("/");
+      // Step 3: Open payment modal
+      setPaymentData({
+        clientSecret,
+        orderId: order._id,
+        amount: order.orderTotal,
+      });
+      setPaymentModalOpen(true);
     } catch (error) {
       const axiosError = error as AxiosError<{ error: string }>;
       console.error("Checkout error:", error);
@@ -66,6 +78,13 @@ function ShoppingCart() {
     } finally {
       setIsCheckingOut(false);
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    // Refresh cart (items removed after confirmation)
+    // refetch();
+    alert(t("messages.orderSuccess"));
+    navigate("/order-history");
   };
 
   return (
@@ -153,6 +172,18 @@ function ShoppingCart() {
           )}
         </div>
       </div>
+
+      {/* Payment Modal */}
+      {paymentData && (
+        <PaymentModal
+          isOpen={paymentModalOpen}
+          onClose={() => setPaymentModalOpen(false)}
+          clientSecret={paymentData.clientSecret}
+          orderId={paymentData.orderId}
+          amount={paymentData.amount}
+          onSuccess={handlePaymentSuccess}
+        />
+      )}
     </div>
   );
 }

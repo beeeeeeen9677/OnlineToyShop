@@ -1,5 +1,6 @@
 import { Router } from "express";
 import Stripe from "stripe";
+import Order from "../mongodb/models/Order.js";
 
 const router = Router();
 
@@ -60,11 +61,7 @@ router.post("/create-payment-intent", async (req, res) => {
         orderId: orderId,
       },
 
-      // Payment method types to accept
-      payment_method_types: ["card"],
-
-      // Automatic payment confirmation
-      // After card is entered, payment processes immediately
+      // Automatic payment methods (replaces payment_method_types)
       automatic_payment_methods: {
         enabled: true,
         allow_redirects: "never", // stay on same page, no redirect
@@ -84,6 +81,80 @@ router.post("/create-payment-intent", async (req, res) => {
     res.status(500).json({
       error: error.message || "Failed to create payment intent",
     });
+  }
+});
+
+/**
+ * POST /api/payment/webhook
+ *
+ * Stripe webhook endpoint for async payment events
+ * This ensures order confirmation even if user closes browser
+ *
+ * Events handled:
+ * - payment_intent.succeeded: Confirm order and deduct quota
+ *
+ * @headers stripe-signature - Webhook signature for verification
+ */
+router.post("/webhook", async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  if (!webhookSecret) {
+    console.error("STRIPE_WEBHOOK_SECRET not configured");
+    return res.status(500).send("Webhook secret not configured");
+  }
+
+  let event;
+
+  try {
+    const stripe = getStripe();
+    // Verify webhook signature (requires raw body)
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the event
+  if (event.type === "payment_intent.succeeded") {
+    const paymentIntent = event.data.object;
+    const orderId = paymentIntent.metadata.orderId;
+
+    console.log(`Payment succeeded for order: ${orderId}`);
+
+    try {
+      // Check if already paid (idempotency)
+      const order = await Order.findById(orderId).lean().exec();
+
+      if (!order) {
+        console.error(`Order not found: ${orderId}`);
+        return res.json({ received: true, error: "Order not found" });
+      }
+
+      if (order.status === "paid") {
+        console.log(`✓ Order ${orderId} already confirmed, skipping`);
+        return res.json({ received: true, skipped: true });
+      }
+
+      // Import confirmPayment logic dynamically to reuse existing function
+      const { confirmPaymentInternal } = await import(
+        "../mongodb/collections/orderColl.js"
+      );
+
+      // Call the shared confirmation logic
+      await confirmPaymentInternal(orderId);
+
+      console.log(`✓ Order ${orderId} confirmed successfully via webhook`);
+      res.json({ received: true });
+    } catch (err) {
+      console.error("Webhook order confirmation error:", err);
+      // Still return 200 to acknowledge receipt (Stripe requirement)
+      res.json({ received: true, error: err.message });
+    }
+  } else {
+    // Unknown event type
+    console.log(`Unhandled event type: ${event.type}`);
+    res.json({ received: true });
   }
 });
 
