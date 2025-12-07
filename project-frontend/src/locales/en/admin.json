@@ -31,14 +31,19 @@
     "filtering": "Filtering",
     "showing": "Showing",
     "of": "of",
-    "orders": "orders"
+    "orders": "orders",
+    "searchUserIdOrName": "Search by User ID or Name",
+    "gender": "Gender",
+    "email": "Email",
+    "users": "users"
   },
   "placeholders": {
     "productName": "PRODUCT NAME",
     "productDescription": "Product description...",
     "stock": "100",
     "searchUserId": "Search by User ID...",
-    "searchOrderId": "Search by Order ID..."
+    "searchOrderId": "Search by Order ID...",
+    "searchUserIdOrName": "Search by User ID or Name..."
   },
   "buttons": {
     "upload": "Upload",
@@ -53,6 +58,13 @@
     "updateSuccess": "Product updated successfully!",
     "uploadFailed": "Upload failed. Please try again.",
     "invalidField": "*invalid field exist",
-    "noMatchingOrders": "No orders match the current filters"
+    "noMatchingOrders": "No orders match the current filters",
+    "noMatchingUsers": "No users match the current filters",
+    "noUsersFound": "No users found"
+  },
+  "genderOptions": {
+    "male": "Male",
+    "female": "Female",
+    "not answered": "Not Answered"
   }
 }

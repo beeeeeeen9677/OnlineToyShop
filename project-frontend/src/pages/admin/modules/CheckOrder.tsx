@@ -34,7 +34,6 @@ function CheckOrder() {
     },
   });
 
-  // Filter orders on frontend with useMemo for performance
   const filteredOrders = useMemo(() => {
     if (!orders) return [];
 
@@ -120,134 +119,133 @@ function CheckOrder() {
         </div>
       ) : (
         <>
-          {" "}
           {/* Filters Section */}
-          <div
-            className={`mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-4 overflow-hidden ${
-              showFilter ? "h-fit" : "h-16"
-            }`}
-          >
-            <h2
-              className="font-oswald font-bold text-2xl mb-4 cursor-pointer select-none flex justify-between items-center"
-              onClick={() => {
-                setShowFilter((prev) => !prev);
-              }}
+          {orders && (
+            <div
+              className={`mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg space-y-4 overflow-hidden ${
+                showFilter ? "h-fit" : "h-16"
+              }`}
             >
-              <p> {t("labels.filters")}</p>
-              <p>{!showFilter ? " ▲" : " ▼"}</p>
-            </h2>
+              <h2
+                className="font-oswald font-bold text-2xl mb-4 cursor-pointer select-none flex justify-between items-center"
+                onClick={() => {
+                  setShowFilter((prev) => !prev);
+                }}
+              >
+                <p> {t("labels.filters")}</p>
+                <p>{showFilter ? " ▲" : " ▼"}</p>
+              </h2>
 
-            {/* Search Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  {t("labels.userID")}
-                </label>
-                <input
-                  type="text"
-                  value={userIdFilter}
-                  onChange={handleFilterChange(setUserIdFilter)}
-                  placeholder={t("placeholders.searchUserId")}
-                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                />
+              {/* Search Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    {t("labels.userID")}
+                  </label>
+                  <input
+                    type="text"
+                    value={userIdFilter}
+                    onChange={handleFilterChange(setUserIdFilter)}
+                    placeholder={t("placeholders.searchUserId")}
+                    className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    {t("labels.orderID")}
+                  </label>
+                  <input
+                    type="text"
+                    value={orderIdFilter}
+                    onChange={handleFilterChange(setOrderIdFilter)}
+                    placeholder={t("placeholders.searchOrderId")}
+                    className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  {t("labels.orderID")}
-                </label>
+              {/* Paid Status Checkbox */}
+              <div className="flex items-center gap-2">
                 <input
-                  type="text"
-                  value={orderIdFilter}
-                  onChange={handleFilterChange(setOrderIdFilter)}
-                  placeholder={t("placeholders.searchOrderId")}
-                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                  type="checkbox"
+                  id="paidOnly"
+                  checked={showPaidOnly}
+                  onChange={handleCheckboxChange}
+                  className="w-4 h-4 rounded"
                 />
-              </div>
-            </div>
-
-            {/* Paid Status Checkbox */}
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="paidOnly"
-                checked={showPaidOnly}
-                onChange={handleCheckboxChange}
-                className="w-4 h-4 rounded"
-              />
-              <label htmlFor="paidOnly" className="text-sm font-medium">
-                {t("labels.showPaidOnly")}
-              </label>
-            </div>
-
-            {/* Date Range */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  {t("labels.dateFrom")}
+                <label htmlFor="paidOnly" className="text-sm font-medium">
+                  {t("labels.showPaidOnly")}
                 </label>
-                <input
-                  type="date"
-                  value={dateFrom}
-                  onChange={handleFilterChange(setDateFrom)}
-                  onClick={(e) => {
-                    e.currentTarget.showPicker();
-                  }}
-                  className="w-full px-3 py-2 border rounded-md cursor-pointer dark:bg-gray-700 dark:border-gray-600"
-                />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  {t("labels.dateTo")}
-                </label>
-                <input
-                  type="date"
-                  value={dateTo}
-                  onChange={handleFilterChange(setDateTo)}
-                  onClick={(e) => {
-                    e.currentTarget.showPicker();
-                  }}
-                  className="w-full px-3 py-2 border rounded-md cursor-pointer dark:bg-gray-700 dark:border-gray-600"
-                />
-              </div>
-            </div>
+              {/* Date Range */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    {t("labels.dateFrom")}
+                  </label>
+                  <input
+                    type="date"
+                    value={dateFrom}
+                    onChange={handleFilterChange(setDateFrom)}
+                    onClick={(e) => {
+                      e.currentTarget.showPicker();
+                    }}
+                    className="w-full px-3 py-2 border rounded-md cursor-pointer dark:bg-gray-700 dark:border-gray-600"
+                  />
+                </div>
 
-            {/* Amount Range */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  {t("labels.amountFrom")} (HK$)
-                </label>
-                <input
-                  type="number"
-                  value={amountFrom}
-                  onChange={handleFilterChange(setAmountFrom)}
-                  placeholder="0"
-                  min="0"
-                  step="0.01"
-                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                />
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    {t("labels.dateTo")}
+                  </label>
+                  <input
+                    type="date"
+                    value={dateTo}
+                    onChange={handleFilterChange(setDateTo)}
+                    onClick={(e) => {
+                      e.currentTarget.showPicker();
+                    }}
+                    className="w-full px-3 py-2 border rounded-md cursor-pointer dark:bg-gray-700 dark:border-gray-600"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  {t("labels.amountTo")} (HK$)
-                </label>
-                <input
-                  type="number"
-                  value={amountTo}
-                  onChange={handleFilterChange(setAmountTo)}
-                  placeholder="999999"
-                  min="0"
-                  step="0.01"
-                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                />
-              </div>
-            </div>
+              {/* Amount Range */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    {t("labels.amountFrom")} (HK$)
+                  </label>
+                  <input
+                    type="number"
+                    value={amountFrom}
+                    onChange={handleFilterChange(setAmountFrom)}
+                    placeholder="0"
+                    min="0"
+                    step="0.01"
+                    className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                  />
+                </div>
 
-            {/* Results Count */}
-            {orders && (
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    {t("labels.amountTo")} (HK$)
+                  </label>
+                  <input
+                    type="number"
+                    value={amountTo}
+                    onChange={handleFilterChange(setAmountTo)}
+                    placeholder="999999"
+                    min="0"
+                    step="0.01"
+                    className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                  />
+                </div>
+              </div>
+
+              {/* Results Count */}
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 {isPending ? (
                   <span>{t("labels.filtering")}...</span>
@@ -258,8 +256,8 @@ function CheckOrder() {
                   </span>
                 )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
           <div className="overflow-auto max-h-140">
             {orders && orders.length > 0 ? (
               <>

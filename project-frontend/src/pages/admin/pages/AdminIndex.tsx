@@ -6,6 +6,7 @@ import ModuleWrapper from "../../../components/ModuleWrapper";
 import ProductForm from "../modules/ProductForm";
 import EditGoods from "../modules/EditGoods";
 import CheckOrder from "../modules/CheckOrder";
+import ViewUser from "../modules/ViewUser";
 // import { useEffect } from "react";
 
 function AdminIndex() {
@@ -46,6 +47,9 @@ function AdminIndex() {
         </ModuleWrapper>
         <ModuleWrapper maxHeight={"max-h-330"} title={t("titles.checkOrders")}>
           <CheckOrder />
+        </ModuleWrapper>
+        <ModuleWrapper maxHeight={"max-h-330"} title={t("titles.viewUsers")}>
+          <ViewUser />
         </ModuleWrapper>
       </div>
     </div>

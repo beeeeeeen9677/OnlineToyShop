@@ -21,7 +21,7 @@
     "quota": "數量：",
     "userData": "用戶資料",
     "userID": "用戶ID",
-    "orderID": "訂單編號",
+    "orderID": "訂單ID",
     "filters": "篩選",
     "showPaidOnly": "僅顯示已付款訂單",
     "dateFrom": "開始日期",
@@ -31,14 +31,19 @@
     "filtering": "篩選中",
     "showing": "顯示",
     "of": "共",
-    "orders": "筆訂單"
+    "orders": "筆訂單",
+    "searchUserIdOrName": "搜尋用戶ID或姓名",
+    "gender": "性別",
+    "email": "電郵",
+    "users": "位用戶"
   },
   "placeholders": {
     "productName": "產品名稱",
     "productDescription": "產品描述...",
     "stock": "100",
     "searchUserId": "搜尋用戶ID...",
-    "searchOrderId": "搜尋訂單ID..."
+    "searchOrderId": "搜尋訂單ID...",
+    "searchUserIdOrName": "搜尋用戶ID或姓名..."
   },
   "buttons": {
     "upload": "上傳",
@@ -53,6 +58,13 @@
     "updateSuccess": "商品更新成功！",
     "uploadFailed": "上傳失敗，請重試。",
     "invalidField": "*存在無效欄位",
-    "noMatchingOrders": "沒有符合篩選條件的訂單"
+    "noMatchingOrders": "沒有符合篩選條件的訂單",
+    "noMatchingUsers": "沒有符合篩選條件的用戶",
+    "noUsersFound": "未找到用戶"
+  },
+  "genderOptions": {
+    "male": "男性",
+    "female": "女性",
+    "not answered": "未回答"
   }
 }
