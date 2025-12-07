@@ -17,7 +17,7 @@ function BannerSlides({ goods }: { goods: Good[] }) {
     });
   }, [goods]);
 
-  const slicedGoods = sortedGoods.slice(0, 9);
+  const slicedGoods = sortedGoods.slice(0, 9); // first 9 items
 
   const enableLoop = slicedGoods.length > 3;
 

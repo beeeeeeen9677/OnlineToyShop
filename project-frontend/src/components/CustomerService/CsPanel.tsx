@@ -42,21 +42,27 @@ function CsPanel({ isLoading, chatRooms, setShowWindow }: CsPanelProps) {
   }
 
   return (
-    <div className="z-30 fixed top-15 bottom-25 inset-x-20 bg-gray-300 dark:bg-gray-500 rounded-2xl flex overflow-hidden animate-scale-in">
-      <CsRoomList rooms={chatRooms} />
-      {roomId ? <CsChatWindow /> : <StartConversationWindow />}
-      <button
-        className="absolute top-0 right-0 bg-red-700 rounded-full size-6 cursor-pointer text-white flex items-center justify-center hover:bg-red-800 select-none"
+    <div className="fixed inset-0 z-30 flex items-center justify-center px-10 py-10">
+      <div
+        className="absolute inset-0 bg-black/50"
         onClick={() => setShowWindow(false)}
-      >
-        X
-      </button>
-      <button
-        className="absolute top-0 right-8 bg-yellow-500 rounded-full size-6 cursor-pointer text-white flex items-center justify-center hover:bg-yellow-700"
-        onClick={() => refetchData()}
-      >
-        <MdRefresh />
-      </button>
+      />
+      <div className="relative z-10 max-w-7xl w-full h-full bg-gray-300 dark:bg-gray-500 rounded-2xl flex overflow-hidden animate-scale-in ">
+        <CsRoomList rooms={chatRooms} />
+        {roomId ? <CsChatWindow /> : <StartConversationWindow />}
+        <button
+          className="absolute top-0 right-0 bg-red-700 rounded-full size-6 cursor-pointer text-white flex items-center justify-center hover:bg-red-800 select-none"
+          onClick={() => setShowWindow(false)}
+        >
+          X
+        </button>
+        <button
+          className="absolute top-0 right-8 bg-yellow-500 rounded-full size-6 cursor-pointer text-white flex items-center justify-center hover:bg-yellow-700"
+          onClick={() => refetchData()}
+        >
+          <MdRefresh />
+        </button>
+      </div>
     </div>
   );
 }

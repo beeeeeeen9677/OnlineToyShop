@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { Order, OrderItem } from "../../interface/order";
 import { toHKDateString } from "../../utils/dateUtils";
+import { Link } from "react-router";
 
 type OrderItemProps = {
   order: Order;
@@ -37,7 +38,12 @@ function OrderData({ order }: OrderItemProps) {
             {/* RHS */}
 
             <div className="flex-1 flex flex-col gap-1">
-              <div className="text-md underline mb-4">{orderItem.name}</div>
+              <Link
+                to={`/item/${orderItem.goodId}`}
+                className="text-md underline mb-4 cursor-pointer"
+              >
+                {orderItem.name}
+              </Link>
 
               <hr className="border-gray-300 dark:border-gray-500 border-t-2" />
 

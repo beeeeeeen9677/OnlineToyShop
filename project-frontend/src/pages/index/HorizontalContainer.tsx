@@ -24,28 +24,30 @@ function HorizontalContainer({
     dragged,
   } = useDragHook();
 
-  const sortedGoods = [...goods].sort((a, b) => {
-    const aValue = a[sortingKey];
-    const bValue = b[sortingKey];
+  const sortedGoods = [...goods]
+    .sort((a, b) => {
+      const aValue = a[sortingKey];
+      const bValue = b[sortingKey];
 
-    // Handle date string sorting (for createdAt, preorderCloseDate, shippingDate)
-    if (sortingKey === "createdAt" || sortingKey === "shippingDate") {
-      const aDate = new Date(aValue as string);
-      const bDate = new Date(bValue as string);
-      return bDate.getTime() - aDate.getTime(); // Newest first
-    } else if (sortingKey === "preorderCloseDate") {
-      const aDate = new Date(aValue as string);
-      const bDate = new Date(bValue as string);
-      return aDate.getTime() - bDate.getTime(); // Earliest first
-    }
+      // Handle date string sorting (for createdAt, preorderCloseDate, shippingDate)
+      if (sortingKey === "createdAt" || sortingKey === "shippingDate") {
+        const aDate = new Date(aValue as string);
+        const bDate = new Date(bValue as string);
+        return bDate.getTime() - aDate.getTime(); // Newest first
+      } else if (sortingKey === "preorderCloseDate") {
+        const aDate = new Date(aValue as string);
+        const bDate = new Date(bValue as string);
+        return aDate.getTime() - bDate.getTime(); // Earliest first
+      }
 
-    // Handle numeric sorting
-    if (typeof aValue === "number" && typeof bValue === "number") {
-      return bValue - aValue; // Highest first
-    }
+      // Handle numeric sorting
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return bValue - aValue; // Highest first
+      }
 
-    return 0;
-  });
+      return 0;
+    })
+    .slice(0, 15); // Limit to 15 items
 
   return (
     <div>
