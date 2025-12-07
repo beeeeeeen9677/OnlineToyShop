@@ -9,6 +9,7 @@ import Auth from "./pages/auth/Auth";
 import AdminIndex from "./pages/admin/pages/AdminIndex";
 import AdminProductList from "./pages/admin/pages/AdminProductList";
 import AdminEditProduct from "./pages/admin/pages/AdminEditProduct";
+import AdminViewUser from "./pages/admin/pages/AdminViewUser";
 import Profile from "./pages/profile/Profile";
 import ItemDetails from "./pages/itemDetails/ItemDetails";
 import LoadingPanel from "./components/LoadingPanel";
@@ -105,7 +106,7 @@ function App() {
     isError,
     error,
   } = useQuery<User, AxiosError>({
-    queryKey: ["user"],
+    queryKey: ["user", { id: auth.currentUser?.uid }],
     enabled: isLoggedIn,
     queryFn: async () => {
       console.log("Try fetching user data");
@@ -124,7 +125,9 @@ function App() {
     if (!isLoggedIn) {
       //setUser(undefined);
       socket.disconnect();
-      queryClient.removeQueries({ queryKey: ["user"] });
+      queryClient.removeQueries({
+        queryKey: ["user", { id: auth.currentUser?.uid }],
+      });
       return;
     }
     if (isLoggedIn && user) {
@@ -190,6 +193,7 @@ function RouteContainer() {
       <Route path="/admin" element={<AdminIndex />} />
       <Route path="/admin/product" element={<AdminProductList />} />
       <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />
+      <Route path="/admin/view-user/:userId" element={<AdminViewUser />} />
       <Route path="/user" element={<Profile />} />
       <Route path="/item/:id" element={<ItemDetails />} />
       <Route path="/search" element={<Search />} />

@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
 import { toHKTimeString } from "../../utils/dateUtils";
+import type { AxiosError } from "axios";
+import { useNavigate } from "react-router";
 
 type ChatMessageProps = {
   senderId: string;
@@ -22,6 +24,7 @@ function ChatMessage({
   message,
   timestamp,
 }: ChatMessageProps) {
+  const navigate = useNavigate();
   const {
     data: user,
     isLoading,
@@ -44,18 +47,35 @@ function ChatMessage({
   }
 
   if (isError) {
-    return <div>Error loading user data: {(error as Error).message}</div>;
+    return (
+      <div>
+        Error loading user data:{" "}
+        {(error as AxiosError<{ error: string }>).response?.data.error}
+      </div>
+    );
   }
+
+  // is sender admin
+  // if yes add admin tag
+  // if no link to user profile
+  const isAdmin = user?.role === "admin";
 
   //console.log("Is Sender: ", isSender);
 
   return (
     <div className={`${isSender ? "ml-auto" : "mr-auto"} w-fit`}>
       {!isSender && (
-        <div className="text-white ml-1 text-sm">
-          {`${user?.firstName} ${user?.lastName} ${
-            user?.role === "admin" ? "[admin]" : ""
+        <div
+          className={` ml-1 text-sm ${
+            !isAdmin
+              ? "underline text-cyan-200 hover:cursor-pointer"
+              : "text-white"
           }`}
+          onClick={() => {
+            navigate(`/admin/view-user/${senderId}`);
+          }}
+        >
+          {`${user?.firstName} ${user?.lastName} ${isAdmin ? "[admin]" : ""}`}
         </div>
       )}
       <div

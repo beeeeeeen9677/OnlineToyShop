@@ -16,7 +16,8 @@
     "broughtCount": "Brought Count:",
     "viewedCount": "Viewed Count:",
     "available": "Available:",
-    "quota": "Quota:"
+    "quota": "Quota:",
+    "userData": "USER DATA"
   },
   "placeholders": {
     "productName": "PRODUCT NAME",

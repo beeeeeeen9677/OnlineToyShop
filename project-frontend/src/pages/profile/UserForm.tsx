@@ -1,6 +1,6 @@
 import { Activity, useEffect, useState } from "react";
 import { useTranslation } from "../../i18n/hooks";
-import { auth, changePassword, verifyUserEmail } from "../../firebase/firebase";
+import { changePassword, verifyUserEmail } from "../../firebase/firebase";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import api from "../../services/api";
@@ -8,15 +8,20 @@ import type { AxiosError } from "axios";
 import type { User } from "../../interface/user";
 import LoadingPanel from "../../components/LoadingPanel";
 import { toHKDateString } from "../../utils/dateUtils";
+
+export interface UserWithExtraData extends User {
+  emailVerified?: boolean;
+  isPasswordProvider?: boolean;
+}
+
 type UserFormProps = {
-  user: User;
+  user: UserWithExtraData;
+  adminView?: boolean;
 };
 
-function UserForm({ user }: UserFormProps) {
+function UserForm({ user, adminView = false }: UserFormProps) {
   const { t, i18n } = useTranslation("common");
-  const isPasswordProvider = auth.currentUser?.providerData.some(
-    (provider) => provider.providerId === "password"
-  );
+  const isPasswordProvider = user.isPasswordProvider;
   const resendInterval = 60; // in second, 1 minute
   const queryClient = useQueryClient();
   const {
@@ -27,6 +32,8 @@ function UserForm({ user }: UserFormProps) {
   } = useQuery<Date | null, AxiosError>({
     queryKey: ["lastEmailSentAt"],
     queryFn: async () => {
+      if (adminView) return null; // skip for admin view
+
       const res = await api.get("/user/last-verification-email");
       const raw = res.data;
       if (!raw) return null;
@@ -50,6 +57,8 @@ function UserForm({ user }: UserFormProps) {
   const [timeLeft, setTimeLeft] = useState<number>(0);
 
   useEffect(() => {
+    if (adminView) return;
+
     if (!lastEmailSentAt) {
       setTimeLeft(0);
       return;
@@ -67,7 +76,7 @@ function UserForm({ user }: UserFormProps) {
     return () => {
       window.clearInterval(timerId);
     };
-  }, [lastEmailSentAt, resendInterval]);
+  }, [lastEmailSentAt, resendInterval, adminView]);
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -127,7 +136,7 @@ function UserForm({ user }: UserFormProps) {
               {t("user.email")}: {user.email}
               {"  " /* gap between text and icon */}
               <br className="sm:hidden" />
-              {auth.currentUser?.emailVerified ? (
+              {user.emailVerified ? (
                 <span className="text-green-600 ">
                   <AiOutlineCheckCircle className="inline" />{" "}
                   {t("status.verified")}
@@ -141,38 +150,36 @@ function UserForm({ user }: UserFormProps) {
             </div>
 
             <div>
-              <Activity
-                mode={auth.currentUser?.emailVerified ? "hidden" : "visible"}
-              >
-                {isError ? (
-                  error.message
-                ) : (
-                  <button
-                    disabled={timeLeft > 0}
-                    onClick={async () => {
-                      if (timeLeft > 0) return;
-                      try {
-                        setIsSubmitting(true);
-                        await verifyUserEmail();
-                        await setLastEmailSentAt(new Date());
-                        setIsSubmitting(false);
-                        setTimeLeft(resendInterval);
-                      } catch (error) {
-                        console.error(
-                          "Error sending verification email:",
-                          error
-                        );
-                      }
-                    }}
-                    className={`tw-button border-2 ${
-                      timeLeft <= 0
-                        ? "border-primary hover:bg-primary cursor-pointer  hover:text-white"
-                        : "border-gray-400"
-                    }  rounded-lg px-4 py-1  transition duration-150 `}
-                  >
-                    {timeLeft <= 0 ? t("buttons.verify") : `${timeLeft}s`}
-                  </button>
-                )}
+              <Activity mode={user.emailVerified ? "hidden" : "visible"}>
+                {isError
+                  ? error.message
+                  : !adminView && (
+                      <button
+                        disabled={timeLeft > 0}
+                        onClick={async () => {
+                          if (timeLeft > 0) return;
+                          try {
+                            setIsSubmitting(true);
+                            await verifyUserEmail();
+                            await setLastEmailSentAt(new Date());
+                            setIsSubmitting(false);
+                            setTimeLeft(resendInterval);
+                          } catch (error) {
+                            console.error(
+                              "Error sending verification email:",
+                              error
+                            );
+                          }
+                        }}
+                        className={`tw-button border-2 ${
+                          timeLeft <= 0
+                            ? "border-primary hover:bg-primary cursor-pointer  hover:text-white"
+                            : "border-gray-400"
+                        }  rounded-lg px-4 py-1  transition duration-150 `}
+                      >
+                        {timeLeft <= 0 ? t("buttons.verify") : `${timeLeft}s`}
+                      </button>
+                    )}
               </Activity>
             </div>
           </div>
@@ -190,7 +197,9 @@ function UserForm({ user }: UserFormProps) {
         <div className="tw-user-form-field">
           {t("user.dateOfBirth")}: {toHKDateString(user.dateOfBirth)}
         </div>
-        <Activity mode={isPasswordProvider ? "visible" : "hidden"}>
+        <Activity
+          mode={isPasswordProvider && !adminView ? "visible" : "hidden"}
+        >
           <div className="tw-user-form-field flex flex-col gap-3">
             <div>{t("labels.changePassword")}</div>
             <div className="flex flex-col gap-4 ">

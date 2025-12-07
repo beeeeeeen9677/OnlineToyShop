@@ -1,11 +1,12 @@
 import Header from "../../components/Header";
 import { useUserContext } from "../../context/app";
+import { auth } from "../../firebase/firebase";
 import UserForm from "./UserForm";
 
 function Profile() {
-  const user = useUserContext();
+  const userContext = useUserContext();
 
-  if (user === undefined) {
+  if (!userContext) {
     return (
       <>
         <Header />
@@ -15,6 +16,16 @@ function Profile() {
       </>
     );
   }
+
+  const emailVerified = auth.currentUser?.emailVerified;
+  const isPasswordProvider = auth.currentUser?.providerData.some(
+    (provider) => provider.providerId === "password"
+  );
+  const user = {
+    ...userContext,
+    emailVerified: emailVerified,
+    isPasswordProvider,
+  };
 
   return (
     <div className="animate-fade-in min-h-screen">

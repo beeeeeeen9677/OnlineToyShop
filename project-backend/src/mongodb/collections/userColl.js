@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import admin from "../../../server.js";
 
 const createNewUser = async (req, res) => {
   const { firstName, lastName, firebaseUID, email, gender, dateOfBirth, role } =
@@ -72,12 +73,13 @@ const getLimitedUserDataByID = async (req, res) => {
     const user = await User.findOne({
       _id: id,
     })
+      .select("_id firstName lastName role")
       .lean()
       .exec();
     if (!user) {
       return res
         .status(404)
-        .json({ message: "User with this Firebase UID not found." });
+        .json({ error: "User with this Firebase UID not found." });
     }
 
     const limitedUserData = {
@@ -94,8 +96,32 @@ const getLimitedUserDataByID = async (req, res) => {
   }
 };
 
+// for admin
+const getUserByID = async (req, res) => {
+  const { id } = req.params;
+  if (!id) return res.status(400).json({ error: "User ID is required." });
+  try {
+    const user = await User.findOne({ _id: id }).lean().exec();
+    if (!user) {
+      return res.status(404).json({ error: "User with this ID not found." });
+    }
+
+    const firebaseUser = await admin.auth().getUser(user.firebaseUID);
+    user.emailVerified = firebaseUser.emailVerified;
+    user.isPasswordProvider = firebaseUser.providerData.some(
+      (provider) => provider.providerId === "password"
+    );
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export {
   createNewUser,
   getUserByFirebaseUID,
-  getLimitedUserDataByID as getUserByID,
+  getLimitedUserDataByID,
+  getUserByID,
 };

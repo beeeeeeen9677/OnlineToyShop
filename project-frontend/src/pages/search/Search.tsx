@@ -351,7 +351,7 @@ function Search() {
                     <option
                       key={option.value}
                       value={option.value}
-                      className="text-black mx-4 my-2"
+                      className="text-black"
                     >
                       {t(`${option.translateKey}`)}
                     </option>

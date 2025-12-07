@@ -191,7 +191,7 @@ function Filter({
   return (
     <>
       {/* Desktop: Sidebar */}
-      <div className="hidden md:block bg-orange-100 dark:bg-gray-500 w-65 shrink-0 h-fit px-4 py-6 space-y-4 sticky top-20 self-start rounded-md">
+      <div className="hidden md:block bg-orange-100 dark:bg-gray-500 w-65 shrink-0 h-fit px-4 py-6 space-y-4 sticky top-10 self-start rounded-md">
         {filterContent}
       </div>
 

@@ -209,3 +209,17 @@ export const getUserOrders = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// for admin
+export const getOrderByUserId = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const orders = await Order.find({ userId: userId })
+      .sort({ createdAt: -1 })
+      .exec();
+    res.json(orders);
+  } catch (err) {
+    console.error("Error fetching order by user ID:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
