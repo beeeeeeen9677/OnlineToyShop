@@ -56,7 +56,7 @@ export const useCart = (): UseCartReturn => {
   const queryClient = useQueryClient();
 
   // Query key includes userId to separate cache per user
-  const cartQueryKey = ["cart", user?._id];
+  const cartQueryKey = ["cart", user?._id] as const;
 
   // Local cart state for guest users
   // const [localItems, setLocalItems] = useState<CartItem[]>(() =>

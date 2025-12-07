@@ -1,7 +1,16 @@
 import { Router } from "express";
 import { stripe } from "../../server.js";
+import rateLimit from "express-rate-limit";
 
 const router = Router();
+
+// Better rate limiting for authenticated route
+const paymentLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 10,
+  keyGenerator: (req) => req.session.user._id, // Track by userId instead of IP
+  message: "Too many payment attempts, please try again later",
+});
 
 /**
  * POST /api/payment/create-payment-intent
@@ -18,7 +27,7 @@ const router = Router();
  * @body {string} orderId - Order ID to link payment to order
  * @returns {object} { clientSecret: string } - Secret for frontend to use
  */
-router.post("/create-payment-intent", async (req, res) => {
+router.post("/create-payment-intent", paymentLimiter, async (req, res) => {
   try {
     const { amount, orderId } = req.body;
 

@@ -65,8 +65,16 @@ connectDB(process.env.MONGO_CONNECTION_STRING);
 const app = express();
 const PORT = process.env.PORT;
 
-// Middleware
-app.use(cors());
+// Trust proxy - Get real client IP from reverse proxy headers
+app.set("trust proxy", 1);
+
+// CORS Configuration
+const corsOptions = {
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 // Initialize Stripe
 import Stripe from "stripe";
