@@ -4,6 +4,7 @@ import { BiLeaf } from "react-icons/bi";
 import { GiWindSlap } from "react-icons/gi";
 import { useState } from "react";
 import { useLoginContext } from "../../context/app";
+import { useQueryClient } from "@tanstack/react-query";
 import { auth } from "../../firebase/firebase";
 import api from "../../services/api";
 import type { AxiosError } from "axios";
@@ -20,7 +21,8 @@ import { useCart } from "./useCart";
 function ShoppingCart() {
   const { t } = useTranslation("shoppingCart");
   const navigate = useNavigate();
-  const { items, itemsWithDetails, cartTotalAmount } = useCart();
+  const queryClient = useQueryClient();
+  const { items, itemsWithDetails, cartTotalAmount, cartQueryKey } = useCart();
   const isLoggedIn = useLoginContext();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
@@ -83,7 +85,8 @@ function ShoppingCart() {
   const handlePaymentSuccess = () => {
     // Refresh cart (items removed after confirmation)
     // refetch();
-    alert(t("messages.orderSuccess"));
+    //alert(t("messages.orderSuccess"));
+    queryClient.invalidateQueries({ queryKey: cartQueryKey });
     navigate("/order-history");
   };
 

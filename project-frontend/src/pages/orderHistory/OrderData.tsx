@@ -3,30 +3,30 @@ import type { Order, OrderItem } from "../../interface/order";
 import { toHKDateString } from "../../utils/dateUtils";
 
 type OrderItemProps = {
-  item: Order;
+  order: Order;
 };
 
-function OrderData({ item }: OrderItemProps) {
+function OrderData({ order }: OrderItemProps) {
   const { t } = useTranslation("shoppingCart");
   return (
     <div className="font-oswald ">
       <h1 className="">
-        {t("labels.orderID")}: {item._id}
+        {t("labels.orderID")}: {order._id}
       </h1>
       <h1>
-        {t("labels.status")}: {t(`status.${item.status}`)}
+        {t("labels.status")}: {t(`status.${order.status}`)}
       </h1>
       <h1>
-        {t("labels.orderDate")}: {toHKDateString(new Date(item.createdAt))}
+        {t("labels.orderDate")}: {toHKDateString(new Date(order.createdAt))}
       </h1>
       <h1>
-        {t("labels.total")}: HK$ {item.orderTotal}
+        {t("labels.total")}: HK$ {order.orderTotal}
       </h1>
       <h1>
-        {t("labels.goods")}: {item.items.length}
+        {t("labels.goods")}: {order.items.length}
       </h1>
       <div className="flex flex-col gap-4 mt-2">
-        {item.items.map((orderItem: OrderItem, index: number) => (
+        {order.items.map((orderItem: OrderItem, index: number) => (
           <div key={index} className="flex gap-4 items-start">
             {/* LHS */}
             <img

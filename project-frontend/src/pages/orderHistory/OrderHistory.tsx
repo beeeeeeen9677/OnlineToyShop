@@ -1,4 +1,4 @@
-import { Activity } from "react";
+import { Activity, Fragment } from "react";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../services/api";
@@ -57,12 +57,12 @@ function OrderHistory() {
               {t("titles.orderHistory")}
             </h1>
             {items.map((order, index) => (
-              <>
+              <Fragment key={order._id}>
                 {index !== 0 && (
                   <hr className="border border-gray-300 dark:border-gray-500" />
                 )}
-                <OrderData key={order._id} item={order} />
-              </>
+                <OrderData order={order} />
+              </Fragment>
             ))}
           </>
         ) : (

@@ -41,6 +41,7 @@ interface UseCartReturn {
   isLoading: boolean;
   error: string | null;
   totalItems: number;
+  cartQueryKey: readonly [string, string | undefined];
   addItem: (goodId: string, quantity: number) => Promise<void>;
   updateQuantity: (goodId: string, quantity: number) => Promise<void>;
   removeItem: (goodId: string) => Promise<void>;
@@ -298,6 +299,7 @@ export const useCart = (): UseCartReturn => {
     isLoading,
     error,
     totalItems,
+    cartQueryKey,
     addItem,
     updateQuantity,
     removeItem,

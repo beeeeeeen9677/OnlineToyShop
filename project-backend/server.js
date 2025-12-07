@@ -55,6 +55,9 @@ import userRoutes from "./src/routes/user.js";
 // Import middleware
 import { verifyFirebaseToken } from "./src/middleware/authMiddleware.js";
 
+// Import webhook handler
+import { handleStripeWebhook } from "./src/webhooks/stripeWebhook.js";
+
 // conect to MongoDB
 connectDB(process.env.MONGO_CONNECTION_STRING);
 
@@ -65,9 +68,17 @@ const PORT = process.env.PORT;
 // Middleware
 app.use(cors());
 
-// Stripe webhook MUST come before express.json() to preserve raw body
-// This allows the webhook route to access raw body for signature verification
-app.use("/api/payment/webhook", express.raw({ type: "application/json" }));
+// Initialize Stripe
+import Stripe from "stripe";
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+console.log("Stripe initialized");
+// Stripe webhook - MUST come BEFORE express.json() and BEFORE auth middleware
+// This is a public endpoint (no Firebase auth) that needs raw body for signature verification
+app.post(
+  "/api/payment/webhook",
+  express.raw({ type: "application/json" }), // Preserve raw body
+  (req, res) => handleStripeWebhook(req, res)
+);
 
 app.use(express.json());
 app.use(

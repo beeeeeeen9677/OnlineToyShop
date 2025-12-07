@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   useStripe,
   useElements,
@@ -35,6 +35,10 @@ interface PaymentModalProps {
   onSuccess: () => void;
 }
 
+interface PaymentFormProps extends Omit<PaymentModalProps, "isOpen"> {
+  canCloseRef: React.MutableRefObject<boolean>;
+}
+
 // Inner component that uses Stripe hooks
 function PaymentForm({
   clientSecret,
@@ -42,7 +46,8 @@ function PaymentForm({
   amount,
   onClose,
   onSuccess,
-}: Omit<PaymentModalProps, "isOpen">) {
+  canCloseRef,
+}: PaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
   const socket = useSocketContext();
@@ -52,6 +57,9 @@ function PaymentForm({
   const [waitingForWebhook, setWaitingForWebhook] = useState(false);
 
   const { t } = useTranslation("shoppingCart");
+
+  // Update canClose ref whenever processing/waiting state changes
+  canCloseRef.current = !isProcessing && !waitingForWebhook;
 
   // Listen for webhook confirmation via WebSocket
   useEffect(() => {
@@ -64,10 +72,10 @@ function PaymentForm({
         setPaymentSuccess(true);
         setWaitingForWebhook(false);
 
-        // Wait a moment to show success message, then close
+        // Wait a moment to show success message, then redirect to order history
         setTimeout(() => {
           onSuccess();
-          onClose();
+          //onClose();
         }, 1500);
       }
     };
@@ -110,7 +118,7 @@ function PaymentForm({
       }
 
       if (paymentIntent?.status === "succeeded") {
-        console.log("Payment succeeded, waiting for webhook confirmation...");
+        console.log("Waiting for webhook confirmation...");
 
         // Don't call confirm API - wait for webhook via WebSocket
         setWaitingForWebhook(true);
@@ -118,9 +126,7 @@ function PaymentForm({
         // Timeout after 30 seconds if webhook doesn't arrive
         setTimeout(() => {
           if (!paymentSuccess) {
-            setError(
-              "Payment processed but confirmation is delayed. Please check your order history."
-            );
+            setError("Confirmation timeout. Please check your order history.");
             setWaitingForWebhook(false);
             setIsProcessing(false);
           }
@@ -210,9 +216,9 @@ function PaymentForm({
         </div>
       )}
 
-      {/* Test Mode Banner */}
+      {/* Test Mode Card Num */}
       <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 rounded text-sm">
-        use 4242 4242 4242 4242 / 1234 / 123 for testing
+        (use 4242 4242 4242 4242 / 1234 / 123 for testing)
       </div>
 
       {/* Action Buttons */}
@@ -220,14 +226,14 @@ function PaymentForm({
         <button
           type="button"
           onClick={onClose}
-          disabled={isProcessing}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
+          disabled={isProcessing || waitingForWebhook}
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {t("buttons.cancel")}
         </button>
         <button
           type="submit"
-          disabled={!stripe || isProcessing}
+          disabled={!stripe || isProcessing || waitingForWebhook}
           className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isProcessing ? t("buttons.processing") : t("buttons.payNow")}
@@ -246,7 +252,16 @@ export default function PaymentModal({
   amount,
   onSuccess,
 }: PaymentModalProps) {
+  // Track whether modal can be closed (shared with PaymentForm via ref)
+  const canCloseRef = useRef(true);
+
   const handleClose = async () => {
+    // Prevent closing during payment processing or webhook wait
+    if (!canCloseRef.current) {
+      console.log("Cannot close modal while payment is processing");
+      return;
+    }
+
     try {
       // Cancel the pending order when user closes without paying
       await api.delete(`/orders/${orderId}`);
@@ -262,7 +277,7 @@ export default function PaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
+      {/* Backdrop - only closeable when canClose is true */}
       <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
 
       {/* Modal */}
@@ -274,6 +289,7 @@ export default function PaymentModal({
             amount={amount}
             onClose={handleClose}
             onSuccess={onSuccess}
+            canCloseRef={canCloseRef}
           />
         </Elements>
       </div>
