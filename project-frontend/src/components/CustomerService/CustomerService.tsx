@@ -1,4 +1,4 @@
-import { Activity, useState, useEffect, useRef } from "react";
+import { Activity, useState, useEffect, useRef, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { RiCustomerService2Fill } from "react-icons/ri";
 import { auth } from "../../firebase/firebase";
@@ -10,7 +10,7 @@ import { useSocketContext } from "../../context/socket";
 import type { ChatRoom, ChatMessage } from "../../interface/chatRoom";
 import CsPanel from "./CsPanel";
 
-// root component for customer service chat
+// ROOT component for customer service chat
 function CustomerService() {
   const [showWindow, setShowWindow] = useState(false);
   const [roomId, setRoomId] = useState<string>("");
@@ -20,7 +20,11 @@ function CustomerService() {
   const queryClient = useQueryClient();
   const isFirstConnect = useRef(true);
 
-  const chatRoomsQueryKey = ["chatRooms", { userId: user?._id }];
+  const chatRoomsQueryKey = useMemo(
+    () => ["chatRooms", { userId: user?._id }],
+    [user?._id]
+  );
+
   const {
     data: chatRooms, // rooms of current user joined
     isLoading,
@@ -57,18 +61,16 @@ function CustomerService() {
       );
 
       // Update lastMessageTime and lastMessageSenderId in chatRooms cache (for red dot indicator)
-      queryClient.setQueryData<ChatRoom[]>(
-        ["chatRooms", { userId: user?._id }],
-        (oldRooms) =>
-          oldRooms?.map((room) =>
-            room._id === data.roomId
-              ? {
-                  ...room,
-                  lastMessageTime: data.timestamp,
-                  lastMessageSenderId: data.senderId,
-                }
-              : room
-          )
+      queryClient.setQueryData<ChatRoom[]>(chatRoomsQueryKey, (oldRooms) =>
+        oldRooms?.map((room) =>
+          room._id === data.roomId
+            ? {
+                ...room,
+                lastMessageTime: data.timestamp,
+                lastMessageSenderId: data.senderId,
+              }
+            : room
+        )
       );
     };
 
@@ -100,7 +102,7 @@ function CustomerService() {
       socket.off("connect", handleReconnect);
       socket.off("newChatRoom", handleNewChatRoom);
     };
-  }, [socket, queryClient, user?._id]);
+  }, [socket, queryClient, chatRoomsQueryKey]);
 
   if (isError) {
     console.error(
