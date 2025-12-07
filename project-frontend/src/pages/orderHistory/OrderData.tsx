@@ -55,21 +55,21 @@ function OrderData({ order }: OrderItemProps) {
               <div className="flex-1 flex flex-col gap-1">
                 <Link
                   to={`/item/${orderItem.goodId}`}
-                  className="text-md underline mb-4 cursor-pointer"
+                  className="text-base underline mb-4 cursor-pointer"
                 >
                   {orderItem.name}
                 </Link>
 
                 <hr className="border-gray-300 dark:border-gray-500 border-t-2" />
 
-                <div className="flex justify-between text-md">
+                <div className="flex justify-between text-base">
                   <span className="flex-1"> {t("labels.price")}</span>
                   <span className="flex-1">{`HK$ ${orderItem.price}`}</span>
                 </div>
 
                 <hr className="border-gray-300 dark:border-gray-500 border-t-2" />
 
-                <div className="flex justify-between text-md">
+                <div className="flex justify-between text-base">
                   <span className="flex-1"> {t("labels.quantity")}</span>
                   <span className="flex-1">{orderItem.quantity}</span>
                 </div>

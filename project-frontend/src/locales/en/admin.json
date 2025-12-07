@@ -1,7 +1,9 @@
 {
   "titles": {
     "addGoods": "Add Goods",
-    "editGoods": "Edit Goods"
+    "editGoods": "Edit Goods",
+    "viewUsers": "View Users",
+    "checkOrders": "Check Orders"
   },
   "labels": {
     "productName": "Product Name:",

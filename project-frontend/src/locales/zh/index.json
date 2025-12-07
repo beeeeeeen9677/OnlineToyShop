@@ -1,7 +1,8 @@
 {
   "title": {
     "newArrivals": "新商品",
-    "closingSoon": "即將下架"
+    "closingSoon": "即將下架",
+    "viewAll": "查看全部"
   },
   "info": {
     "openTo": "截止預購",

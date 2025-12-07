@@ -38,13 +38,11 @@ function AdminIndex() {
         <ModuleWrapper
           maxHeight={"max-h-170"}
           title={t("titles.addGoods")}
-          component={<ProductForm />}
+          children={<ProductForm />}
         />
-        <ModuleWrapper
-          maxHeight={"max-h-30"}
-          title={t("titles.editGoods")}
-          component={<EditGoods />}
-        />
+        <ModuleWrapper maxHeight={"max-h-30"} title={t("titles.editGoods")}>
+          <EditGoods />
+        </ModuleWrapper>
       </div>
     </div>
   );

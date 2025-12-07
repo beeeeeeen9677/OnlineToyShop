@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "../i18n/hooks";
 import { CiSearch } from "react-icons/ci";
 import { FaLocationArrow } from "react-icons/fa";

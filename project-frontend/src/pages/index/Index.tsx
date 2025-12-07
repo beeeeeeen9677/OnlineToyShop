@@ -77,11 +77,13 @@ function Index() {
       {/* New Arriavals */}
       <HorizontalContainer
         title={t("title.newArrivals")}
+        subtitle={t("title.viewAll")}
         goods={allGoods}
         sortingKey="createdAt"
       />
       <HorizontalContainer
         title={t("title.closingSoon")}
+        subtitle={t("title.viewAll")}
         goods={allGoods}
         sortingKey="preorderCloseDate"
         titleColor="text-red-500"

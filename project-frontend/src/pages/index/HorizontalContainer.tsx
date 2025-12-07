@@ -1,3 +1,4 @@
+import { Link, useSearchParams } from "react-router";
 import type { Good } from "../../interface/good";
 import ItemCard from "./ItemCard";
 import "./IndexPage.css";
@@ -5,6 +6,7 @@ import { useDragHook } from "../../hooks/useDragHook";
 
 type HorizontalContainerProps = {
   title: string;
+  subtitle: string;
   goods: Good[];
   sortingKey: keyof Good;
   titleColor?: string;
@@ -12,6 +14,7 @@ type HorizontalContainerProps = {
 
 function HorizontalContainer({
   title,
+  subtitle,
   goods,
   sortingKey,
   titleColor = "text-blue-500",
@@ -49,12 +52,23 @@ function HorizontalContainer({
     })
     .slice(0, 15); // Limit to 15 items
 
+  const searchURL = new URLSearchParams();
+  searchURL.append(
+    "sort",
+    (sortingKey as string) === "createdAt" ? "newest" : "preorderCloseDate_asc"
+  );
+
+  console.log(searchURL);
+
   return (
     <div>
       <div
         className={`font-oswald text-center m-6 font-semibold text-3xl md:text-5xl ${titleColor}`}
       >
         <div> {title}</div>
+        <Link to={`/search?${searchURL}`} className="underline text-xl">
+          {subtitle}
+        </Link>
       </div>
       <div
         className="flex gap-4 p-4 bg-black dark:bg-gray-600 overflow-x-auto scrollbar-custom "
@@ -64,27 +78,6 @@ function HorizontalContainer({
         style={containerStyle}
       >
         {/* Goods */}
-        {sortedGoods.map((good) => (
-          <ItemCard
-            key={good._id}
-            itemDetails={good}
-            dateType={
-              sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
-            }
-            dragged={dragged}
-          />
-        ))}
-        {/* Use Repeated Data for test */}
-        {sortedGoods.map((good) => (
-          <ItemCard
-            key={good._id}
-            itemDetails={good}
-            dateType={
-              sortingKey === "createdAt" ? "createdAt" : "preorderCloseDate"
-            }
-            dragged={dragged}
-          />
-        ))}
         {sortedGoods.map((good) => (
           <ItemCard
             key={good._id}

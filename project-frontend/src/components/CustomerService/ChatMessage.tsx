@@ -3,6 +3,7 @@ import api from "../../services/api";
 import { toHKTimeString } from "../../utils/dateUtils";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router";
+import { useUserContext } from "../../context/app";
 
 type ChatMessageProps = {
   senderId: string;
@@ -25,6 +26,8 @@ function ChatMessage({
   timestamp,
 }: ChatMessageProps) {
   const navigate = useNavigate();
+
+  const isAdmin = useUserContext()?.role === "admin";
   const {
     data: user,
     isLoading,
@@ -41,9 +44,20 @@ function ChatMessage({
     gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
     refetchOnWindowFocus: false,
   });
+  // is sender admin
+  // if yes add admin tag
+  const isSenderAdmin = user?.role === "admin";
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className={`${isSender ? "ml-auto" : "mr-auto"}`}>
+        <div
+          className={`${
+            isSender ? "bg-green-300" : "bg-white"
+          } text-black rounded-2xl p-2 w-20 h-9`}
+        />
+      </div>
+    );
   }
 
   if (isError) {
@@ -55,27 +69,23 @@ function ChatMessage({
     );
   }
 
-  // is sender admin
-  // if yes add admin tag
-  // if no link to user profile
-  const isAdmin = user?.role === "admin";
-
-  //console.log("Is Sender: ", isSender);
-
   return (
     <div className={`${isSender ? "ml-auto" : "mr-auto"} w-fit`}>
       {!isSender && (
         <div
           className={` ml-1 text-sm ${
-            !isAdmin
+            isAdmin
               ? "underline text-cyan-200 hover:cursor-pointer"
               : "text-white"
           }`}
           onClick={() => {
+            if (!isAdmin) return;
             navigate(`/admin/view-user/${senderId}`);
           }}
         >
-          {`${user?.firstName} ${user?.lastName} ${isAdmin ? "[admin]" : ""}`}
+          {`${user?.firstName} ${user?.lastName} ${
+            isSenderAdmin ? "[admin]" : ""
+          }`}
         </div>
       )}
       <div

@@ -39,7 +39,7 @@ function CartItemDetails({ item }: CartItemProps) {
   return (
     <div className="h-fit relative">
       <h1
-        className="font-oswald underline cursor-pointer text-md font-semibold md:text-xl mb-2 "
+        className="font-oswald underline cursor-pointer text-base font-semibold md:text-xl mb-2 "
         onClick={() => {
           navigate(`/item/${item._id}`);
         }}

@@ -4,10 +4,10 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 type ModuleWrapperProps = {
   maxHeight: string;
   title: string;
-  component: React.ReactNode;
+  children: React.ReactNode;
 };
 
-function ModuleWrapper({ maxHeight, title, component }: ModuleWrapperProps) {
+function ModuleWrapper({ maxHeight, title, children }: ModuleWrapperProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   return (
     <div
@@ -24,7 +24,7 @@ function ModuleWrapper({ maxHeight, title, component }: ModuleWrapperProps) {
       >
         {title}
       </div>
-      {component}
+      {children}
     </div>
   );
 }

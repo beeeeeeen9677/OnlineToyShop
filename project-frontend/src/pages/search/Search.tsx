@@ -158,6 +158,10 @@ function Search() {
   );
   const { selectedCategories, selectedSalesStatus, priceRange } = filterState;
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
+
   // Sync filter state to URL when it changes (using replaceState to avoid re-render)
   useEffect(() => {
     const params = new URLSearchParams();

@@ -119,16 +119,16 @@ function ShoppingCart() {
                   {t("labels.billingSummary")}
                 </h1>
                 <hr className="border border-orange-100  dark:border-gray-500 " />
-                <div className="flex justify-between text-md">
+                <div className="flex justify-between text-base">
                   <div>{t("labels.itemTotal")}</div>
                   <div>HK$ {cartTotalAmount}</div>
                 </div>
-                <div className="flex justify-between text-md">
+                <div className="flex justify-between text-base">
                   <div>{t("labels.shippingFee")}</div>
                   <div>HK$ 40</div>
                 </div>{" "}
                 <hr className="border border-orange-300  dark:border-gray-300 " />
-                <div className="flex justify-between text-md">
+                <div className="flex justify-between text-base">
                   <div>{t("labels.orderTotal")}</div>
                   <div>HK$ {cartTotalAmount + 40}</div>
                 </div>{" "}

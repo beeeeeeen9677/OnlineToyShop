@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Activity, Fragment } from "react";
+import { Fragment } from "react";
 import { useTranslation } from "../../../i18n/hooks";
 import type { AxiosError } from "axios";
 import api from "../../../services/api";
@@ -25,6 +25,7 @@ function AdminViewUser() {
       const res = await api.get(`/admin/user/${userId}`);
       return res.data;
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const {
@@ -35,7 +36,7 @@ function AdminViewUser() {
   } = useQuery<Order[]>({
     queryKey: ["orders", { userId }],
     queryFn: async () => {
-      const res = await api.get(`/admin/orders/${userId}`);
+      const res = await api.get(`/admin/orders/?userId=${userId}`);
       return res.data;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -56,6 +57,15 @@ function AdminViewUser() {
     );
   }
 
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <LoadingPanel />
+      </>
+    );
+  }
+
   if (isError) {
     return (
       <div>
@@ -71,7 +81,7 @@ function AdminViewUser() {
       <>
         <Header />
         <div className="flex justify-center items-center h-100">
-          <div className="text-5xl text">Not found / Still fetching</div>
+          <div className="text-5xl text">User Not found</div>
         </div>
       </>
     );
@@ -80,9 +90,6 @@ function AdminViewUser() {
   return (
     <div className="animate-fade-in min-h-screen">
       <title>PROFILE | PREMIUM BEN TOYS</title>
-      <Activity mode={isLoading ? "visible" : "hidden"}>
-        <LoadingPanel />
-      </Activity>
       <Header />
       <h1 className="font-oswald font-bold text-center text-5xl my-10 mx-auto">
         {t("labels.userData")}
@@ -104,7 +111,7 @@ function AdminViewUser() {
             ))}
           </>
         ) : (
-          <h1 className="font-oswald text-5xl mt-60 mb-20 self-center">
+          <h1 className="font-oswald text-5xl my-15 self-center">
             {t("messages.noOrderFound", { ns: "shoppingCart" })}
           </h1>
         )}

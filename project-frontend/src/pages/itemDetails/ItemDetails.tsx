@@ -205,7 +205,7 @@ function ItemDetails() {
       >
         <div className="mx-auto max-w-280 px-8  lg:items-center flex flex-col lg:flex-row lg:justify-between">
           <div className="flex flex-col lg:flex-row justify-between">
-            <div className="font-oswald font-extrabold text-md lg:max-w-5/7">
+            <div className="font-oswald font-extrabold text-base lg:max-w-5/7">
               {itemDetails.name}
             </div>
             <div>

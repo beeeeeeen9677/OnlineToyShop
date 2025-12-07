@@ -1,7 +1,9 @@
 {
   "titles": {
     "addGoods": "新增商品",
-    "editGoods": "編輯商品"
+    "editGoods": "編輯商品",
+    "viewUsers": "查看用戶",
+    "checkOrders": "查看訂單"
   },
   "labels": {
     "productName": "產品名稱：",

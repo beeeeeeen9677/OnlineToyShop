@@ -69,7 +69,7 @@ function Filter({
 
       {/* Selected filters header with clear all */}
       <div className="flex justify-between items-center">
-        <div className="font-oswald text-md">{t("selectedFilters")}</div>
+        <div className="font-oswald text-base">{t("selectedFilters")}</div>
         {hasActiveFilters && (
           <button
             onClick={onClearAll}

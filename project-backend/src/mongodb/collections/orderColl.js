@@ -213,10 +213,11 @@ export const getUserOrders = async (req, res) => {
 // for admin
 export const getOrderByUserId = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const orders = await Order.find({ userId: userId })
-      .sort({ createdAt: -1 })
-      .exec();
+    const { userId } = req.query;
+
+    const filter = userId ? { userId } : {};
+
+    const orders = await Order.find(filter).sort({ createdAt: -1 }).exec();
     res.json(orders);
   } catch (err) {
     console.error("Error fetching order by user ID:", err);

@@ -12,5 +12,5 @@ const router = express.Router();
 router.post("/goods", uploadSingleFile, createNewGoods);
 router.put("/goods/:id", uploadSingleFile, updateGoods);
 router.get("/user/:id", getUserByID);
-router.get("/orders/:userId", getOrderByUserId);
+router.get("/orders/", getOrderByUserId);
 export default router;
