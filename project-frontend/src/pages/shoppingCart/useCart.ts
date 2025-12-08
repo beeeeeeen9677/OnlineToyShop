@@ -213,6 +213,8 @@ export const useCart = (): UseCartReturn => {
     return sum;
   }, 0);
 
+  const isItemInvalid = true; // check any item in cart is invalid
+
   const isLoading =
     isQueryLoading ||
     addMutation.isPending ||

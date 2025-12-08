@@ -1,5 +1,5 @@
 import { useTranslation } from "../../i18n/hooks";
-import React, { useEffect } from "react";
+import React, { useEffect, useEffectEvent } from "react";
 import { useUserContext } from "../../context/app";
 import { useSocketContext } from "../../context/socket";
 import { useAutoScroll } from "../../hooks/useAutoScroll";
@@ -12,7 +12,7 @@ import type {
 } from "../../interface/chatRoom";
 import { useMessageQuery } from "../../hooks/useMessageQuery";
 import api from "../../services/api";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -40,32 +40,33 @@ function CsChatWindow() {
 
   const queryClient = useQueryClient();
 
+  const { mutateAsync: setLastReadTime } = useMutation({
+    mutationFn: async () => {
+      const res = await api.put(`/chat/lastReadAt/${roomId}`);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      const lastReadTime = data.lastReadTime;
+      queryClient.setQueryData<ChatRoom[]>(
+        ["chatRooms", { userId: user?._id }],
+        (oldRooms) =>
+          oldRooms?.map((room) =>
+            room._id === roomId ? { ...room, lastReadTime } : room
+          )
+      );
+    },
+  });
+
+  const setLastReadTimeEvent = useEffectEvent(async () => {
+    await setLastReadTime();
+  });
+
   // set last read time when opening room or receiving new messages
   useEffect(() => {
     if (chatRecords.length === 0) return;
 
-    const setLastReadTime = async () => {
-      try {
-        const res = await api.put(`/chat/lastReadAt/${roomId}`);
-        const lastReadTime = res.data.lastReadTime;
-        // Use ISO string format to match backend response
-        // const now = new Date().toISOString();
-        queryClient.setQueryData<ChatRoom[]>(
-          ["chatRooms", { userId: user?._id }],
-          (oldRooms) =>
-            oldRooms?.map((room) =>
-              room._id === roomId
-                ? { ...room, lastReadTime: lastReadTime }
-                : room
-            )
-        );
-      } catch (error) {
-        console.error("Error when marking room as read:", error);
-      }
-    };
-
-    setLastReadTime();
-  }, [queryClient, user?._id, roomId, chatRecords.length]);
+    setLastReadTimeEvent();
+  }, [roomId, chatRecords.length]);
 
   // Socket listener is now in CsPanel so it stays active even when this component unmounts
 

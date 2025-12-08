@@ -49,6 +49,7 @@
     "male": "Male",
     "female": "Female",
     "notAnswered": "Not Answered",
+    "not answered": "Not Answered",
     "dateOfBirth": "Date of Birth"
   },
   "status": {

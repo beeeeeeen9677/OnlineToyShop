@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { MdRefresh } from "react-icons/md";
 import api from "../../../services/api";
 import type { AxiosError } from "axios";
 import { useTranslation } from "react-i18next";
@@ -147,15 +148,28 @@ function ViewUser() {
               </div>
 
               {/* Results Count */}
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                {isPending ? (
-                  <span>{t("labels.filtering")}...</span>
-                ) : (
-                  <span>
-                    {t("labels.showing")} {filteredUsers.length}{" "}
-                    {t("labels.of")} {users.length} {t("labels.users")}
-                  </span>
-                )}
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  {isPending ? (
+                    <span>{t("labels.filtering")}...</span>
+                  ) : (
+                    <span>
+                      {t("labels.showing")} {filteredUsers.length}{" "}
+                      {t("labels.of")} {users.length} {t("labels.users")}
+                    </span>
+                  )}
+                </div>
+                <button
+                  className="cursor-pointer"
+                  onClick={() => {
+                    startTransition(() => {
+                      setSearchFilter("");
+                      setSelectedGenders([]);
+                    });
+                  }}
+                >
+                  <MdRefresh size={20} />
+                </button>
               </div>
             </div>
           )}

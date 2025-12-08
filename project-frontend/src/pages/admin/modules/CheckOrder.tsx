@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { MdRefresh } from "react-icons/md";
 import api from "../../../services/api";
 import type { AxiosError } from "axios";
 import OrderData from "../../orderHistory/OrderData";
@@ -246,15 +247,33 @@ function CheckOrder() {
               </div>
 
               {/* Results Count */}
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                {isPending ? (
-                  <span>{t("labels.filtering")}...</span>
-                ) : (
-                  <span>
-                    {t("labels.showing")} {filteredOrders.length}{" "}
-                    {t("labels.of")} {orders.length} {t("labels.orders")}
-                  </span>
-                )}
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  {isPending ? (
+                    <span>{t("labels.filtering")}...</span>
+                  ) : (
+                    <span>
+                      {t("labels.showing")} {filteredOrders.length}{" "}
+                      {t("labels.of")} {orders.length} {t("labels.orders")}
+                    </span>
+                  )}
+                </div>
+                <button
+                  className="cursor-pointer"
+                  onClick={() => {
+                    startTransition(() => {
+                      setUserIdFilter("");
+                      setOrderIdFilter("");
+                      setShowPaidOnly(false);
+                      setDateFrom("");
+                      setDateTo("");
+                      setAmountFrom("");
+                      setAmountTo("");
+                    });
+                  }}
+                >
+                  <MdRefresh size={20} />
+                </button>
               </div>
             </div>
           )}

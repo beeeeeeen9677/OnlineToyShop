@@ -37,9 +37,14 @@ function ItemDetails() {
   const preorderEnded = itemDetails
     ? new Date() > new Date(itemDetails.preorderCloseDate)
     : false;
+  const available =
+    !preorderEnded &&
+    itemDetails?.quota &&
+    itemDetails.quota > 0 &&
+    itemDetails?.available;
 
   const handleAddToCart = async () => {
-    if (preorderEnded || !id) return;
+    if (!available || !id) return;
 
     setIsAdding(true);
     setCartMessage(null);
@@ -115,12 +120,10 @@ function ItemDetails() {
             </div>
             <div
               className={`text-white ${
-                preorderEnded ? "bg-gray-400" : "bg-red-400"
+                !available ? "bg-gray-400" : "bg-red-400"
               } w-fit p-0.5 text-xs`}
             >
-              {preorderEnded
-                ? t("status.preorderClosed")
-                : t("status.preorder")}
+              {!available ? t("status.preorderClosed") : t("status.preorder")}
             </div>
             {/*  Break line  */}
             <hr className="border border-orange-100   dark:border-gray-500 " />
@@ -163,9 +166,9 @@ function ItemDetails() {
             <button
               className="tw-round-primary-btn"
               onClick={handleAddToCart}
-              disabled={preorderEnded || isAdding}
+              disabled={!available || isAdding}
             >
-              {preorderEnded
+              {!available
                 ? t("status.preorderClosed")
                 : isAdding
                 ? t("buttons.adding")
@@ -219,9 +222,9 @@ function ItemDetails() {
           <button
             className="mx-auto border-white border-4 rounded-full bg-primary py-2 w-80 hover:bg-white hover:text-primary cursor-pointer font-extrabold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-default disabled:hover:text-white"
             onClick={handleAddToCart}
-            disabled={preorderEnded || isAdding}
+            disabled={!available || isAdding}
           >
-            {preorderEnded
+            {!available
               ? t("status.preorderClosed")
               : isAdding
               ? t("buttons.adding")

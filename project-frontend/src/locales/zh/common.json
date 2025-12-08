@@ -49,6 +49,7 @@
     "male": "男",
     "female": "女",
     "notAnswered": "未回答",
+    "not answered": "未回答",
     "dateOfBirth": "出生日期"
   },
   "status": {
