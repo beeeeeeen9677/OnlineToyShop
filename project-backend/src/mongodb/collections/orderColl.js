@@ -24,6 +24,7 @@ export const createOrder = async (req, res) => {
     });
 
     // Validate all items
+    const now = new Date();
     for (const item of items) {
       const good = goodsMap[item.goodId];
 
@@ -37,6 +38,12 @@ export const createOrder = async (req, res) => {
         return res
           .status(400)
           .json({ error: `Product unavailable: ${good.name}` });
+      }
+
+      if (new Date(good.preorderCloseDate) < now) {
+        return res.status(400).json({
+          error: `Preorder closed for ${good.name}`,
+        });
       }
 
       if (good.quota < item.quantity) {
@@ -68,7 +75,6 @@ export const createOrder = async (req, res) => {
     const orderTotal = totalAmount + shippingFee;
 
     // expiration time
-    const now = new Date();
     const expiresAt = new Date(now.getTime() + 30 * 60 * 1000); // 30 mins
 
     // Create order
@@ -116,17 +122,32 @@ export const confirmPaymentInternal = async (orderId, userId = null) => {
       throw new Error("Order has expired");
     }
 
-    // Deduct quota for all items
+    // Validate and deduct quota for all items
+    const now = new Date();
     for (const item of order.items) {
-      const result = await Good.findOneAndUpdate(
-        { _id: item.goodId, quota: { $gte: item.quantity } },
-        { $inc: { quota: -item.quantity, broughtCount: item.quantity } },
-        { session, new: true }
-      ).exec();
+      // Fetch current product state for validation
+      const good = await Good.findById(item.goodId).session(session).exec();
 
-      if (!result) {
+      if (!good) {
+        throw new Error(`Product not found: ${item.name}`);
+      }
+
+      if (!good.available) {
+        throw new Error(`Product unavailable: ${item.name}`);
+      }
+
+      if (new Date(good.preorderCloseDate) < now) {
+        throw new Error(`Preorder closed for ${item.name}`);
+      }
+
+      if (good.quota < item.quantity) {
         throw new Error(`Insufficient stock for ${item.name}`);
       }
+
+      // Deduct quota atomically (double-check quota to prevent race condition)
+      good.quota -= item.quantity;
+      good.broughtCount += item.quantity;
+      await good.save({ session });
     }
 
     // Update order status

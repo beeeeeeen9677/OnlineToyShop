@@ -38,6 +38,8 @@ interface UseCartReturn {
   isLoadingDetails: boolean;
   /** Total price of all items in cart */
   cartTotalAmount: number;
+  /** Whether any item in cart is invalid (unavailable, preorder closed, or exceeds quota) */
+  isItemInvalid: boolean;
   isLoading: boolean;
   error: string | null;
   totalItems: number;
@@ -213,7 +215,23 @@ export const useCart = (): UseCartReturn => {
     return sum;
   }, 0);
 
-  const isItemInvalid = true; // check any item in cart is invalid
+  // Check if any item in cart is invalid (unavailable, preorder closed, or exceeds quota)
+  const isItemInvalid = itemsWithDetails.some((item) => {
+    if (!item.isLoaded) return true; // Can't validate if not loaded yet
+
+    // Check availability
+    if (!item.available) return true;
+
+    // Check if preorder is closed (preorderCloseDate is in the past)
+    const preorderCloseDate = new Date(item.preorderCloseDate);
+    const now = new Date();
+    if (preorderCloseDate < now) return true;
+
+    // Check if quantity exceeds quota
+    if (item.quantity > item.quota) return true;
+
+    return false;
+  });
 
   const isLoading =
     isQueryLoading ||
@@ -298,6 +316,7 @@ export const useCart = (): UseCartReturn => {
     itemsWithDetails,
     isLoadingDetails,
     cartTotalAmount,
+    isItemInvalid,
     isLoading,
     error,
     totalItems,
