@@ -3,13 +3,13 @@ import { Link, useNavigate } from "react-router";
 import type { AxiosError } from "axios";
 import { useTranslation } from "../../i18n/hooks";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
+// import { FaFacebook } from "react-icons/fa";
 import {
   auth,
   loginWithEmailAndPassword,
   registerWithEmailAndPassword,
   logInWithGooglePopup,
-  logInWithFacebookPopup,
+  // logInWithFacebookPopup,
   // loginWithEmailLink,
   // authEmail,
   logout,
@@ -212,13 +212,13 @@ function Auth() {
     }
   };
 
-  const facebookLogin = async () => {
-    try {
-      await logInWithFacebookPopup(loginSuccessCallback, actionFailedCallback);
-    } catch (error) {
-      console.error("Facebook login failed:", error);
-    }
-  };
+  // const facebookLogin = async () => {
+  //   try {
+  //     await logInWithFacebookPopup(loginSuccessCallback, actionFailedCallback);
+  //   } catch (error) {
+  //     console.error("Facebook login failed:", error);
+  //   }
+  // };
 
   const expressLogout = useEffectEvent(async () => {
     // call backend api to clear session
@@ -320,7 +320,7 @@ function Auth() {
                 htmlFor="email"
                 className=" text-sm font-medium text-gray-700 mb-2"
               >
-                {t("labels.email")} *
+                {t("labels.email")} <span className="text-red-500">*</span>
               </label>
               <div
                 className={`text-red-500 text-sm ${
@@ -349,7 +349,7 @@ function Auth() {
                 htmlFor="password"
                 className="text-sm font-medium text-gray-700 mb-2"
               >
-                {t("labels.password")} *
+                {t("labels.password")} <span className="text-red-500">*</span>
               </label>
               <div
                 className={`text-red-500 text-sm  ${
@@ -387,7 +387,7 @@ function Auth() {
                 htmlFor="firstName"
                 className="h-6 block text-sm font-medium text-gray-700 mb-2"
               >
-                {t("labels.firstName")} *
+                {t("labels.firstName")} <span className="text-red-500">*</span>
               </label>
 
               <input
@@ -465,7 +465,8 @@ function Auth() {
                 htmlFor="date-of-birth"
                 className="text-sm font-medium text-gray-700 mb-2"
               >
-                {t("labels.dateOfBirth")} *
+                {t("labels.dateOfBirth")}{" "}
+                <span className="text-red-500">*</span>
               </label>
               <div
                 className={`text-red-500 text-sm ${

@@ -94,6 +94,7 @@ function AdminViewUser() {
       <h1 className="font-oswald font-bold text-center text-5xl my-10 mx-auto">
         {t("labels.userData")}
       </h1>
+      <button>asd</button>
       <UserForm user={user} adminView={true} />
       <h1 className="font-oswald font-bold text-center text-5xl my-10 mx-auto">
         {t("titles.orderHistory", { ns: "shoppingCart" })}

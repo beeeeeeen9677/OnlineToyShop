@@ -7,6 +7,7 @@ interface User {
   gender: "male" | "female" | "not answered";
   dateOfBirth: Date;
   role: "customer" | "admin";
+  profileComplete: boolean;
 }
 
 export type { User };

@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Index from "./pages/index/Index";
 import Auth from "./pages/auth/Auth";
 import ForgetPw from "./pages/auth/ForgetPw";
+import CompleteProfile from "./pages/auth/CompleteProfile";
 import AdminIndex from "./pages/admin/pages/AdminIndex";
 import AdminProductList from "./pages/admin/pages/AdminProductList";
 import AdminEditProduct from "./pages/admin/pages/AdminEditProduct";
@@ -152,6 +153,17 @@ function App() {
     }
   }, [isLoggedIn, user, syncCart]);
 
+  // Check if OAuth user needs to complete profile
+  useEffect(() => {
+    if (isLoggedIn && user && !user.profileComplete) {
+      console.log("User needs to complete profile, redirecting...");
+      // Don't redirect if already on complete-profile page
+      if (currentPath !== "/complete-profile") {
+        navigate("/complete-profile");
+      }
+    }
+  }, [isLoggedIn, user, currentPath, navigate]);
+
   const { changeLanguage } = useLanguage();
   // language init
   useEffect(() => {
@@ -192,6 +204,7 @@ function RouteContainer() {
       <Route index element={<Index />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/auth/forget-password" element={<ForgetPw />} />
+      <Route path="/complete-profile" element={<CompleteProfile />} />
       <Route path="/admin" element={<AdminIndex />} />
       <Route path="/admin/product" element={<AdminProductList />} />
       <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />

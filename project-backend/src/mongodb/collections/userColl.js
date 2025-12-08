@@ -2,8 +2,16 @@ import User from "../models/User.js";
 import admin from "../../../server.js";
 
 const createNewUser = async (req, res) => {
-  const { firstName, lastName, firebaseUID, email, gender, dateOfBirth, role } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    firebaseUID,
+    email,
+    gender,
+    dateOfBirth,
+    role,
+    profileComplete,
+  } = req.body;
 
   const userData = {
     firstName,
@@ -13,6 +21,7 @@ const createNewUser = async (req, res) => {
     gender,
     dateOfBirth,
     role,
+    profileComplete: profileComplete !== undefined ? profileComplete : true, // Default true for regular registration
   };
 
   try {
@@ -129,10 +138,55 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+// Complete user profile after OAuth registration
+const completeProfile = async (req, res) => {
+  const firebaseUID = req.firebaseUser.uid;
+  const { firstName, lastName, gender, dateOfBirth } = req.body;
+
+  // Validate required fields
+  if (!firstName || !lastName || !gender || !dateOfBirth) {
+    return res.status(400).json({
+      message:
+        "All fields are required: firstName, lastName, gender, dateOfBirth",
+    });
+  }
+
+  try {
+    const user = await User.findOne({ firebaseUID }).exec();
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.profileComplete) {
+      return res.status(400).json({ message: "Profile already completed" });
+    }
+
+    // Update user with complete profile data
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.gender = gender;
+    user.dateOfBirth = dateOfBirth;
+    user.profileComplete = true;
+
+    await user.save();
+
+    console.log("Profile completed for user:", user._id);
+    res.status(200).json({
+      message: "Profile completed successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("Error completing profile:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   createNewUser,
   getUserByFirebaseUID,
   getLimitedUserDataByID,
   getUserByID,
   getAllUsers,
+  completeProfile,
 };

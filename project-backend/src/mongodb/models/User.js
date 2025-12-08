@@ -20,9 +20,10 @@ const userSchema = new Schema({
     enum: ["male", "female", "not answered"],
     default: "not answered",
   },
-  dateOfBirth: { type: Date, required: true },
+  dateOfBirth: { type: Date, required: false },
   role: { type: String, enum: ["customer", "admin"], default: "customer" },
   cart: { type: [cartItemSchema], default: [] },
+  profileComplete: { type: Boolean, default: false },
 });
 
 const User = mongoose.model("User", userSchema);

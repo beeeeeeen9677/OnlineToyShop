@@ -22,6 +22,7 @@ import {
   FacebookAuthProvider,
 } from "firebase/auth";
 import api from "../services/api";
+import { AxiosError } from "axios";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -85,7 +86,7 @@ const loginWithEmailAndPassword = async (
 
 const createNewUserInDB = async (userData: {
   email: string;
-  password: string;
+  //password: string;
   firstName: string;
   lastName: string;
   gender: string;
@@ -283,8 +284,34 @@ const logInWithGooglePopup = async (
 ) => {
   try {
     await setPersistence(auth, browserLocalPersistence);
-    //const result =
-    await signInWithPopup(auth, googleProvider);
+    const result = await signInWithPopup(auth, googleProvider);
+
+    // Extract user data from OAuth result
+    const user = result.user;
+    const displayName = user.displayName || "";
+    const nameParts = displayName.trim().split(" ");
+    const firstName = nameParts[0] || "User";
+    const lastName = nameParts.slice(1).join(" ") || "Name";
+
+    // Try to create user in MongoDB with OAuth data
+    try {
+      await api.post("/auth/register", {
+        firebaseUID: user.uid,
+        email: user.email,
+        firstName,
+        lastName,
+        gender: "not answered",
+        dateOfBirth: null,
+        profileComplete: false, // OAuth users need to complete profile
+      });
+      console.log("OAuth user registered in MongoDB");
+    } catch (err) {
+      // If user already exists (409), that's fine - continue login
+      if (err instanceof AxiosError && err.response?.status !== 409) {
+        console.error("Error registering OAuth user:", err);
+      }
+    }
+
     loginSuccessCallback();
   } catch (error: unknown) {
     let errorCode: string = "auth/unexpected-error";
@@ -304,8 +331,34 @@ const logInWithFacebookPopup = async (
 ) => {
   try {
     await setPersistence(auth, browserLocalPersistence);
-    //const result =
-    await signInWithPopup(auth, facebookProvider);
+    const result = await signInWithPopup(auth, facebookProvider);
+
+    // Extract user data from OAuth result
+    const user = result.user;
+    const displayName = user.displayName || "";
+    const nameParts = displayName.trim().split(" ");
+    const firstName = nameParts[0] || "User";
+    const lastName = nameParts.slice(1).join(" ") || "Name";
+
+    // Try to create user in MongoDB with OAuth data
+    try {
+      await api.post("/auth/register", {
+        firebaseUID: user.uid,
+        email: user.email,
+        firstName,
+        lastName,
+        gender: "not answered",
+        dateOfBirth: null,
+        profileComplete: false, // OAuth users need to complete profile
+      });
+      console.log("OAuth user registered in MongoDB");
+    } catch (err) {
+      // If user already exists (409), that's fine - continue login
+      if (err instanceof AxiosError && err.response?.status !== 409) {
+        console.error("Error registering OAuth user:", err);
+      }
+    }
+
     loginSuccessCallback();
   } catch (error: unknown) {
     let errorCode: string = "auth/unexpected-error";

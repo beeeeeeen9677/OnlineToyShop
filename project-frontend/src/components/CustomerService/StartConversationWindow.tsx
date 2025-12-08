@@ -1,30 +1,12 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUserContext } from "../../context/app";
 import { useTranslation } from "../../i18n/hooks";
-import api from "../../services/api";
+import { useCreateRoom } from "../../hooks/useCreateRoom";
 
 // for customers to create a room containning current user and admin
 function StartConversationWindow() {
   const { t } = useTranslation("chat");
   const user = useUserContext();
-  const queryClient = useQueryClient();
-  const { mutateAsync: createRoom, isPending } = useMutation({
-    mutationFn: async () => {
-      if (!user) return;
-      const res = await api.post("/chat/chatRooms", {
-        userId: user._id,
-      });
-      return res.data;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: ["chatRooms", { userId: user?._id }],
-      });
-      console.log("Chat room created:", data._id);
-      // Room joining is now handled automatically on backend
-    },
-  });
-
+  const { createRoom, isPending } = useCreateRoom(user?._id || "");
   // for customers to start conversation with admin only
   return (
     <div className="bg-gray-400 flex-1 flex justify-center items-center">

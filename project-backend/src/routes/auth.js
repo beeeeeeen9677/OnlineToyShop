@@ -1,9 +1,13 @@
 import { verifyFirebaseToken } from "../middleware/authMiddleware.js";
-import { createNewUser } from "../mongodb/collections/userColl.js";
+import {
+  createNewUser,
+  completeProfile,
+} from "../mongodb/collections/userColl.js";
 import express from "express";
 const router = express.Router();
 
 router.post("/register", createNewUser);
+router.post("/complete-profile", verifyFirebaseToken, completeProfile);
 router.post("/logout", verifyFirebaseToken, (req, res) => {
   req.session.destroy((err) => {
     if (err) {

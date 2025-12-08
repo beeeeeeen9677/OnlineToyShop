@@ -152,7 +152,7 @@ function ForgetPw() {
             className={
               "w-full bg-primary cursor-pointer text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:bg-gray-500 disabled:cursor-default"
             }
-            onClick={(e) => sendResetPWEmail(email)}
+            onClick={() => sendResetPWEmail(email)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 sendResetPWEmail(email);
