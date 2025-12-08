@@ -49,7 +49,8 @@
     "upload": "Upload",
     "update": "Update",
     "uploadFile": "Upload File",
-    "remove": "Remove"
+    "remove": "Remove",
+    "startConversation": "Start Conversation"
   },
   "messages": {
     "imageFileOnly": "Please select an image file (PNG, JPG, JPEG, GIF, WebP)",

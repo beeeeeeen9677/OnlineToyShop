@@ -10,6 +10,7 @@ import LoadingPanel from "../../../components/LoadingPanel";
 import UserForm, { type UserWithExtraData } from "../../profile/UserForm";
 import OrderData from "../../orderHistory/OrderData";
 import type { Order } from "../../../interface/order";
+import CustomerService from "../../../components/CustomerService/CustomerService";
 
 function AdminViewUser() {
   const { t } = useTranslation("admin");
@@ -91,10 +92,11 @@ function AdminViewUser() {
     <div className="animate-fade-in min-h-screen">
       <title>PROFILE | PREMIUM BEN TOYS</title>
       <Header />
+      <CustomerService />
       <h1 className="font-oswald font-bold text-center text-5xl my-10 mx-auto">
         {t("labels.userData")}
       </h1>
-      <button>asd</button>
+
       <UserForm user={user} adminView={true} />
       <h1 className="font-oswald font-bold text-center text-5xl my-10 mx-auto">
         {t("titles.orderHistory", { ns: "shoppingCart" })}

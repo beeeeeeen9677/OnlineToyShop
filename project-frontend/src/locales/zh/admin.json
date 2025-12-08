@@ -49,7 +49,8 @@
     "upload": "上傳",
     "update": "更新",
     "uploadFile": "上傳文件",
-    "remove": "移除"
+    "remove": "移除",
+    "startConversation": "開始對話"
   },
   "messages": {
     "imageFileOnly": "請選擇圖片文件（PNG、JPG、JPEG、GIF、WebP）",

@@ -55,6 +55,7 @@ function CustomerService() {
               msg.senderId === data.senderId &&
               msg.message === data.message
           );
+          // console.log(data);
           if (exists) return oldMessages;
           return [...oldMessages, data];
         }
@@ -72,6 +73,9 @@ function CustomerService() {
             : room
         )
       );
+
+      // Trigger re-render for red dot update
+      queryClient.invalidateQueries({ queryKey: chatRoomsQueryKey });
     };
 
     // Invalidate cache on reconnect to fetch any missed messages

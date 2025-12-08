@@ -7,6 +7,7 @@ import { Link } from "react-router";
 import { useUserContext } from "../../../context/app";
 import { useQuery } from "@tanstack/react-query";
 import LoadingPanel from "../../../components/LoadingPanel";
+import CustomerService from "../../../components/CustomerService/CustomerService";
 
 function AdminProductList() {
   const user = useUserContext();
@@ -83,6 +84,7 @@ function AdminProductList() {
     <div className="animate-fade-in min-h-screen">
       <title>ADMIN PRODUCTS | PREMIUM BEN TOYS</title>
       <Header />
+      <CustomerService />
       <Link to="/admin/">
         <div className="mx-6 mt-3 underline text-2xl"> &lt;Back</div>
       </Link>

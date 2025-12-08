@@ -7,6 +7,7 @@ import ProductForm from "../modules/ProductForm";
 import EditGoods from "../modules/EditGoods";
 import CheckOrder from "../modules/CheckOrder";
 import ViewUser from "../modules/ViewUser";
+import CustomerService from "../../../components/CustomerService/CustomerService";
 // import { useEffect } from "react";
 
 function AdminIndex() {
@@ -36,6 +37,7 @@ function AdminIndex() {
     <div className="animate-fade-in min-h-screen">
       <title>ADMIN | PREMIUM BEN TOYS</title>
       <Header />
+      <CustomerService />
       <div>
         <ModuleWrapper
           maxHeight={"max-h-170"}
