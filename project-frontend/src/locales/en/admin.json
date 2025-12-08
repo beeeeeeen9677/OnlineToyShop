@@ -43,7 +43,8 @@
     "stock": "100",
     "searchUserId": "Search by User ID...",
     "searchOrderId": "Search by Order ID...",
-    "searchUserIdOrName": "Search by User ID or Name..."
+    "searchUserIdOrName": "Search by User ID or Name...",
+    "searchGoodName": "Search by Product Name..."
   },
   "buttons": {
     "upload": "Upload",

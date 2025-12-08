@@ -43,7 +43,8 @@
     "stock": "100",
     "searchUserId": "搜尋用戶ID...",
     "searchOrderId": "搜尋訂單ID...",
-    "searchUserIdOrName": "搜尋用戶ID或姓名..."
+    "searchUserIdOrName": "搜尋用戶ID或姓名...",
+    "searchGoodName": "搜尋產品名稱..."
   },
   "buttons": {
     "upload": "上傳",

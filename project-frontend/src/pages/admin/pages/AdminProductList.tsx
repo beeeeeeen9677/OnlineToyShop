@@ -1,3 +1,4 @@
+import { useTranslation } from "../../../i18n/hooks";
 import { useState, useTransition } from "react";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../../services/api";
@@ -10,6 +11,7 @@ import LoadingPanel from "../../../components/LoadingPanel";
 import CustomerService from "../../../components/CustomerService/CustomerService";
 
 function AdminProductList() {
+  const { t } = useTranslation("admin");
   const user = useUserContext();
   /*
   const [goods, setGoods] = useState<Array<Good>>([]);
@@ -88,7 +90,9 @@ function AdminProductList() {
   );
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchFilter(event.target.value);
+    startTransition(() => {
+      setSearchFilter(event.target.value);
+    });
   };
 
   return (
@@ -105,7 +109,7 @@ function AdminProductList() {
             type="text"
             value={searchFilter}
             onChange={handleSearchChange}
-            placeholder={"Name"}
+            placeholder={t("placeholders.searchGoodName")}
             className="w-full px-2 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
           />
           <p className="text-right text-xs mt-2">
@@ -116,26 +120,30 @@ function AdminProductList() {
 
       {/* Container for goods list */}
       <div className="flex gap-5 p-5 flex-wrap">
-        {isPending
-          ? "Filtering..."
-          : filteredGoods.map((good) => (
-              // Content
-              <Link
-                key={good._id}
-                to={`/admin/edit-product/${good._id}`}
-                className="min-w-60 max-w-75 h-90 flex-1 bg-gray-100 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer overflow-hidden"
-              >
-                <img
-                  src={good.imageUrl}
-                  alt={good.name}
-                  className="w-full h-3/5 object-cover object-top bg-white"
-                />
-                <div className="p-1 flex flex-col justify-between flex-1">
-                  <div> {good.name}</div>
-                  <div> ID: {good._id} </div>
-                </div>
-              </Link>
-            ))}
+        {isPending ? (
+          <div className="w-full flex justify-center  text-3xl">
+            {t("labels.filtering")}
+          </div>
+        ) : (
+          filteredGoods.map((good) => (
+            // Content
+            <Link
+              key={good._id}
+              to={`/admin/edit-product/${good._id}`}
+              className="min-w-60 max-w-75 h-90 flex-1 bg-gray-100 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer overflow-hidden"
+            >
+              <img
+                src={good.imageUrl}
+                alt={good.name}
+                className="w-full h-3/5 object-cover object-top bg-white"
+              />
+              <div className="p-1 flex flex-col justify-between flex-1">
+                <div> {good.name}</div>
+                <div> ID: {good._id} </div>
+              </div>
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );
