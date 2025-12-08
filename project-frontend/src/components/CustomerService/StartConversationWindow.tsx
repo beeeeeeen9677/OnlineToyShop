@@ -15,8 +15,8 @@ function StartConversationWindow() {
       ) : (
         <button
           disabled={!user || user.role !== "customer"}
-          onClick={() => {
-            createRoom();
+          onClick={async () => {
+            await createRoom();
           }}
           className="bg-primary text-white px-4 py-2 rounded-full border-2 hover:bg-primary-hover hover:text-purple-50 dark:bg-white dark:text-primary dark:hover:bg-purple-50 dark:hover:text-primary-hover transition-colors cursor-pointer"
         >

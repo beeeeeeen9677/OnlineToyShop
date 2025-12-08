@@ -1,14 +1,14 @@
-import { Activity, useState, useEffect, useRef, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Activity, useState, useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { RiCustomerService2Fill } from "react-icons/ri";
 import { auth } from "../../firebase/firebase";
-import api from "../../services/api";
 import type { AxiosError } from "axios";
 import { RoomIdContext } from "../../context/useRoomContext";
 import { useUserContext } from "../../context/app";
 import { useSocketContext } from "../../context/socket";
 import type { ChatRoom, ChatMessage } from "../../interface/chatRoom";
 import CsPanel from "./CsPanel";
+import { useChatRooms } from "../../hooks/useChatRooms";
 
 // ROOT component for customer service chat
 function CustomerService() {
@@ -20,59 +20,43 @@ function CustomerService() {
   const queryClient = useQueryClient();
   const isFirstConnect = useRef(true);
 
-  const chatRoomsQueryKey = useMemo(
-    () => ["chatRooms", { userId: user?._id }],
-    [user?._id]
-  );
-
-  const {
-    data: chatRooms, // rooms of current user joined
-    isLoading,
-    isError,
-    error,
-  } = useQuery<ChatRoom[]>({
-    queryKey: chatRoomsQueryKey,
-    queryFn: async () => {
-      const res = await api.get(`/chat/chatRooms/${user?._id}`);
-      return res.data;
-    },
-    enabled: !!user,
-  });
+  const { chatRooms, isLoading, isError, error, chatRoomsQueryKey } =
+    useChatRooms(user!);
 
   // Listen for socket messages
   // moved to root level to ensure consistent updates
   useEffect(() => {
     const handleReceiveMessage = (data: ChatMessage) => {
       // Merge new message into the cached data (msg record) for this room
-      // queryClient.setQueryData<ChatMessage[]>(
-      //   ["chatMessages", { roomId: data.roomId }],
-      //   (oldMessages) => {
-      //     if (!oldMessages) return; // probably havn't open the chat window, not fetch yet
-      //     // Avoid duplicates by checking if message already exists
-      //     const exists = oldMessages.some(
-      //       (msg) =>
-      //         msg.timestamp === data.timestamp &&
-      //         msg.senderId === data.senderId &&
-      //         msg.message === data.message
-      //     );
-      //     // console.log(data);
-      //     if (exists) return oldMessages;
-      //     return [...oldMessages, data];
-      //   }
-      // );
+      queryClient.setQueryData<ChatMessage[]>(
+        ["chatMessages", { roomId: data.roomId }],
+        (oldMessages) => {
+          if (!oldMessages) return; // probably havn't open the chat window, not fetch yet
+          // Avoid duplicates by checking if message already exists
+          const exists = oldMessages.some(
+            (msg) =>
+              msg.timestamp === data.timestamp &&
+              msg.senderId === data.senderId &&
+              msg.message === data.message
+          );
+          // console.log(data);
+          if (exists) return oldMessages;
+          return [...oldMessages, data];
+        }
+      );
 
-      // // Update lastMessageTime and lastMessageSenderId in chatRooms cache (for red dot indicator)
-      // queryClient.setQueryData<ChatRoom[]>(chatRoomsQueryKey, (oldRooms) =>
-      //   oldRooms?.map((room) =>
-      //     room._id === data.roomId
-      //       ? {
-      //           ...room,
-      //           lastMessageTime: data.timestamp,
-      //           lastMessageSenderId: data.senderId,
-      //         }
-      //       : room
-      //   )
-      // );
+      // Update lastMessageTime and lastMessageSenderId in chatRooms cache (for red dot indicator)
+      queryClient.setQueryData<ChatRoom[]>(chatRoomsQueryKey, (oldRooms) =>
+        oldRooms?.map((room) =>
+          room._id === data.roomId
+            ? {
+                ...room,
+                lastMessageTime: data.timestamp,
+                lastMessageSenderId: data.senderId,
+              }
+            : room
+        )
+      );
 
       // Trigger re-render for red dot update
       queryClient.invalidateQueries({ queryKey: chatRoomsQueryKey });
