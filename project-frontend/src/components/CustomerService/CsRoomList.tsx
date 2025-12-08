@@ -49,7 +49,7 @@ function CsRoomList({ rooms = [] }: CsRoomListProps) {
           key={room._id}
           className={`flex p-2 justify-center items-center h-18 overflow-hidden border-b border-gray-300 cursor-pointer ${
             roomId === room._id
-              ? "bg-gray-100 text-black"
+              ? "bg-orange-200 text-black"
               : "bg-gray-300 text-black hover:bg-gray-400"
           }`}
         >

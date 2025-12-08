@@ -44,38 +44,41 @@ function CustomerService() {
   useEffect(() => {
     const handleReceiveMessage = (data: ChatMessage) => {
       // Merge new message into the cached data (msg record) for this room
-      queryClient.setQueryData<ChatMessage[]>(
-        ["chatMessages", { roomId: data.roomId }],
-        (oldMessages) => {
-          if (!oldMessages) return; // probably havn't open the chat window, not fetch yet
-          // Avoid duplicates by checking if message already exists
-          const exists = oldMessages.some(
-            (msg) =>
-              msg.timestamp === data.timestamp &&
-              msg.senderId === data.senderId &&
-              msg.message === data.message
-          );
-          // console.log(data);
-          if (exists) return oldMessages;
-          return [...oldMessages, data];
-        }
-      );
+      // queryClient.setQueryData<ChatMessage[]>(
+      //   ["chatMessages", { roomId: data.roomId }],
+      //   (oldMessages) => {
+      //     if (!oldMessages) return; // probably havn't open the chat window, not fetch yet
+      //     // Avoid duplicates by checking if message already exists
+      //     const exists = oldMessages.some(
+      //       (msg) =>
+      //         msg.timestamp === data.timestamp &&
+      //         msg.senderId === data.senderId &&
+      //         msg.message === data.message
+      //     );
+      //     // console.log(data);
+      //     if (exists) return oldMessages;
+      //     return [...oldMessages, data];
+      //   }
+      // );
 
-      // Update lastMessageTime and lastMessageSenderId in chatRooms cache (for red dot indicator)
-      queryClient.setQueryData<ChatRoom[]>(chatRoomsQueryKey, (oldRooms) =>
-        oldRooms?.map((room) =>
-          room._id === data.roomId
-            ? {
-                ...room,
-                lastMessageTime: data.timestamp,
-                lastMessageSenderId: data.senderId,
-              }
-            : room
-        )
-      );
+      // // Update lastMessageTime and lastMessageSenderId in chatRooms cache (for red dot indicator)
+      // queryClient.setQueryData<ChatRoom[]>(chatRoomsQueryKey, (oldRooms) =>
+      //   oldRooms?.map((room) =>
+      //     room._id === data.roomId
+      //       ? {
+      //           ...room,
+      //           lastMessageTime: data.timestamp,
+      //           lastMessageSenderId: data.senderId,
+      //         }
+      //       : room
+      //   )
+      // );
 
       // Trigger re-render for red dot update
       queryClient.invalidateQueries({ queryKey: chatRoomsQueryKey });
+      queryClient.invalidateQueries({
+        queryKey: ["chatMessages", { roomId: data.roomId }],
+      });
     };
 
     // Invalidate cache on reconnect to fetch any missed messages
