@@ -50,7 +50,16 @@ function HorizontalContainer({
 
       return 0;
     })
-    .slice(0, 15); // Limit to 15 items
+    .slice(0, 15) // Limit to 15 items
+    .filter((good) => {
+      const preorderEnded = good
+        ? new Date() > new Date(good.preorderCloseDate)
+        : false;
+      const available =
+        !preorderEnded && good?.quota && good.quota > 0 && good?.available;
+
+      return available;
+    });
 
   const searchURL = new URLSearchParams();
   searchURL.append(
