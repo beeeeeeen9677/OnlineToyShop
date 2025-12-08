@@ -373,6 +373,11 @@ function Search() {
                   <SearchItem key={good._id} itemDetails={good} />
                 ))}
             </div>
+            {searchResult?.total === 0 && (
+              <div className="text-center text-3xl font-oswald mt-40">
+                {t("noResultsFound")}
+              </div>
+            )}
 
             {/* Pagination */}
             {searchResult && searchResult.totalPages > 1 && (
@@ -436,12 +441,6 @@ function Search() {
             )}
           </div>
         </div>
-
-        {searchResult?.total === 0 && (
-          <div className="text-center text-3xl font-oswald mt-20">
-            {t("noResultsFound")}
-          </div>
-        )}
       </div>
     </div>
   );

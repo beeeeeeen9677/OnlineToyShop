@@ -22,7 +22,13 @@ function ShoppingCart() {
   const { t } = useTranslation("shoppingCart");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { items, itemsWithDetails, cartTotalAmount, cartQueryKey } = useCart();
+  const {
+    items,
+    itemsWithDetails,
+    cartTotalAmount,
+    cartQueryKey,
+    isItemInvalid,
+  } = useCart();
   const isLoggedIn = useLoginContext();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
@@ -142,7 +148,9 @@ function ShoppingCart() {
                 <button
                   className="my-6 tw-round-primary-btn"
                   onClick={checkout}
-                  disabled={isCheckingOut || items.length === 0}
+                  disabled={
+                    isCheckingOut || items.length === 0 || isItemInvalid
+                  }
                 >
                   {isCheckingOut
                     ? t("buttons.processing")

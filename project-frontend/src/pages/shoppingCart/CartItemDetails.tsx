@@ -36,6 +36,12 @@ function CartItemDetails({ item }: CartItemProps) {
     );
   }
 
+  const preorderEnded = item
+    ? new Date() > new Date(item.preorderCloseDate)
+    : false;
+  const available =
+    !preorderEnded && item?.quota && item.quota > 0 && item?.available;
+
   return (
     <div className="h-fit relative">
       <h1
@@ -50,7 +56,7 @@ function CartItemDetails({ item }: CartItemProps) {
         {/* LHS */}
 
         <div
-          className="group w-3/10 aspect-square overflow-hidden rounded-md cursor-pointer"
+          className="group w-3/10 aspect-square overflow-hidden rounded-md cursor-pointer "
           onClick={() => {
             navigate(`/item/${item._id}`);
           }}
@@ -63,7 +69,12 @@ function CartItemDetails({ item }: CartItemProps) {
         </div>
 
         {/* RHS */}
-        <div className="flex-1 flex flex-col ">
+        <div className="flex-1 flex flex-col relative">
+          {!available && (
+            <div className="absolute top-0 right-4 flex items-center justify-center text-white bg-gray-400 w-fit p-0.5 text-sm  md:text-xs lg:text-base">
+              {t("status.preorderClosed", { ns: "goods" })}
+            </div>
+          )}
           <div className="font-oswald mb-4">HK$ {item.price}</div>
           <div className="text-xs mb-4 md:mb-0 lg:mb-4">
             {t("labels.shippingDate")}: {toHKDateString(item.shippingDate)}
