@@ -92,12 +92,14 @@ export const setLastReadAt = async (req, res) => {
     const { roomId } = req.params;
     const userId = req.session.user._id;
 
+    const now = new Date();
     await ChatRoom.updateOne(
       { _id: roomId },
-      { $set: { [`lastReadTime.${userId}`]: new Date() } }
+      { $set: { [`lastReadTime.${userId}`]: now } }
     ).exec();
 
-    res.json({ success: true });
+    // Return the timestamp in ISO format for frontend to use
+    res.json({ success: true, lastReadTime: now.toISOString() });
   } catch (err) {
     console.error("Error marking room as read:", err);
     res.status(500).json({ error: err.message });

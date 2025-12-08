@@ -46,17 +46,17 @@ function CsChatWindow() {
 
     const setLastReadTime = async () => {
       try {
-        await api.put(`/chat/lastReadAt/${roomId}`);
-        // Use HK timezone to match backend format
-        const hkTime = dayjs()
-          .tz("Asia/Hong_Kong")
-          .format("YYYY-MM-DDTHH:mm:ss");
-        // set cache directly to avoid extra refetch
+        const res = await api.put(`/chat/lastReadAt/${roomId}`);
+        const lastReadTime = res.data.lastReadTime;
+        // Use ISO string format to match backend response
+        // const now = new Date().toISOString();
         queryClient.setQueryData<ChatRoom[]>(
           ["chatRooms", { userId: user?._id }],
           (oldRooms) =>
             oldRooms?.map((room) =>
-              room._id === roomId ? { ...room, lastReadTime: hkTime } : room
+              room._id === roomId
+                ? { ...room, lastReadTime: lastReadTime }
+                : room
             )
         );
       } catch (error) {

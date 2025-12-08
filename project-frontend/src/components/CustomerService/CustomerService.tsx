@@ -45,7 +45,7 @@ function CustomerService() {
         }
       );
 
-      // Update lastMessageTime and lastMessageSenderId in chatRooms cache (for red dot indicator)
+      // Update lastMessageTime and lastMessageSenderId in chatRooms cache
       queryClient.setQueryData<ChatRoom[]>(chatRoomsQueryKey, (oldRooms) =>
         oldRooms?.map((room) =>
           room._id === data.roomId
@@ -58,11 +58,10 @@ function CustomerService() {
         )
       );
 
-      // Trigger re-render for red dot update
-      queryClient.invalidateQueries({ queryKey: chatRoomsQueryKey });
-      queryClient.invalidateQueries({
-        queryKey: ["chatMessages", { roomId: data.roomId }],
-      });
+      // queryClient.invalidateQueries({ queryKey: chatRoomsQueryKey });
+      // queryClient.invalidateQueries({
+      //   queryKey: ["chatMessages", { roomId: data.roomId }],
+      // });
     };
 
     // Invalidate cache on reconnect to fetch any missed messages
