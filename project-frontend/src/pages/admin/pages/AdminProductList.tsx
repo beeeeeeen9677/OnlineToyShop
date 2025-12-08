@@ -1,11 +1,11 @@
-import Header from "../../../components/Header";
-//import { useEffect, useEffectEvent, useState } from "react";
-import type { Good } from "../../../interface/good";
+import { useState, useTransition } from "react";
+import { useQuery } from "@tanstack/react-query";
 import api from "../../../services/api";
 import type { AxiosError } from "axios";
+import type { Good } from "../../../interface/good";
+import Header from "../../../components/Header";
 import { Link } from "react-router";
 import { useUserContext } from "../../../context/app";
-import { useQuery } from "@tanstack/react-query";
 import LoadingPanel from "../../../components/LoadingPanel";
 import CustomerService from "../../../components/CustomerService/CustomerService";
 
@@ -61,6 +61,9 @@ function AdminProductList() {
     },
   });
 
+  const [isPending, startTransition] = useTransition();
+  const [searchFilter, setSearchFilter] = useState("");
+
   if (user === undefined || user.role !== "admin") {
     return (
       <>
@@ -80,34 +83,59 @@ function AdminProductList() {
     );
   if (isLoading) return <LoadingPanel />;
 
+  const filteredGoods = goods.filter((good) =>
+    good.name.toLowerCase().includes(searchFilter.toLowerCase())
+  );
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchFilter(event.target.value);
+  };
+
   return (
     <div className="animate-fade-in min-h-screen">
       <title>ADMIN PRODUCTS | PREMIUM BEN TOYS</title>
       <Header />
       <CustomerService />
-      <Link to="/admin/">
-        <div className="mx-6 mt-3 underline text-2xl"> &lt;Back</div>
-      </Link>
+      <div className="flex items-center justify-between px-6 pt-3">
+        <Link to="/admin/">
+          <div className=" underline text-2xl  ">&lt;Back</div>
+        </Link>
+        <div className="w-2/3 max-w-4xl flex flex-col">
+          <input
+            type="text"
+            value={searchFilter}
+            onChange={handleSearchChange}
+            placeholder={"Name"}
+            className="w-full px-2 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+          />
+          <p className="text-right text-xs mt-2">
+            {filteredGoods.length} of {goods.length}
+          </p>
+        </div>
+      </div>
+
       {/* Container for goods list */}
       <div className="flex gap-5 p-5 flex-wrap">
-        {goods.map((good) => (
-          // Content
-          <Link
-            key={good._id}
-            to={`/admin/edit-product/${good._id}`}
-            className="min-w-60 max-w-75 h-90 flex-1 bg-gray-100 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer overflow-hidden"
-          >
-            <img
-              src={good.imageUrl}
-              alt={good.name}
-              className="w-full h-3/5 object-cover object-top bg-white"
-            />
-            <div className="p-1 flex flex-col justify-between flex-1">
-              <div> {good.name}</div>
-              <div> ID: {good._id} </div>
-            </div>
-          </Link>
-        ))}
+        {isPending
+          ? "Filtering..."
+          : filteredGoods.map((good) => (
+              // Content
+              <Link
+                key={good._id}
+                to={`/admin/edit-product/${good._id}`}
+                className="min-w-60 max-w-75 h-90 flex-1 bg-gray-100 dark:bg-gray-500 flex flex-col rounded-lg shadow-md shadow-yellow-500/50 cursor-pointer overflow-hidden"
+              >
+                <img
+                  src={good.imageUrl}
+                  alt={good.name}
+                  className="w-full h-3/5 object-cover object-top bg-white"
+                />
+                <div className="p-1 flex flex-col justify-between flex-1">
+                  <div> {good.name}</div>
+                  <div> ID: {good._id} </div>
+                </div>
+              </Link>
+            ))}
       </div>
     </div>
   );
