@@ -265,7 +265,7 @@ export default function PaymentModal({
     try {
       // Cancel the pending order when user closes without paying
       await api.delete(`/orders/${orderId}`);
-      console.log("Order cancelled:", orderId);
+      console.log("Order cancelled");
     } catch (error) {
       console.error("Failed to cancel order:", error);
       // Still close modal even if cancellation fails

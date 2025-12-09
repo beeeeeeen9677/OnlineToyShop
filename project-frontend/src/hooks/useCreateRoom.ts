@@ -11,11 +11,11 @@ export const useCreateRoom = (userId: string) => {
       });
       return res.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["chatRooms", { userId }],
       });
-      console.log("Chat room created:", data._id);
+      //console.log("Chat room created:", data._id);
       // Room joining is now handled automatically on backend
     },
   });

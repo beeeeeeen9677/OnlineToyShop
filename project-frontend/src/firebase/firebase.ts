@@ -94,7 +94,7 @@ const createNewUserInDB = async (userData: {
 }) => {
   try {
     const response = await api.post("/auth/register", userData);
-    console.log("User created in DB:", response.data);
+    console.log("User created in DB:", response.data.message);
   } catch (err) {
     console.error(err);
   }
@@ -285,6 +285,8 @@ const logInWithGooglePopup = async (
   try {
     await setPersistence(auth, browserLocalPersistence);
     const result = await signInWithPopup(auth, googleProvider);
+    //const credential = GoogleAuthProvider.credentialFromResult(result);
+    // The signed-in user info.
 
     // Extract user data from OAuth result
     const user = result.user;
@@ -292,6 +294,9 @@ const logInWithGooglePopup = async (
     const nameParts = displayName.trim().split(" ");
     const firstName = nameParts[0] || "User";
     const lastName = nameParts.slice(1).join(" ") || "Name";
+
+    // console.log(credential);
+    // console.log(user);
 
     // Try to create user in MongoDB with OAuth data
     try {
@@ -304,7 +309,7 @@ const logInWithGooglePopup = async (
         dateOfBirth: null,
         profileComplete: false, // OAuth users need to complete profile
       });
-      console.log("OAuth user registered in MongoDB");
+      //console.log("OAuth user registered in MongoDB");
     } catch (err) {
       // If user already exists (409), that's fine - continue login
       if (err instanceof AxiosError && err.response?.status !== 409) {
@@ -351,7 +356,7 @@ const logInWithFacebookPopup = async (
         dateOfBirth: null,
         profileComplete: false, // OAuth users need to complete profile
       });
-      console.log("OAuth user registered in MongoDB");
+      //console.log("OAuth user registered in MongoDB");
     } catch (err) {
       // If user already exists (409), that's fine - continue login
       if (err instanceof AxiosError && err.response?.status !== 409) {
