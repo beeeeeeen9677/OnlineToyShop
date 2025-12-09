@@ -68,9 +68,33 @@ const PORT = process.env.PORT;
 // Trust proxy - Get real client IP from reverse proxy headers
 app.set("trust proxy", 1);
 
-// CORS Configuration
+// CORS Configuration - Allow production + all Vercel preview deployments
+const allowedOriginChecker = (origin, callback) => {
+  // Allow requests with no origin (mobile apps, Postman, etc.)
+  if (!origin) return callback(null, true);
+
+  // Allow main production URL
+  if (origin === process.env.FRONTEND_URL) {
+    return callback(null, true);
+  }
+
+  // Allow all Vercel preview/deployment URLs
+  const vercelPattern = /^https:\/\/online-toy-shop-[a-z0-9-]*\.vercel\.app$/;
+  if (vercelPattern.test(origin)) {
+    return callback(null, true);
+  }
+
+  // Allow localhost for development
+  if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+    return callback(null, true);
+  }
+
+  console.warn("CORS blocked origin:", origin);
+  callback(new Error("Not allowed by CORS"));
+};
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: allowedOriginChecker,
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -137,8 +161,9 @@ const server = http.createServer(app);
 // Attach Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: allowedOriginChecker,
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
