@@ -12,7 +12,7 @@ function ForgetPw() {
   const [email, setEmail] = useState("");
   const [emailErrors, setEmailErrors] = useState("");
   const [isSentEmailPending, setIsSentEmailPending] = useState(false);
-  function validateEmail(email: string) {
+  function validateEmail(email: string): string {
     let errors: string = "";
 
     if (!email) {
@@ -21,6 +21,7 @@ function ForgetPw() {
       errors = emailErr.pattern;
     }
     setEmailErrors(errors);
+    return errors;
   }
   const emailErr = {
     required: t("validation.email.required"),
@@ -81,9 +82,7 @@ function ForgetPw() {
   }, [lastEmailSentAt, resendInterval]);
 
   const sendResetPWEmail = async (email: string) => {
-    validateEmail(email);
-    if (emailErrors !== "") return;
-
+    if (validateEmail(email) !== "") return;
     setIsSentEmailPending(true);
     try {
       await sendResetEmail(email);
