@@ -24,6 +24,8 @@ const userSchema = new Schema({
   role: { type: String, enum: ["customer", "admin"], default: "customer" },
   cart: { type: [cartItemSchema], default: [] },
   profileComplete: { type: Boolean, default: false },
+  lastVerificationEmailSentAt: { type: Date, default: null },
+  lastResetEmailSentAt: { type: Date, default: null },
 });
 
 const User = mongoose.model("User", userSchema);

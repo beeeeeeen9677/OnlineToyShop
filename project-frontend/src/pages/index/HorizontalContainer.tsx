@@ -61,11 +61,8 @@ function HorizontalContainer({
       return available;
     });
 
-  const searchURL = new URLSearchParams();
-  searchURL.append(
-    "sort",
-    (sortingKey as string) === "createdAt" ? "newest" : "preorderCloseDate_asc"
-  );
+  const queryKey =
+    (sortingKey as string) === "createdAt" ? "newest" : "preorderCloseDate_asc";
 
   //console.log(searchURL);
 
@@ -75,7 +72,10 @@ function HorizontalContainer({
         className={`font-oswald text-center m-6 font-semibold text-3xl md:text-5xl ${titleColor}`}
       >
         <div> {title}</div>
-        <Link to={`/search?${searchURL}`} className="underline text-xl">
+        <Link
+          to={`/search?sort=${encodeURIComponent(queryKey)}`}
+          className="underline text-xl"
+        >
           {subtitle}
         </Link>
       </div>

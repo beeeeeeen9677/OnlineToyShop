@@ -30,7 +30,7 @@ function UserForm({ user, adminView = false }: UserFormProps) {
     isError,
     error,
   } = useQuery<Date | null, AxiosError>({
-    queryKey: ["lastEmailSentAt"],
+    queryKey: ["lastEmailSentAt", { userId: user._id }],
     queryFn: async () => {
       if (adminView) return null; // skip for admin view
 
@@ -42,15 +42,14 @@ function UserForm({ user, adminView = false }: UserFormProps) {
   });
 
   const { mutateAsync: setLastEmailSentAt } = useMutation({
-    mutationFn: async (timeStamp: Date) => {
-      const res = await api.post("/user/last-verification-email", {
-        // do not rename to timestamp (case sensitive) as backend use timeStamp
-        timeStamp: timeStamp.toISOString(),
-      });
-      return res.data; // maybe convert to Date again if needed
+    mutationFn: async () => {
+      const res = await api.post("/user/last-verification-email");
+      return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lastEmailSentAt"] });
+      queryClient.invalidateQueries({
+        queryKey: ["lastEmailSentAt", { userId: user._id }],
+      });
     },
   });
 
@@ -161,7 +160,7 @@ function UserForm({ user, adminView = false }: UserFormProps) {
                           try {
                             setIsSubmitting(true);
                             await verifyUserEmail();
-                            await setLastEmailSentAt(new Date());
+                            await setLastEmailSentAt();
                             setIsSubmitting(false);
                             setTimeLeft(resendInterval);
                           } catch (error) {

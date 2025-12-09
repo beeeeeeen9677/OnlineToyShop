@@ -1,17 +1,29 @@
 import { Link } from "react-router";
 import { useTranslation } from "../../i18n/hooks";
 import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
-import api from "../../services/api";
 import { sendResetEmail } from "../../firebase/firebase";
 import LoadingPanel from "../../components/LoadingPanel";
+
+const getResetEmailTimestamp = (): string | null => {
+  return localStorage.getItem("resetEmailTimestamps") ?? null;
+};
+
+const setResetEmailTimestamp = () => {
+  localStorage.setItem("resetEmailTimestamps", new Date().toISOString());
+};
 
 function ForgetPw() {
   const { t } = useTranslation("auth");
   const [email, setEmail] = useState("");
   const [emailErrors, setEmailErrors] = useState("");
   const [isSentEmailPending, setIsSentEmailPending] = useState(false);
+
+  const resendInterval = 60; // in seconds, 1 minute
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [lastSentTimestamp, setLastSentTimestamp] = useState<string | null>(
+    () => getResetEmailTimestamp()
+  );
+
   function validateEmail(email: string): string {
     let errors: string = "";
 
@@ -28,47 +40,16 @@ function ForgetPw() {
     pattern: t("validation.email.pattern"),
   };
 
-  const resendInterval = 60; // in second, 1 minute
-  const queryClient = useQueryClient();
-  const {
-    data: lastEmailSentAt,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Date | null, AxiosError>({
-    queryKey: ["lastResetEmailSentAt"],
-    queryFn: async () => {
-      const res = await api.get("/auth/last-reset-email");
-      const raw = res.data;
-      if (!raw) return null;
-      return new Date(raw);
-    },
-  });
-
-  const { mutateAsync: setLastResetEmailSentAt } = useMutation({
-    mutationFn: async (timeStamp: Date) => {
-      const res = await api.post("/auth/last-reset-email", {
-        // do not rename to timestamp (case sensitive) as backend use timeStamp
-        timeStamp: timeStamp.toISOString(),
-      });
-      return res.data; // maybe convert to Date again if needed
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lastResetEmailSentAt"] });
-      alert(t("messages.resetEmailSent"));
-    },
-  });
-
-  const [timeLeft, setTimeLeft] = useState<number>(0);
-
+  // Load timestamp and update countdown
   useEffect(() => {
-    if (!lastEmailSentAt) {
+    if (!lastSentTimestamp) {
       setTimeLeft(0);
       return;
     }
 
     const updateCountdown = () => {
-      const elapsedSeconds = (Date.now() - lastEmailSentAt.getTime()) / 1000;
+      const elapsedSeconds =
+        (Date.now() - new Date(lastSentTimestamp).getTime()) / 1000;
       const remaining = Math.max(0, Math.ceil(resendInterval - elapsedSeconds));
       setTimeLeft(remaining);
     };
@@ -79,32 +60,29 @@ function ForgetPw() {
     return () => {
       window.clearInterval(timerId);
     };
-  }, [lastEmailSentAt, resendInterval]);
+  }, [lastSentTimestamp, resendInterval]);
 
   const sendResetPWEmail = async (email: string) => {
     if (validateEmail(email) !== "") return;
     setIsSentEmailPending(true);
     try {
+      // Send Firebase reset email
       await sendResetEmail(email);
-      await setLastResetEmailSentAt(new Date());
+
+      // Store timestamp in localStorage
+      setResetEmailTimestamp();
+
+      // Update state to trigger countdown
+      const newTimestamp = new Date().toISOString();
+      setLastSentTimestamp(newTimestamp);
+
+      alert(t("messages.resetEmailSent"));
     } catch (error) {
       console.error("Error sending reset email:", error);
     } finally {
       setIsSentEmailPending(false);
     }
   };
-
-  if (isLoading) {
-    return <LoadingPanel />;
-  }
-
-  if (isError) {
-    return (
-      <div>
-        Error: {(error as AxiosError<{ error: string }>).response?.data?.error}
-      </div>
-    );
-  }
 
   return (
     <div className="animate-fade-in flex flex-col items-center justify-start min-h-screen bg-gray-50 dark:bg-gray-500">

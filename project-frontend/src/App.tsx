@@ -47,8 +47,13 @@ function App() {
   const currentPath = useLocation().pathname;
 
   const checkPathEvent = useEffectEvent(() => {
-    const availablePaths = ["/", "/auth"];
-    if (!availablePaths.includes(currentPath)) navigate("/");
+    const availablePaths = ["/", /^\/auth(\/.*)?$/];
+    if (
+      !availablePaths.some((path) =>
+        typeof path === "string" ? path === currentPath : path.test(currentPath)
+      )
+    )
+      navigate("/");
   });
 
   // Monitor authentication state on app load
