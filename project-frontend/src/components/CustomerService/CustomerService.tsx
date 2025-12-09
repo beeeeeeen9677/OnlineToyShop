@@ -58,6 +58,8 @@ function CustomerService() {
         )
       );
 
+      console.log("Received message:", data);
+
       // queryClient.invalidateQueries({ queryKey: chatRoomsQueryKey });
       // queryClient.invalidateQueries({
       //   queryKey: ["chatMessages", { roomId: data.roomId }],

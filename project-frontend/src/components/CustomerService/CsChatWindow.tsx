@@ -42,6 +42,7 @@ function CsChatWindow() {
 
   const { mutateAsync: setLastReadTime } = useMutation({
     mutationFn: async () => {
+      //console.log("Setting last read time for room:", roomId);
       const res = await api.put(`/chat/lastReadAt/${roomId}`);
       return res.data;
     },

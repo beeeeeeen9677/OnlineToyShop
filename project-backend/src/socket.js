@@ -13,7 +13,7 @@ const initSocket = async (io) => {
         { upsert: true }
       ).exec();
 
-      //console.log(`User ${userId} connected, socket-id: ${socket.id}`);
+      console.log(`User ${userId} connected, socket-id: ${socket.id}`);
 
       // Join user-specific room for payment notifications
       socket.join(userId);
@@ -25,7 +25,7 @@ const initSocket = async (io) => {
         .exec();
       userRooms.forEach((room) => {
         socket.join(room._id.toString());
-        //console.log(`User ${userId} auto-joined room ${room._id}`);
+        console.log(`User ${userId} auto-joined room ${room._id}`);
       });
     } catch (err) {
       console.error("Error creating online user:", err);
@@ -33,7 +33,7 @@ const initSocket = async (io) => {
 
     // Send message to a room
     socket.on("sendMessage", async ({ roomId, message }) => {
-      // console.log("Send message :", userId, message);
+      console.log("Send message :", userId, message);
 
       try {
         const msg = await Message.create({
@@ -48,7 +48,7 @@ const initSocket = async (io) => {
           message,
           timestamp: msg.timestamp, // UTC Date from MongoDB
         });
-        // console.log(`Message sent to room ${roomId}`);
+        console.log(`Message sent to room ${roomId}`);
       } catch (error) {
         console.error("Error saving or sending message:", error);
       }
