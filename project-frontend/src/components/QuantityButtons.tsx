@@ -1,5 +1,3 @@
-import { useTranslation } from "../i18n/hooks";
-
 type QuantityButtonsProps = {
   quantity: number;
   setQuantity: (quantity: number) => void;
