@@ -11,6 +11,7 @@ function ForgetPw() {
   const { t } = useTranslation("auth");
   const [email, setEmail] = useState("");
   const [emailErrors, setEmailErrors] = useState("");
+  const [isSentEmailPending, setIsSentEmailPending] = useState(false);
   function validateEmail(email: string) {
     let errors: string = "";
 
@@ -83,11 +84,14 @@ function ForgetPw() {
     validateEmail(email);
     if (emailErrors !== "") return;
 
+    setIsSentEmailPending(true);
     try {
       await sendResetEmail(email);
       await setLastResetEmailSentAt(new Date());
     } catch (error) {
       console.error("Error sending reset email:", error);
+    } finally {
+      setIsSentEmailPending(false);
     }
   };
 
@@ -106,6 +110,7 @@ function ForgetPw() {
   return (
     <div className="animate-fade-in flex flex-col items-center justify-start min-h-screen bg-gray-50 dark:bg-gray-500">
       <title>FORGET PASSWORD | PREMIUM BEN TOYS</title>
+      {isSentEmailPending && <LoadingPanel />}
       <Link to="/" className=" my-8">
         <img src={"/logo.png"} alt="Logo" className="h-20" />
       </Link>
@@ -158,7 +163,7 @@ function ForgetPw() {
                 sendResetPWEmail(email);
               }
             }}
-            disabled={timeLeft > 0}
+            disabled={timeLeft > 0 || isSentEmailPending}
           >
             {timeLeft > 0 ? timeLeft : t("buttons.sendResetLink")}
           </button>
