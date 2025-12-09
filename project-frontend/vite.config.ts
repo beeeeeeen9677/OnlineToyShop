@@ -15,7 +15,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: process.env.VITE_API_BASE_URL || "http://localhost:5000",
+        target: process.env.VITE_DEV_BACKEND_URL || "http://localhost:5000",
       },
       "/images": {
         target: `http://localhost:${process.env.VITE_BACKEND_PORT || "5000"}`,

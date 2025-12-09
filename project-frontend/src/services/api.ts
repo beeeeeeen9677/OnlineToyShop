@@ -4,7 +4,7 @@ import { auth } from "../firebase/firebase";
 
 // Create Axios instance
 const api: AxiosInstance = axios.create({
-  baseURL: "/api", // your API base URL
+  baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
 });
 
 // Add request interceptor
