@@ -99,6 +99,15 @@ app.use(
   })
 );
 
+// Health check endpoint (for keep-alive services)
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
 // Public Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/goods", goodRoutes);
