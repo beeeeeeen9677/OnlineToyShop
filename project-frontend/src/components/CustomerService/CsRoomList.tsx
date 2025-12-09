@@ -38,9 +38,15 @@ function CsRoomList({ rooms = [] }: CsRoomListProps) {
     */
   };
 
+  const sortedRoom = rooms.sort((a, b) => {
+    const timeA = a.lastMessageTime ? new Date(a.lastMessageTime).getTime() : 0;
+    const timeB = b.lastMessageTime ? new Date(b.lastMessageTime).getTime() : 0;
+    return timeB - timeA;
+  });
+
   return (
     <div className="w-1/4">
-      {rooms.map((room) => (
+      {sortedRoom.map((room) => (
         <div
           onClick={() => {
             //console.log(room);
