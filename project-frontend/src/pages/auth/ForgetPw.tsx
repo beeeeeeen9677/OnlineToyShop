@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { useTranslation } from "../../i18n/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { sendResetEmail } from "../../firebase/firebase";
 import LoadingPanel from "../../components/LoadingPanel";
 
@@ -14,7 +14,12 @@ const setResetEmailTimestamp = () => {
 
 function ForgetPw() {
   const { t } = useTranslation("auth");
-  const [email, setEmail] = useState("");
+  const emailElem = useRef<HTMLInputElement>(null);
+  const setEmail = (value: string) => {
+    if (emailElem.current) {
+      emailElem.current.value = value;
+    }
+  };
   const [emailErrors, setEmailErrors] = useState("");
   const [isSentEmailPending, setIsSentEmailPending] = useState(false);
 
@@ -62,12 +67,14 @@ function ForgetPw() {
     };
   }, [lastSentTimestamp, resendInterval]);
 
-  const sendResetPWEmail = async (email: string) => {
-    if (validateEmail(email) !== "") return;
+  const sendResetPWEmail = async () => {
+    if (!emailElem.current) return;
+
+    if (validateEmail(emailElem.current.value) !== "") return;
     setIsSentEmailPending(true);
     try {
       // Send Firebase reset email
-      await sendResetEmail(email);
+      await sendResetEmail(emailElem.current.value);
 
       // Store timestamp in localStorage
       setResetEmailTimestamp();
@@ -128,16 +135,16 @@ function ForgetPw() {
             placeholder={t("placeholders.enterEmail")}
             onBlur={(e) => validateEmail(e.target.value)}
             onChange={(e) => setEmail(e.target.value)}
-            value={email}
+            ref={emailElem}
           />
           <button
             className={
               "w-full bg-primary cursor-pointer text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:bg-gray-500 disabled:cursor-default"
             }
-            onClick={() => sendResetPWEmail(email)}
+            onClick={() => sendResetPWEmail()}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                sendResetPWEmail(email);
+                sendResetPWEmail();
               }
             }}
             disabled={timeLeft > 0 || isSentEmailPending}
