@@ -58,7 +58,7 @@ function CustomerService() {
         )
       );
 
-      console.log("Received message:", data);
+      //console.log("Received message:", data);
 
       // queryClient.invalidateQueries({ queryKey: chatRoomsQueryKey });
       // queryClient.invalidateQueries({
