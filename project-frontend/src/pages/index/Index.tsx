@@ -55,6 +55,10 @@ function Index() {
     },
   });
 
+  if (!allGoods && isLoading) {
+    return <LoadingPanel />;
+  }
+
   if (isError) {
     return (
       <div>
