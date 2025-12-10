@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import Good from "./models/Good.js";
 
-//const uri = "mongodb+srv://benlausigoto_db_user:MFpAbutCeZ4xq0EF@cluster0.tqgcrbx.mongodb.net/?appName=Cluster0";
 const clientOptions = {
   serverApi: {
     version: "1",
