@@ -203,7 +203,7 @@ function ViewUser() {
                               <span className="font-medium">
                                 {t("labels.gender")}:
                               </span>{" "}
-                              {t(`gender.${user.gender}`, { ns: "common" })}
+                              {t(`genderOptions.${user.gender}`)}
                             </div>
                             <div className="text-sm">
                               <span className="font-medium">
