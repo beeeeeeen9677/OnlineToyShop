@@ -40,7 +40,6 @@ function BannerSlides() {
         }}
         loop={enableLoop}
         slidesPerView={"auto"}
-        slidesPerGroup={1}
         spaceBetween={20}
         centeredSlides={true}
       >
