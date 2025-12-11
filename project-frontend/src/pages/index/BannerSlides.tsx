@@ -21,9 +21,7 @@ function BannerSlides() {
       .slice(0, 9); // first 9 items
   }, [allGoods]);
 
-  const duplicatedGoods = [...sortedGoods, ...sortedGoods]; // for Swiper warning
-
-  const enableLoop = duplicatedGoods.length > 3;
+  const enableLoop = sortedGoods.length > 3;
 
   const bannerWidth = "clamp(27.5rem, calc(100% - 14rem), 80rem)";
 
@@ -45,7 +43,7 @@ function BannerSlides() {
         spaceBetween={20}
         centeredSlides={true}
       >
-        {duplicatedGoods.map((good) => (
+        {sortedGoods.map((good) => (
           <SwiperSlide key={good._id} style={bannerSlideStyle}>
             <BannerItem itemDetails={good} />
           </SwiperSlide>
