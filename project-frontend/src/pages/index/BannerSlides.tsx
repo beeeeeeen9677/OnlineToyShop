@@ -3,19 +3,21 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
-import type { Good } from "../../interface/good";
 import BannerItem from "./BannerItem";
 import "./IndexPage.css";
+import { useAllGoods } from "../../hooks/useAllGoods";
 
-function BannerSlides({ goods }: { goods: Good[] }) {
+function BannerSlides() {
+  const { allGoods = [] } = useAllGoods();
+
   const sortedGoods = useMemo(() => {
-    return [...goods].sort((a, b) => {
+    return [...allGoods].sort((a, b) => {
       const aValue: number = a["broughtCount"];
       const bValue: number = b["broughtCount"];
 
       return bValue - aValue; // Highest first
     });
-  }, [goods]);
+  }, [allGoods]);
 
   const slicedGoods = sortedGoods.slice(0, 9); // first 9 items
 
