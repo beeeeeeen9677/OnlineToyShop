@@ -11,17 +11,19 @@ function BannerSlides() {
   const { allGoods = [] } = useAllGoods();
 
   const sortedGoods = useMemo(() => {
-    return [...allGoods].sort((a, b) => {
-      const aValue: number = a["broughtCount"];
-      const bValue: number = b["broughtCount"];
+    return [...allGoods]
+      .sort((a, b) => {
+        const aValue: number = a["broughtCount"];
+        const bValue: number = b["broughtCount"];
 
-      return bValue - aValue; // Highest first
-    });
+        return bValue - aValue; // Highest first
+      })
+      .slice(0, 9); // first 9 items
   }, [allGoods]);
 
-  const slicedGoods = sortedGoods.slice(0, 9); // first 9 items
+  const duplicatedGoods = [...sortedGoods, ...sortedGoods]; // for Swiper warning
 
-  const enableLoop = slicedGoods.length > 3;
+  const enableLoop = duplicatedGoods.length > 3;
 
   const bannerWidth = "clamp(27.5rem, calc(100% - 14rem), 80rem)";
 
@@ -43,7 +45,7 @@ function BannerSlides() {
         spaceBetween={20}
         centeredSlides={true}
       >
-        {slicedGoods.map((good) => (
+        {duplicatedGoods.map((good) => (
           <SwiperSlide key={good._id} style={bannerSlideStyle}>
             <BannerItem itemDetails={good} />
           </SwiperSlide>
