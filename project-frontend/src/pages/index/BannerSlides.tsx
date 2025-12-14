@@ -32,24 +32,24 @@ function BannerSlides() {
 
   return (
     <>
-      <Swiper
-        modules={[Pagination]}
-        pagination={{
-          el: ".custom-pagination",
-          clickable: true,
-        }}
-        loop={enableLoop}
-        slidesPerView={"auto"}
-        spaceBetween={20}
-        centeredSlides={true}
-      >
-        {sortedGoods.map((good) => (
-          <SwiperSlide key={good._id} style={bannerSlideStyle}>
-            <BannerItem itemDetails={good} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      <div className="custom-pagination" style={{ width: bannerWidth }}></div>
+      {sortedGoods.length > 0 && (
+        <Swiper
+          key={sortedGoods.length} // forces re-init when count changes
+          modules={[Pagination]}
+          pagination={{ el: ".custom-pagination", clickable: true }}
+          loop={enableLoop}
+          slidesPerView="auto"
+          spaceBetween={20}
+          centeredSlides
+        >
+          {sortedGoods.map((good) => (
+            <SwiperSlide key={good._id} style={bannerSlideStyle}>
+              <BannerItem itemDetails={good} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      )}
+      <div className="custom-pagination" style={{ width: bannerWidth }} />
     </>
   );
 }
