@@ -5,6 +5,8 @@
  * This ensures order confirmation even if user closes browser after payment
  */
 import { stripe } from "../../server.js";
+import Order from "../mongodb/models/Order.js";
+import { confirmPaymentInternal } from "../mongodb/collections/orderColl.js";
 
 export const handleStripeWebhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
@@ -32,31 +34,25 @@ export const handleStripeWebhook = async (req, res) => {
 
     //console.log(`Payment succeeded for order: ${orderId}`);
 
+    // Check if already paid (idempotency)
+    const order = await Order.findById(orderId).lean().exec();
+    const io = req.app.get("io");
+
+    if (!order) {
+      console.error(`Order not found: ${orderId}`);
+      return res.json({ received: true, error: "Order not found" });
+    }
+
+    if (order.status === "paid") {
+      console.log(`✓ Order ${orderId} already confirmed, skipping`);
+      return res.json({ received: true, skipped: true });
+    }
+
     try {
-      // Import Order model and confirmation logic
-      const Order = (await import("../mongodb/models/Order.js")).default;
-      const { confirmPaymentInternal } = await import(
-        "../mongodb/collections/orderColl.js"
-      );
-
-      // Check if already paid (idempotency)
-      const order = await Order.findById(orderId).lean().exec();
-
-      if (!order) {
-        console.error(`Order not found: ${orderId}`);
-        return res.json({ received: true, error: "Order not found" });
-      }
-
-      if (order.status === "paid") {
-        console.log(`✓ Order ${orderId} already confirmed, skipping`);
-        return res.json({ received: true, skipped: true });
-      }
-
       // Confirm order (updates status, deducts stock, clears cart)
       const confirmedOrder = await confirmPaymentInternal(orderId);
 
       // Emit WebSocket event to notify user
-      const io = req.app.get("io");
       if (io) {
         io.to(order.userId.toString()).emit("orderConfirmed", {
           orderId: confirmedOrder._id,
@@ -70,8 +66,42 @@ export const handleStripeWebhook = async (req, res) => {
       res.json({ received: true });
     } catch (err) {
       console.error("Webhook order confirmation error:", err);
-      // Still return 200 to acknowledge receipt (Stripe requirement)
-      res.json({ received: true, error: err.message });
+
+      // Issue refund since order couldn't be fulfilled
+      try {
+        await stripe.refunds.create({
+          payment_intent: paymentIntent.id,
+          reason: "requested_by_customer",
+        });
+        console.log(`Refund issued for order ${orderId}: ${err.message}`);
+
+        // Update order status to refunded
+        await Order.findByIdAndUpdate(orderId, {
+          status: "refunded",
+          refundReason: err.message,
+          refundedAt: new Date(),
+        });
+
+        // Notify user via WebSocket
+        if (io) {
+          io.to(order.userId.toString()).emit("orderFailed", {
+            orderId,
+            reason: err.message,
+            refunded: true,
+          });
+          console.log(`Order failed event sent to user ${order.userId}`);
+        }
+
+        res.json({ received: true, error: err.message, refunded: true });
+      } catch (refundErr) {
+        console.error("Refund failed:", refundErr);
+        // Alert admin for manual intervention (could add email/slack notification here)
+        res.json({
+          received: true,
+          error: err.message,
+          refundError: refundErr.message,
+        });
+      }
     }
   } else {
     // Other event types

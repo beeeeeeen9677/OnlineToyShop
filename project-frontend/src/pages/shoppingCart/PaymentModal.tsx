@@ -54,6 +54,8 @@ function PaymentForm({
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [paymentRefunded, setPaymentRefunded] = useState(false);
+  const [refundReason, setRefundReason] = useState<string | null>(null);
   const [waitingForWebhook, setWaitingForWebhook] = useState(false);
 
   const { t } = useTranslation("shoppingCart");
@@ -80,11 +82,32 @@ function PaymentForm({
       }
     };
 
-    socket.on("orderConfirmed", handleOrderConfirmed);
+    const handleOrderFailed = (data: {
+      orderId: string;
+      reason: string;
+      refunded: boolean;
+    }) => {
+      if (data.orderId === orderId) {
+        console.log("Order failed via webhook WebSocket event:", data.reason);
+        setWaitingForWebhook(false);
+        setIsProcessing(false);
 
-    // Cleanup listener on unmount
+        if (data.refunded) {
+          setPaymentRefunded(true);
+          setRefundReason(data.reason);
+        } else {
+          setError(data.reason);
+        }
+      }
+    };
+
+    socket.on("orderConfirmed", handleOrderConfirmed);
+    socket.on("orderFailed", handleOrderFailed);
+
+    // Cleanup listeners on unmount
     return () => {
       socket.off("orderConfirmed", handleOrderConfirmed);
+      socket.off("orderFailed", handleOrderFailed);
     };
   }, [orderId, socket, onSuccess, onClose]);
 
@@ -154,6 +177,28 @@ function PaymentForm({
       setIsProcessing(false);
     }
   };
+
+  if (paymentRefunded) {
+    return (
+      <div className="text-center py-8">
+        <div className="text-6xl mb-4">↩️</div>
+        <h3 className="text-2xl font-bold text-orange-600 mb-2">
+          {t("messages.orderRefunded")}
+        </h3>
+        <p className="text-gray-600 mb-4">
+          {refundReason || t("messages.refundReason")}
+        </p>
+        <p className="text-sm text-gray-500">{t("messages.refundNotice")}</p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-6 px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+        >
+          {t("buttons.close")}
+        </button>
+      </div>
+    );
+  }
 
   if (paymentSuccess) {
     return (

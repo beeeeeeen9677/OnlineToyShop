@@ -25,12 +25,14 @@ const orderSchema = new mongoose.Schema({
   orderTotal: { type: Number, required: true }, // totalAmount + shippingFee
   status: {
     type: String,
-    enum: ["pending", "paid", "expired", "cancelled"],
+    enum: ["pending", "paid", "expired", "cancelled", "refunded"],
     default: "pending",
   },
   createdAt: { type: Date, default: Date.now }, // UTC timestamp
   paidAt: { type: Date, default: null }, // null if not paid
   expiresAt: { type: Date, required: true }, // createdAt + 30 min
+  refundReason: { type: String, default: null }, // Reason for refund
+  refundedAt: { type: Date, default: null }, // null if not refunded
 });
 
 // Index for efficient cleanup query

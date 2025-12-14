@@ -30,7 +30,10 @@
     "orderFailed": "訂單建立失敗，請重試",
     "noOrderFound": "未找到記錄",
     "orderConfirmed": "您的訂單已確認。",
-    "processingConfirmation": "正在處理付款確認中..."
+    "processingConfirmation": "正在處理付款確認中...",
+    "orderRefunded": "付款已退回",
+    "refundReason": "您的訂單無法處理。",
+    "refundNotice": "退款將退回您的帳戶。"
   },
   "locations": {
     "hongKong": "香港"
@@ -45,12 +48,14 @@
     "home": "首頁",
     "previousPage": "回到前一頁",
     "cancel": "取消",
-    "payNow": "付款"
+    "payNow": "付款",
+    "close": "關閉"
   },
   "status": {
     "pending": "待處理",
     "paid": "已付款",
     "expired": "已過期",
-    "cancelled": "已取消"
+    "cancelled": "已取消",
+    "refunded": "已退款"
   }
 }

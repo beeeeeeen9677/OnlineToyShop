@@ -30,7 +30,10 @@
     "orderFailed": "Failed to place order. Please try again.",
     "noOrderFound": "NO ORDER FOUND",
     "orderConfirmed": "Your order has been confirmed.",
-    "processingConfirmation": "Processing payment confirmation..."
+    "processingConfirmation": "Processing payment confirmation...",
+    "orderRefunded": "Payment Refunded",
+    "refundReason": "Your order could not be processed.",
+    "refundNotice": "The refund will be credited to your account."
   },
   "locations": {
     "hongKong": "HONG KONG"
@@ -45,12 +48,14 @@
     "home": "HOME",
     "previousPage": "RETURN TO PREVIOUS PAGE",
     "cancel": "CANCEL",
-    "payNow": "PAY NOW"
+    "payNow": "PAY NOW",
+    "close": "CLOSE"
   },
   "status": {
     "pending": "PENDING",
     "paid": "PAID",
     "expired": "EXPIRED",
-    "cancelled": "CANCELLED"
+    "cancelled": "CANCELLED",
+    "refunded": "REFUNDED"
   }
 }
