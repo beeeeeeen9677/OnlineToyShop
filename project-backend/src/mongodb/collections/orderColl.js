@@ -220,7 +220,10 @@ export const cancelOrder = async (req, res) => {
 export const getUserOrders = async (req, res) => {
   try {
     const userId = req.session.user._id;
-    const orders = await Order.find({ userId, status: "paid" })
+    const orders = await Order.find({
+      userId,
+      status: { $in: ["paid", "refunded"] },
+    })
       .sort({ createdAt: -1 })
       .exec();
 
