@@ -20,6 +20,10 @@ function OrderData({ order }: OrderItemProps) {
       statusColor = "text-red-500";
       opacity = "opacity-50";
       break;
+    case "refunded":
+      statusColor = "text-yellow-500";
+      opacity = "opacity-50";
+      break;
   }
 
   return (

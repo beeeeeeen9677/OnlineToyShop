@@ -14,7 +14,7 @@ interface Order {
   totalAmount: number; // Total price of the order
   shippingFee: number; // $40
   orderTotal: number; // totalAmount + shippingFee
-  status: "pending" | "paid" | "expired" | "cancelled"; // Order status
+  status: "pending" | "paid" | "expired" | "cancelled" | "refunded"; // Order status
   createdAt: string; // ISO timestamp
   paidAt: string;
   expiresAt: string;
