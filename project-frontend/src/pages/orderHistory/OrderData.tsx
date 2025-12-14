@@ -18,11 +18,11 @@ function OrderData({ order }: OrderItemProps) {
     case "cancelled":
     case "expired":
       statusColor = "text-red-500";
-      opacity = "opacity-50";
+      opacity = "opacity-60";
       break;
     case "refunded":
       statusColor = "text-yellow-500";
-      opacity = "opacity-50";
+      opacity = "opacity-60";
       break;
   }
 
