@@ -28,6 +28,7 @@ function BannerSlides() {
   const bannerSlideStyle: React.CSSProperties = {
     width: bannerWidth,
     aspectRatio: "2 / 1",
+    maxWidth: "95%",
   };
 
   return (
@@ -49,7 +50,10 @@ function BannerSlides() {
           ))}
         </Swiper>
       )}
-      <div className="custom-pagination" style={{ width: bannerWidth }} />
+      <div
+        className="custom-pagination"
+        style={{ width: bannerWidth, maxWidth: "95%" }}
+      />
     </>
   );
 }
