@@ -170,12 +170,15 @@ function ShoppingCart() {
               </div>
               <div className="mt-10 flex flex-col md:flex-row gap-8 w-full">
                 <button
-                  className="w-full  border-4 rounded-full py-2 hover:bg-white hover:text-primary cursor-pointer font-extrabold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-default disabled:hover:text-white"
+                  className="w-full max-w-[90vw] mx-auto border-4 rounded-full py-2 hover:bg-white hover:text-primary cursor-pointer font-extrabold text-lg transition-colors disabled:bg-gray-400 disabled:cursor-default disabled:hover:text-white"
                   onClick={() => navigate(-1)}
                 >
                   {t("buttons.previousPage")}
                 </button>
-                <Link className="tw-round-primary-btn" to="/">
+                <Link
+                  className="tw-round-primary-btn max-w-[90vw] mx-auto"
+                  to="/"
+                >
                   {t("buttons.home")}
                 </Link>
               </div>
