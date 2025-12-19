@@ -47,23 +47,24 @@ function OrderData({ order }: OrderItemProps) {
       <div className="flex flex-col gap-4 mt-2">
         {order.items.map((orderItem: OrderItem, index: number) => {
           return (
-            <div key={index} className="flex gap-4 items-start">
-              {/* LHS */}
+            <div key={index} className="grid grid-cols-8 gap-4 ">
+              {/* Image */}
               <img
                 src={orderItem.imageUrl}
                 alt={orderItem.name}
-                className="object-cover max-w-1/4 min-w-40 aspect-square rounded-sm"
+                className="object-cover w-max aspect-square rounded-sm col-span-2 md:row-span-2"
               />
-              {/* RHS */}
 
-              <div className="flex-1 flex flex-col gap-1">
-                <Link
-                  to={`/item/${orderItem.goodId}`}
-                  className="text-base underline mb-4 cursor-pointer"
-                >
-                  {orderItem.name}
-                </Link>
+              {/* Title */}
+              <Link
+                to={`/item/${orderItem.goodId}`}
+                className="text-base underline mb-4 cursor-pointer col-start-3 -col-end-1"
+              >
+                {orderItem.name}
+              </Link>
 
+              {/* Details */}
+              <div className="col-span-full md:col-start-3 md:-col-end-1 flex flex-col gap-1 ">
                 <hr className="border-gray-300 dark:border-gray-500 border-t-2" />
 
                 <div className="flex justify-between text-base">
