@@ -171,7 +171,7 @@ function Search() {
   // Build query string with filters (for API call and URL sync)
   const buildQueryString = () => {
     const params = new URLSearchParams();
-    if (keyword) params.append("keyword", keyword);
+    if (keyword && keyword.trim() !== "") params.append("keyword", keyword);
     // Don't send relevance sort if no keyword
     const effectiveSort =
       sortBy === "relevance" && !keyword ? sortingOptions.newest.value : sortBy;
@@ -235,8 +235,10 @@ function Search() {
     ],
     queryFn: async () => {
       const res = await api.get(`/goods/search?${queryString}`);
+      console.log("API Call: /goods/search?", queryString);
       return res.data;
     },
+    staleTime: 30 * 1000,
   });
 
   // Dispatch wrapper functions for cleaner API to Filter component

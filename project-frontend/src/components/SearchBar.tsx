@@ -12,7 +12,11 @@ function SearchBar() {
 
   // enter key for handling search
   const redirectToSearch = (keyword: string) => {
-    navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+    if (!keyword || keyword.trim() === "") {
+      navigate(`/search`);
+    } else {
+      navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+    }
   };
 
   const handleEnter = () => {
