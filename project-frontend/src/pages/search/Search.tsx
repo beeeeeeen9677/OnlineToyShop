@@ -404,7 +404,7 @@ function Search() {
                         className={`w-10 h-10 rounded-lg font-oswald transition duration-300 ${
                           currentPage === page
                             ? "bg-primary text-white"
-                            : "border-2 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
+                            : "border-2 hover:text-primary cursor-pointer"
                         }`}
                       >
                         {page}
