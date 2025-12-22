@@ -9,7 +9,7 @@ function SearchItem({ itemDetails }: SearchItemProps) {
   const navigate = useNavigate();
   return (
     <div
-      className="group max-w-75 bg-white shrink-0 cursor-pointer"
+      className="group flex flex-col max-w-75 bg-white shrink-0 cursor-pointer"
       onClick={() => {
         navigate(`/item/${itemDetails._id}`);
       }}
@@ -21,12 +21,12 @@ function SearchItem({ itemDetails }: SearchItemProps) {
         />
       </div>
 
-      <h1 className="font-oswald px-1 pt-1 text-black font-black text-md line-clamp-3">
+      <h1 className="font-oswald px-1 pt-1 text-black font-black text-md line-clamp-3 flex-1">
         {itemDetails.name}
       </h1>
-      <div className=" px-1 pt-1 text-black ">
-        <span className="font-bold text-xs "> HK$ </span>
-        <span className="font-oswald font-black text-sm ">
+      <div className=" px-2 text-black text-right">
+        <span className="font-bold text-sm "> HK$ </span>
+        <span className="font-oswald font-black text-md ">
           {itemDetails.price}
         </span>
       </div>
