@@ -200,8 +200,8 @@ function Search() {
   // Sync filter state to URL when it changes (using replaceState to avoid re-render)
   useEffect(() => {
     const newSearch = buildQueryStringEvent();
-    const newUrl = newSearch ? `?${newSearch}` : window.location.pathname;
-    if (window.location.search !== `?${newSearch}`) {
+    const newUrl = newSearch ? `?${newSearch}` : location.pathname;
+    if (location.search !== `?${newSearch}`) {
       window.history.replaceState(null, "", newUrl);
     }
   }, [
@@ -235,10 +235,10 @@ function Search() {
     ],
     queryFn: async () => {
       const res = await api.get(`/goods/search?${queryString}`);
-      console.log("API Call: /goods/search?", queryString);
+      //console.log("API Call: /goods/search?", queryString);
       return res.data;
     },
-    staleTime: 30 * 1000,
+    staleTime: 30 * 1000, // 30s
   });
 
   // Dispatch wrapper functions for cleaner API to Filter component

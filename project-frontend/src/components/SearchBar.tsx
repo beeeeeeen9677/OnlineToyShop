@@ -2,20 +2,24 @@ import { useRef, useState } from "react";
 import { useTranslation } from "../i18n/hooks";
 import { CiSearch } from "react-icons/ci";
 import { FaLocationArrow } from "react-icons/fa";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 function SearchBar() {
   const { t } = useTranslation("common");
   const navigate = useNavigate();
+  const location = useLocation();
   const [inputValue, setInputValue] = useState("");
   const inputElem = useRef<HTMLInputElement>(null);
 
   // enter key for handling search
   const redirectToSearch = (keyword: string) => {
-    if (!keyword || keyword.trim() === "") {
-      navigate(`/search`);
-    } else {
+    if (keyword && keyword.trim() !== "") {
       navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
+    } else if (location.pathname == "/search") {
+      // empty keyword
+      return;
+    } else {
+      navigate(`/search`);
     }
   };
 
