@@ -1,4 +1,10 @@
-import { Activity, useEffect, useReducer, useState } from "react";
+import {
+  Activity,
+  useEffect,
+  useEffectEvent,
+  useReducer,
+  useState,
+} from "react";
 import { useLocation } from "react-router";
 import { FaFilter } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
@@ -162,54 +168,15 @@ function Search() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, []);
 
-  // Sync filter state to URL when it changes (using replaceState to avoid re-render)
-  useEffect(() => {
-    const params = new URLSearchParams();
-
-    // Preserve keyword
-    if (keyword) params.set("keyword", keyword);
-
-    // Add sort
-    if (sortBy && sortBy !== sortingOptions.relevance.value) {
-      params.set("sort", sortBy);
-    }
-
-    // Add filters
-    selectedCategories.forEach((cat) => params.append("category", cat));
-    selectedSalesStatus.forEach((status) =>
-      params.append("salesStatus", status)
-    );
-    if (priceRange.min !== undefined)
-      params.set("minPrice", String(priceRange.min));
-    if (priceRange.max !== undefined)
-      params.set("maxPrice", String(priceRange.max));
-
-    // Add page (only if not page 1)
-    if (currentPage > 1) params.set("page", String(currentPage));
-
-    // Update URL without triggering React Router re-render
-    const newSearch = params.toString();
-    const newUrl = newSearch ? `?${newSearch}` : window.location.pathname;
-    if (window.location.search !== `?${newSearch}`) {
-      window.history.replaceState(null, "", newUrl);
-    }
-  }, [
-    keyword,
-    sortBy,
-    currentPage,
-    selectedCategories,
-    selectedSalesStatus,
-    priceRange,
-  ]);
-
-  // Build query string with filters (for API call)
+  // Build query string with filters (for API call and URL sync)
   const buildQueryString = () => {
     const params = new URLSearchParams();
     if (keyword) params.append("keyword", keyword);
     // Don't send relevance sort if no keyword
     const effectiveSort =
       sortBy === "relevance" && !keyword ? sortingOptions.newest.value : sortBy;
-    if (effectiveSort) params.append("sort", effectiveSort);
+    params.append("sort", effectiveSort);
+
     if (selectedCategories.length > 0) {
       selectedCategories.forEach((cat) => params.append("category", cat));
     }
@@ -225,6 +192,26 @@ function Search() {
     if (currentPage > 1) params.append("page", String(currentPage));
     return params.toString();
   };
+
+  const buildQueryStringEvent = useEffectEvent(() => {
+    return buildQueryString();
+  });
+
+  // Sync filter state to URL when it changes (using replaceState to avoid re-render)
+  useEffect(() => {
+    const newSearch = buildQueryStringEvent();
+    const newUrl = newSearch ? `?${newSearch}` : window.location.pathname;
+    if (window.location.search !== `?${newSearch}`) {
+      window.history.replaceState(null, "", newUrl);
+    }
+  }, [
+    keyword,
+    sortBy,
+    currentPage,
+    selectedCategories,
+    selectedSalesStatus,
+    priceRange,
+  ]);
 
   const queryString = buildQueryString();
   //console.log("Query String:", queryString);

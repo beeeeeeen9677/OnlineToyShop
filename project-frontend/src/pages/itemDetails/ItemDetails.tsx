@@ -196,7 +196,16 @@ function ItemDetails() {
           <div className="font-oswald font-extrabold text-xl mb-3">
             {t("info.productIntroduction")}
           </div>
-          <div>{itemDetails.description[i18n.language as "en" | "zh"]}</div>
+          <div>
+            {itemDetails.description[i18n.language as "en" | "zh"]
+              .split("\n")
+              .map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+          </div>
         </div>
       </div>
       <div className="mb-45" />

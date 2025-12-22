@@ -73,7 +73,9 @@ function HorizontalContainer({
       >
         <div> {title}</div>
         <Link
-          to={`/search?sort=${encodeURIComponent(queryKey)}`}
+          to={`/search?sort=${encodeURIComponent(
+            queryKey
+          )}&salesStatus=available`}
           className="underline text-xl"
         >
           {subtitle}
