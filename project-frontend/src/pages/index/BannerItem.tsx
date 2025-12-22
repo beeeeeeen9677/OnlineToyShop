@@ -32,7 +32,14 @@ function BannerItem({ itemDetails }: { itemDetails: Good }) {
             {itemDetails.name}
           </div>
           <div className="text-gray-600 mt-2 lg:mt-6 line-clamp-3 md:line-clamp-4 lg:line-clamp-9 text-xs md:text-sm ">
-            {itemDetails.description[i18n.language as "en" | "zh"]}
+            {itemDetails.description[i18n.language as "en" | "zh"]
+              .split("\n")
+              .map((line, idx) => (
+                <span key={idx}>
+                  {line}
+                  <br />
+                </span>
+              ))}
           </div>
         </div>
       </div>
