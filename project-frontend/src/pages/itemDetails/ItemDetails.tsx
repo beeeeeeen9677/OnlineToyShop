@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../i18n/hooks";
 import i18n from "../../i18n";
@@ -192,7 +192,20 @@ function ItemDetails() {
         </div>
         {/*  Break line  */}
         <hr className="border border-orange-100   dark:border-gray-500 " />
+        {/*  Category Tags  */}
+        <div className="flex gap-4">
+          {itemDetails.category.map((cat) => (
+            <Link
+              to={"/search?category=" + encodeURIComponent(cat)}
+              className="bg-primary text-white px-2 py-1 rounded-lg hover:bg-orange-300"
+              key={cat}
+            >
+              {t(`category.${cat}`)}
+            </Link>
+          ))}
+        </div>
         <div>
+          {/*  Description  */}
           <div className="font-oswald font-extrabold text-xl mb-3">
             {t("info.productIntroduction")}
           </div>
