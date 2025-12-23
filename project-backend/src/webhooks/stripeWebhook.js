@@ -6,9 +6,9 @@
  */
 import { stripe } from "../../server.js";
 import Order from "../mongodb/models/Order.js";
-import User from "../mongodb/models/User.js";
+//import User from "../mongodb/models/User.js";
 import { confirmPaymentInternal } from "../mongodb/collections/orderColl.js";
-import { sendOrderConfirmationEmail } from "../mail/nodemailer.js";
+//import { sendOrderConfirmationEmail } from "../mail/nodemailer.js";
 
 export const handleStripeWebhook = async (req, res) => {
   const sig = req.headers["stripe-signature"];
