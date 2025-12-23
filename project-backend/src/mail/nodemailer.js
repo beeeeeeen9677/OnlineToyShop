@@ -12,6 +12,7 @@ export const sendOrderConfirmationEmail = async (to, orderDetails) => {
 
   try {
     await sendMail({ to, subject, text, html });
+    console.log(`Order confirmation email sent to ${to}`);
   } catch (error) {
     console.error("Error sending order confirmation email:", error);
   }

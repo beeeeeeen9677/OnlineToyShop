@@ -76,7 +76,7 @@ export const handleStripeWebhook = async (req, res) => {
         .join("\n");
       const orderDetails = `Order ID: ${confirmedOrder._id}\nTotal Amount: ${confirmedOrder.orderTotal}\n\nThank you for shopping with us!`;
 
-      await sendOrderConfirmationEmail(userEmail, orderDetails);
+      sendOrderConfirmationEmail(userEmail, orderDetails);
 
       res.json({ received: true });
     } catch (err) {
