@@ -67,16 +67,16 @@ export const handleStripeWebhook = async (req, res) => {
       console.log(`Order ${orderId} confirmed successfully`);
 
       // Send order confirmation email
-      const userEmail = await User.findById(confirmedOrder.userId).lean().exec()
-        .email;
-      const itemsList = confirmedOrder.items
-        .map(
-          (item) => `${item.quantity} x ${item.name} @ HKD ${item.price} each`
-        )
-        .join("\n");
-      const orderDetails = `Order ID: ${confirmedOrder._id}\nTotal Amount: ${confirmedOrder.orderTotal}\n\nThank you for shopping with us!`;
+      // const userEmail = await User.findById(confirmedOrder.userId).lean().exec()
+      //   .email;
+      // const itemsList = confirmedOrder.items
+      //   .map(
+      //     (item) => `${item.quantity} x ${item.name} @ HKD ${item.price} each`
+      //   )
+      //   .join("\n");
+      // const orderDetails = `Order ID: ${confirmedOrder._id}\nTotal Amount: ${confirmedOrder.orderTotal}\n\nThank you for shopping with us!`;
 
-      sendOrderConfirmationEmail(userEmail, orderDetails);
+      // sendOrderConfirmationEmail(userEmail, orderDetails);
 
       res.json({ received: true });
     } catch (err) {
