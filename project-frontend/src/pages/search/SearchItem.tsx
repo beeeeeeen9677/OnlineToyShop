@@ -21,12 +21,12 @@ function SearchItem({ itemDetails }: SearchItemProps) {
         />
       </div>
 
-      <h1 className="font-oswald px-1 pt-1 text-black font-black text-md line-clamp-3 flex-1">
+      <h1 className="font-oswald px-1 pt-1 text-black font-black text-base line-clamp-3 py-3 flex-1">
         {itemDetails.name}
       </h1>
       <div className=" px-2 text-black text-right">
         <span className="font-bold text-sm "> HK$ </span>
-        <span className="font-oswald font-black text-md ">
+        <span className="font-oswald font-black text-base ">
           {itemDetails.price}
         </span>
       </div>
