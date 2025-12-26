@@ -17,7 +17,7 @@ function SearchItem({ itemDetails }: SearchItemProps) {
       <div className="w-full h-7/11 sm:h-8/11 md:h-2/3 overflow-hidden items-center flex ">
         <img
           src={itemDetails.imageUrl}
-          className="object-contain aspect-square scale-200 transform translate-y-12 group-hover:scale-100 group-hover:translate-0 transition duration-300"
+          className="object-contain aspect-square scale-200 transform translate-y-12 group-hover:scale-110 group-hover:translate-0 transition duration-300"
         />
       </div>
 
