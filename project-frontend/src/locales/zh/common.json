@@ -10,7 +10,8 @@
     "verify": "驗證",
     "savePassword": "儲存密碼",
     "cancel": "取消",
-    "clear": "清空"
+    "clear": "清空",
+    "home": "首頁"
   },
   "labels": {
     "email": "電子郵件",

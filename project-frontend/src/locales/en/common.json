@@ -10,7 +10,8 @@
     "verify": "Verify",
     "savePassword": "Save Password",
     "cancel": "Cancel",
-    "clear": "Clear"
+    "clear": "Clear",
+    "home": "Home"
   },
   "labels": {
     "email": "Email",
