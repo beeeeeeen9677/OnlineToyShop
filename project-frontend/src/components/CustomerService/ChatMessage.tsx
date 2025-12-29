@@ -70,7 +70,7 @@ function ChatMessage({
   }
 
   return (
-    <div className={`${isSender ? "ml-auto" : "mr-auto"} w-fit`}>
+    <div className={`${isSender ? "ml-auto" : "mr-auto"} w-fit max-w-[90%]`}>
       {!isSender && (
         <div
           className={` ml-1 text-sm ${
@@ -91,7 +91,7 @@ function ChatMessage({
       <div
         className={`${
           isSender ? "bg-green-300" : "bg-white"
-        } text-black rounded-2xl p-2 w-fit`}
+        } text-black rounded-2xl p-2 w-fit wrap-anywhere`}
       >
         {message}
       </div>

@@ -97,7 +97,7 @@ function CsChatWindow() {
   };
 
   return (
-    <div className="bg-gray-400 flex-1 flex flex-col  ">
+    <div className="bg-gray-400 flex-1 flex flex-col">
       <h1 className="text-center">
         {user.role !== "admin" ? "Admin" : roomId}
       </h1>
