@@ -108,7 +108,7 @@ function ItemDetails() {
             alt={itemDetails?.name}
             className=" md:w-3/5 md:max-w-140 shrink-0"
           />
-          <div className=" p-5 border-10 border-orange-100  dark:border-gray-500 space-y-4">
+          <div className=" p-5 border-10 border-orange-100  dark:border-gray-500 space-y-4 w-full">
             <div className="font-oswald font-extrabold text-2xl">
               {itemDetails.name}
             </div>

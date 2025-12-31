@@ -50,7 +50,7 @@ export function useDragHook() {
       const touch = e.touches[0];
       if (startDrag(touch.pageX)) {
         setDragged(false); // Reset
-        e.preventDefault();
+        //e.preventDefault();
       }
     },
     [startDrag]
