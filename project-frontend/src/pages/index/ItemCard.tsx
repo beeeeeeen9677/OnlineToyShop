@@ -14,7 +14,7 @@ function ItemCard({ itemDetails, dateType, dragged }: ItemCardProps) {
   const navigate = useNavigate();
   return (
     <div
-      className="group w-[calc(100%/3-0.5rem)] aspect-1/2 md:w-36 md:h-80 lg:w-44 lg:h-88 xl:w-48 xl:h-96 bg-white shrink-0 cursor-pointer"
+      className="group w-[calc(100%/3-0.5rem)] aspect-1/2 md:w-36 md:h-80 lg:w-44 lg:h-88 xl:w-48 xl:h-96 bg-white shrink-0 cursor-pointer flex flex-col"
       onClick={() => {
         // console.log("dragged:", dragged);
         if (!dragged) {
@@ -31,7 +31,7 @@ function ItemCard({ itemDetails, dateType, dragged }: ItemCardProps) {
       <div
         className={`px-1 pt-1 ${
           dateType === "createdAt" ? "text-blue-500" : "text-red-500"
-        } font-bold text-xs `}
+        } font-bold text-xs`}
       >
         {t("info." + (dateType === "createdAt" ? "preorderOpen" : "openTo")) +
           ": "}
@@ -44,7 +44,7 @@ function ItemCard({ itemDetails, dateType, dragged }: ItemCardProps) {
       <div className="font-oswald px-1 pt-1 text-black font-black text-sm line-clamp-2">
         {itemDetails.name}
       </div>
-      <div className=" px-1 pt-1 text-black ">
+      <div className=" px-1 pt-1 text-black mt-auto ml-auto">
         <span className="font-bold text-xs "> HK$ </span>
         <span className="font-oswald font-black text-sm ">
           {itemDetails.price}
